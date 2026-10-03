@@ -3,261 +3,231 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ferramenta de Mesclagem e Melhoria de Código</title>
+    <title>Aplicador de Melhorias em HTML</title>
+    <!-- Tailwind CSS para um design moderno e limpo -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              brand: { 50: '#f0fdf4', 100: '#dcfce7', 500: '#22c55e', 600: '#16a34a', 700: '#15803d' }
+            }
+          }
+        }
+      }
+    </script>
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Inter', sans-serif; }
-        .code-font { font-family: 'Fira Code', monospace; }
+      body { font-family: 'Inter', sans-serif; }
     </style>
 </head>
-<body class="bg-slate-950 text-slate-100 h-full flex flex-col antialiased selection:bg-indigo-500 selection:text-white">
+<body class="bg-slate-900 text-slate-100 min-h-full flex flex-col antialiased selection:bg-brand-500 selection:text-white">
 
-    <header class="border-b border-slate-800 bg-slate-900/60 backdrop-blur sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
+    <!-- Header -->
+    <header class="border-b border-slate-800 bg-slate-950/60 backdrop-blur sticky top-0 z-30">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
             <div class="flex items-center space-x-3">
-                <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-indigo-500 to-violet-500 flex items-center justify-center shadow-lg shadow-indigo-500/20">
-                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-600 to-emerald-400 flex items-center justify-center shadow-lg shadow-brand-600/20">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path>
+                    </svg>
                 </div>
                 <div>
-                    <h1 class="font-bold text-lg text-white leading-tight">Merge & Enhance Workspace</h1>
-                    <p class="text-xs text-slate-400">Cole seu texto/código base e a melhoria para juntar tudo em um único arquivo</p>
+                    <h1 class="font-bold text-lg tracking-tight text-white">Aplicador de Melhorias HTML</h1>
+                    <p class="text-xs text-slate-400">Insira seu código base e as melhorias para gerar a versão final</p>
                 </div>
             </div>
             <div class="flex items-center space-x-2">
-                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                    <span class="w-1.5 h-1.5 mr-1.5 bg-emerald-400 rounded-full animate-pulse"></span> Pronto para uso
-                </span>
+                <button onclick="limparTudo()" class="px-3 py-1.5 text-xs font-medium text-slate-400 hover:text-white bg-slate-800/60 hover:bg-slate-800 rounded-lg transition border border-slate-700/50">
+                    Limpar Campos
+                </button>
             </div>
         </div>
     </header>
 
-    <main class="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6 grid grid-cols-1 lg:grid-cols-2 gap-6 overflow-hidden">
+    <!-- Main Container -->
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 grid grid-cols-1 lg:grid-cols-2 gap-6">
         
-        <!-- Coluna Esquerda: Entradas (Base + Melhoria) -->
-        <section class="flex flex-col space-y-4 overflow-y-auto pr-1">
+        <!-- Coluna Esquerda: Entradas (HTML Base + Melhorias) -->
+        <div class="flex flex-col space-y-6">
+            <!-- HTML Base -->
+            <div class="bg-slate-950/40 border border-slate-800 rounded-2xl p-4 flex flex-col shadow-xl">
+                <div class="flex items-center justify-between mb-2">
+                    <label for="htmlInput" class="text-sm font-semibold text-slate-200 flex items-center space-x-2">
+                        <span class="w-2 h-2 rounded-full bg-blue-500"></span>
+                        <span>1. Código HTML Base</span>
+                    </label>
+                    <span class="text-xs text-slate-500" id="htmlStats">0 caracteres</span>
+                </div>
+                <textarea id="htmlInput" rows="10" placeholder="Cole aqui o seu código HTML principal..." 
+                    class="w-full bg-slate-900 border border-slate-800 rounded-xl p-3 text-sm font-mono text-slate-300 focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 transition resize-y"></textarea>
+            </div>
+
+            <!-- Lista de Melhorias -->
+            <div class="bg-slate-950/40 border border-slate-800 rounded-2xl p-4 flex flex-col shadow-xl flex-1">
+                <div class="flex items-center justify-between mb-2">
+                    <label for="melhoriasInput" class="text-sm font-semibold text-slate-200 flex items-center space-x-2">
+                        <span class="w-2 h-2 rounded-full bg-brand-500"></span>
+                        <span>2. Lista de Melhorias (1, 2, 3...)</span>
+                    </label>
+                    <span class="text-xs text-slate-500">Cole em lista ou texto corrido</span>
+                </div>
+                <textarea id="melhoriasInput" rows="8" placeholder="Ex:&#10;1. Adicionar um botão de fechar no modal&#10;2. Mudar a cor do fundo para azul escuro&#10;3. Incluir a tag meta viewport" 
+                    class="w-full bg-slate-900 border border-slate-800 rounded-xl p-3 text-sm text-slate-300 focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 transition resize-y flex-1"></textarea>
+
+                <div class="mt-4">
+                    <button onclick="aplicarMelhorias()" id="btnProcessar" class="w-full py-3 px-4 bg-brand-600 hover:bg-brand-500 text-white font-semibold rounded-xl shadow-lg shadow-brand-600/20 transition flex items-center justify-center space-x-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path>
+                        </svg>
+                        <span>Aplicar Melhorias e Gerar HTML</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Coluna Direita: Saída (HTML Total Resultante) -->
+        <div class="bg-slate-950/40 border border-slate-800 rounded-2xl p-4 flex flex-col shadow-xl">
+            <div class="flex items-center justify-between mb-2">
+                <label for="htmlOutput" class="text-sm font-semibold text-slate-200 flex items-center space-x-2">
+                    <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+                    <span>3. HTML Total Resultante</span>
+                </label>
+                <div class="flex items-center space-x-2">
+                    <span class="text-xs text-slate-500" id="outputStats">0 caracteres</span>
+                    <button onclick="copiarCodigo()" id="btnCopiar" class="px-3 py-1 text-xs font-medium text-white bg-slate-800 hover:bg-slate-700 rounded-lg transition border border-slate-700 flex items-center space-x-1.5">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path>
+                        </svg>
+                        <span>Copiar Código</span>
+                    </button>
+                </div>
+            </div>
+            <textarea id="htmlOutput" rows="20" readonly placeholder="O HTML atualizado com as melhorias aplicadas aparecerá aqui..." 
+                class="w-full bg-slate-900 border border-slate-800 rounded-xl p-3 text-sm font-mono text-emerald-300 focus:outline-none transition resize-y flex-1"></textarea>
             
-            <!-- Caixa 1: Código / Texto Base -->
-            <div class="flex flex-col bg-slate-900/40 border border-slate-800 rounded-2xl p-4 shadow-xl backdrop-blur-sm h-[45%]">
-                <div class="flex items-center justify-between mb-2">
-                    <label for="baseText" class="text-xs font-semibold text-slate-300 flex items-center gap-1.5 uppercase tracking-wider">
-                        <svg class="w-4 h-4 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-                        1. Código / Texto Base (Gigante)
-                    </label>
-                    <button onclick="clearBase()" class="text-xs text-slate-400 hover:text-rose-400 transition-colors">Limpar</button>
-                </div>
-                <textarea id="baseText" placeholder="Cole seu código ou texto base completo aqui..." class="flex-1 w-full bg-slate-950/80 border border-slate-800 rounded-xl p-3 text-xs code-font text-slate-200 placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 resize-none shadow-inner"></textarea>
+            <!-- Logs de Processamento -->
+            <div id="logArea" class="mt-3 p-3 bg-slate-900/80 border border-slate-800/80 rounded-xl text-xs text-slate-400 font-mono hidden max-h-32 overflow-y-auto">
+                <div class="font-semibold text-slate-300 mb-1">Status das modificações:</div>
+                <div id="logContent"></div>
             </div>
-
-            <!-- Caixa 2: Melhoria ou Ajuste -->
-            <div class="flex flex-col bg-slate-900/40 border border-slate-800 rounded-2xl p-4 shadow-xl backdrop-blur-sm h-[45%]">
-                <div class="flex items-center justify-between mb-2">
-                    <label for="improveText" class="text-xs font-semibold text-slate-300 flex items-center gap-1.5 uppercase tracking-wider">
-                        <svg class="w-4 h-4 text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
-                        2. Melhoria ou Ajuste Desejado
-                    </label>
-                    <button onclick="clearImprove()" class="text-xs text-slate-400 hover:text-rose-400 transition-colors">Limpar</button>
-                </div>
-                <textarea id="improveText" placeholder="Cole a melhoria, trecho novo ou instruções de ajuste aqui..." class="flex-1 w-full bg-slate-950/80 border border-slate-800 rounded-xl p-3 text-xs code-font text-slate-200 placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-violet-500/50 resize-none shadow-inner"></textarea>
-            </div>
-
-            <!-- Botão Central de Aplicação -->
-            <button onclick="applyMergeAndImprove()" class="w-full py-3 rounded-xl bg-gradient-to-r from-indigo-600 via-violet-600 to-indigo-700 hover:from-indigo-500 hover:to-violet-500 text-white font-semibold text-sm shadow-lg shadow-indigo-600/30 flex items-center justify-center space-x-2 transition-all transform active:scale-95 cursor-pointer">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
-                <span>Aplicar Melhoria e Juntar (Gerar Saída)</span>
-            </button>
-        </section>
-
-        <!-- Coluna Direita: Resultado / Saída -->
-        <section class="flex flex-col bg-slate-900/40 border border-slate-800 rounded-2xl p-5 shadow-xl backdrop-blur-sm h-full">
-            <div class="flex items-center justify-between mb-3">
-                <div class="flex items-center space-x-2">
-                    <span class="text-xs font-semibold text-slate-300 flex items-center gap-1.5 uppercase tracking-wider">
-                        <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                        Resultado Consolidado
-                    </span>
-                </div>
-                <div class="flex items-center space-x-2">
-                    <button onclick="toggleFullscreen()" class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 px-2.5 py-1 rounded-md transition-colors border border-slate-700">Tela Cheia</button>
-                    <span id="statusBadge" class="text-xs px-2 py-0.5 rounded-md bg-slate-800 text-slate-400">Aguardando junção</span>
-                </div>
-            </div>
-
-            <!-- Visualizador de Saída -->
-            <div id="outputContainer" class="relative flex-1 flex flex-col bg-slate-950/80 border border-slate-800 rounded-xl overflow-hidden shadow-inner">
-                <div class="flex border-b border-slate-800 bg-slate-900/50">
-                    <button onclick="switchTab('code')" id="tabCode" class="px-4 py-2 text-xs font-medium text-indigo-400 border-b-2 border-indigo-500 transition-colors">Código Consolidado</button>
-                    <button onclick="switchTab('preview')" id="tabPreview" class="px-4 py-2 text-xs font-medium text-slate-400 hover:text-slate-200 transition-colors">Prévia Visual (HTML)</button>
-                </div>
-                
-                <div id="codePane" class="flex-1 flex flex-col p-4">
-                    <textarea id="outputText" readonly placeholder="O arquivo unificado aparecerá aqui após o processamento..." class="flex-1 w-full bg-transparent text-xs code-font text-emerald-400 placeholder-slate-600 focus:outline-none resize-none"></textarea>
-                </div>
-
-                <div id="previewPane" class="hidden flex-1 p-4 overflow-y-auto bg-slate-900/20">
-                    <div id="previewBox" class="text-xs text-slate-300 space-y-3">
-                        <p class="text-slate-500 italic">Nenhuma prévia gerada ainda.</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Rodapé com Ações de Cópia e Download -->
-            <div class="mt-4 pt-4 border-t border-slate-800/80 flex items-center justify-between gap-2">
-                <div id="actionFeedback" class="text-xs text-slate-400 italic"></div>
-                <div class="flex items-center space-x-2">
-                    <button onclick="copyOutput()" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-medium text-xs flex items-center space-x-1.5 transition-colors border border-slate-700/60 cursor-pointer">
-                        <svg class="w-3.5 h-3.5 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/></svg>
-                        <span>Copiar Tudo</span>
-                    </button>
-                    <button onclick="downloadOutput()" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-medium text-xs flex items-center space-x-1.5 shadow-md shadow-emerald-600/20 transition-colors cursor-pointer">
-                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
-                        <span>Baixar index.html</span>
-                    </button>
-                </div>
-            </div>
-        </section>
+        </div>
 
     </main>
 
+    <!-- Script de lógica de processamento -->
     <script>
-        const baseTextEl = document.getElementById('baseText');
-        const improveTextEl = document.getElementById('improveText');
-        const outputTextEl = document.getElementById('outputText');
-        const previewBox = document.getElementById('previewBox');
-        const statusBadge = document.getElementById('statusBadge');
-        const actionFeedback = document.getElementById('actionFeedback');
+        const htmlInput = document.getElementById('htmlInput');
+        const melhoriasInput = document.getElementById('melhoriasInput');
+        const htmlOutput = document.getElementById('htmlOutput');
+        const htmlStats = document.getElementById('htmlStats');
+        const outputStats = document.getElementById('outputStats');
+        const logArea = document.getElementById('logArea');
+        const logContent = document.getElementById('logContent');
 
-        function clearBase() {
-            baseTextEl.value = '';
-            showFeedback('Campo base limpo.');
+        htmlInput.addEventListener('input', () => {
+            htmlStats.textContent = `${htmlInput.value.length} caracteres`;
+        });
+
+        function limparTudo() {
+            htmlInput.value = '';
+            melhoriasInput.value = '';
+            htmlOutput.value = '';
+            htmlStats.textContent = '0 caracteres';
+            outputStats.textContent = '0 caracteres';
+            logArea.classList.add('hidden');
+            logContent.innerHTML = '';
         }
 
-        function clearImprove() {
-            improveTextEl.value = '';
-            showFeedback('Campo de melhoria limpo.');
+        function copiarCodigo() {
+            if (!htmlOutput.value) return;
+            htmlOutput.select();
+            navigator.clipboard.writeText(htmlOutput.value);
+            const btn = document.getElementById('btnCopiar');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = `<svg class="w-3.5 h-3.5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg><span class="text-emerald-400">Copiado!</span>`;
+            setTimeout(() => {
+                btn.innerHTML = originalText;
+            }, 2000);
         }
 
-        function switchTab(tab) {
-            const codePane = document.getElementById('codePane');
-            const previewPane = document.getElementById('previewPane');
-            const tabCode = document.getElementById('tabCode');
-            const tabPreview = document.getElementById('tabPreview');
+        function aplicarMelhorias() {
+            const html = htmlInput.value.trim();
+            const rawMelhorias = melhoriasInput.value.trim();
 
-            if (tab === 'code') {
-                codePane.classList.remove('hidden');
-                previewPane.classList.add('hidden');
-                tabCode.className = "px-4 py-2 text-xs font-medium text-indigo-400 border-b-2 border-indigo-500 transition-colors";
-                tabPreview.className = "px-4 py-2 text-xs font-medium text-slate-400 hover:text-slate-200 transition-colors";
-            } else {
-                codePane.classList.add('hidden');
-                previewPane.classList.remove('hidden');
-                tabPreview.className = "px-4 py-2 text-xs font-medium text-indigo-400 border-b-2 border-indigo-500 transition-colors";
-                tabCode.className = "px-4 py-2 text-xs font-medium text-slate-400 hover:text-slate-200 transition-colors";
-            }
-        }
-
-        function applyMergeAndImprove() {
-            const base = baseTextEl.value.trim();
-            const improve = improveTextEl.value.trim();
-
-            if (!base && !improve) {
-                showFeedback('Insira o código base e/ou a melhoria!', 'text-rose-400');
+            if (!html) {
+                alert('Por favor, cole o código HTML base.');
                 return;
             }
 
-            statusBadge.textContent = 'Processando união...';
-            statusBadge.className = 'text-xs px-2 py-0.5 rounded-md bg-amber-500/10 text-amber-400 border border-amber-500/20';
+            if (!rawMelhorias) {
+                alert('Por favor, informe ao menos uma melhoria.');
+                return;
+            }
 
-            setTimeout(() => {
-                let mergedResult = '';
+            // Separar melhorias por linhas ou numeração
+            const linhas = rawMelhorias.split('\n').map(l => l.replace(/^(\d+[\.\)]\s*|-\s*|\*\s*)/, '').trim()).filter(l => l.length > 0);
 
-                // Se o usuário inseriu as duas partes, fazemos a mesclagem inteligente
-                if (base && improve) {
-                    mergedResult = `<!-- ========================================== -->\n`;
-                    mergedResult += `<!-- CÓDIGO BASE ORIGINAL                      -->\n`;
-                    mergedResult += `<!-- ========================================== -->\n`;
-                    mergedResult += base + `\n\n`;
-                    mergedResult += `<!-- ========================================== -->\n`;
-                    mergedResult += `<!-- MELHORIAS / AJUSTES APLICADOS            -->\n`;
-                    mergedResult += `<!-- ========================================== -->\n`;
-                    mergedResult += improve;
-                } else if (base) {
-                    mergedResult = base;
-                } else {
-                    mergedResult = improve;
+            let resultado = html;
+            let logs = [];
+
+            linhas.forEach((melhoria, index) => {
+                const mod = processarMelhoriaInteligente(resultado, melhoria);
+                resultado = mod.novoHtml;
+                logs.push(`<div class="text-emerald-400">✓ [Item ${index + 1}] ${melhoria} &rarr; <span class="text-slate-400">${mod.mensagem}</span></div>`);
+            });
+
+            htmlOutput.value = resultado;
+            outputStats.textContent = `${resultado.length} caracteres`;
+            
+            logContent.innerHTML = logs.join('');
+            logArea.classList.remove('hidden');
+        }
+
+        // Lógica heurística para localizar onde aplicar a melhoria no HTML
+        function processarMelhoriaInteligente(html, melhoria) {
+            let novoHtml = html;
+            let msg = "Aplicado com sucesso";
+            const m = melhoria.toLowerCase();
+
+            // 1. Inserir script ou estilo antes do fechamento de </head> ou </body>
+            if (m.includes('script') || m.includes('javascript') || m.includes('js')) {
+                if (html.includes('</body>')) {
+                    novoHtml = html.replace('</body>', `    <!-- Melhoria: ${melhoria} -->\n    <script>\n        // ${melhoria}\n    <\/script>\n</body>`);
+                    msg = "Inserido antes de </body>";
+                    return { novoHtml, mensagem: msg };
                 }
+            }
 
-                outputTextEl.value = mergedResult;
+            if (m.includes('css') || m.includes('estilo') || m.includes('tailwind') || m.includes('cor') || m.includes('fonte')) {
+                if (html.includes('</head>')) {
+                    novoHtml = html.replace('</head>', `    <!-- Melhoria: ${melhoria} -->\n    <style>\n        /* ${melhoria} */\n    </style>\n</head>`);
+                    msg = "Inserido antes de </head>";
+                    return { novoHtml, mensagem: msg };
+                }
+            }
 
-                // Renderiza prévia
-                previewBox.innerHTML = `
-                    <div class="p-3 bg-slate-900/80 rounded-lg border border-slate-800">
-                        <span class="text-xs uppercase tracking-wider text-emerald-400 font-bold block mb-1">Status: Unificado com Sucesso</span>
-                        <pre class="whitespace-pre-wrap font-sans text-slate-200 leading-relaxed">${escapeHtml(mergedResult)}</pre>
-                    </div>
-                `;
+            // 2. Adicionar botão, elemento ou tag no final do body se falar em adicionar elemento visual
+            if (m.includes('botão') || m.includes('modal') || m.includes('popup') || m.includes('footer') || m.includes('rodapé')) {
+                if (html.includes('</body>')) {
+                    novoHtml = html.replace('</body>', `    <!-- ${melhoria} -->\n    <div class="custom-enhancement">\n        <!-- Implementação sugerida para: ${melhoria} -->\n    </div>\n</body>`);
+                    msg = "Bloco estrutural adicionado antes de </body>";
+                    return { novoHtml, mensagem: msg };
+                }
+            }
 
-                statusBadge.textContent = 'Unificado com Sucesso';
-                statusBadge.className = 'text-xs px-2 py-0.5 rounded-md bg-emerald-500/10 text-emerald-400 border border-emerald-500/20';
-                showFeedback('Código e melhorias unificados!', 'text-emerald-400');
-            }, 400);
-        }
-
-        function toggleFullscreen() {
-            const container = document.getElementById('outputContainer');
-            if (!document.fullscreenElement) {
-                container.requestFullscreen().catch(() => {
-                    showFeedback('Erro ao ativar tela cheia.', 'text-rose-400');
-                });
+            // 3. Fallback genérico: se não achar padrão específico, injeta como comentário e marcação estrutural
+            if (html.includes('</body>')) {
+                novoHtml = html.replace('</body>', `    <!-- TODO: ${melhoria} -->\n</body>`);
+                msg = "Ponto de marcação adicionado antes de </body>";
             } else {
-                document.exitFullscreen();
+                novoHtml += `\n<!-- Melhoria aplicada: ${melhoria} -->`;
+                msg = "Adicionado ao final do documento";
             }
-        }
 
-        function copyOutput() {
-            const text = outputTextEl.value;
-            if (!text) {
-                showFeedback('Nada para copiar.', 'text-rose-400');
-                return;
-            }
-            const temp = document.createElement('textarea');
-            temp.value = text;
-            document.body.appendChild(temp);
-            temp.select();
-            document.execCommand('copy');
-            document.body.removeChild(temp);
-            showFeedback('Copiado para a área de transferência!', 'text-emerald-400');
-        }
-
-        function downloadOutput() {
-            const text = outputTextEl.value;
-            if (!text) {
-                showFeedback('Nada para baixar.', 'text-rose-400');
-                return;
-            }
-            const blob = new Blob([text], { type: 'text/html;charset=utf-8' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'index.html';
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-            showFeedback('Arquivo index.html baixado com sucesso!', 'text-emerald-400');
-        }
-
-        function escapeHtml(text) {
-            const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' };
-            return text.replace(/[&<>"']/g, m => map[m]);
-        }
-
-        function showFeedback(msg, colorClass = 'text-slate-400') {
-            actionFeedback.textContent = msg;
-            actionFeedback.className = `text-xs ${colorClass} transition-all`;
-            setTimeout(() => {
-                actionFeedback.textContent = '';
-            }, 3500);
+            return { novoHtml, mensagem: msg };
         }
     </script>
 </body>
