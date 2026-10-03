@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Roteiro Europa - Lista de Compras</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <meta name="theme-color" content="#db2777">
+    <style>
+        button, a, label, select, input { -webkit-tap-highlight-color: transparent; }
+        button:active, a:active { transform: scale(0.97); }
+    </style>
+</head>
+<body class="bg-slate-100 text-slate-800 min-h-screen pb-24 select-none">
+
+    <div id="toast-container" class="fixed top-4 right-4 z-[999] flex flex-col gap-2 pointer-events-none"></div>
+
+    <header class="bg-pink-950 text-white px-3 py-2.5 shadow-md border-b border-pink-900/50 text-xs flex justify-between items-center z-50 sticky top-0">
+        <span class="font-bold flex items-center gap-1.5">
+            <span>🛍️</span> Lista de Compras
+        </span>
+        <div class="flex items-center gap-1.5">
+            <button onclick="compartilharWhatsApp()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-2.5 py-1.5 rounded-lg font-bold text-[10px] active:scale-95 flex items-center gap-1">
+                <span>📲</span> WhatsApp
+            </button>
+            <a href="principal.html" class="bg-pink-900 hover:bg-pink-800 text-white px-2.5 py-1.5 rounded-lg font-bold text-[10px] border border-pink-700">🏠 Início</a>
+        </div>
+    </header>
+
+    <div class="max-w-4xl mx-auto p-3 sm:p-6 space-y-4 pt-4">
+
+        <!-- RESUMO DE GASTOS POR PESSOA -->
+        <div id="resumo-pessoas" class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs"></div>
+
+        <!-- FORMULÁRIO DE ADIÇÃO RÁPIDA -->
+        <div class="p-4 rounded-3xl border border-pink-200 bg-pink-50/50 space-y-3 shadow-xs">
+            <span class="font-black text-pink-950 uppercase text-[10px] block">➕ Adicionar Item na Lista</span>
+            <div class="flex gap-2">
+                <input type="text" id="novo-desc" placeholder="Nome do item (ex: Perfume, Casaco...)" class="flex-1 p-2 bg-white border border-slate-300 rounded-xl font-bold text-xs outline-none">
+                <select id="novo-pub" class="p-2 bg-white border border-slate-300 rounded-xl font-bold text-xs">
+                    <option value="Mariana">👤 Mariana</option>
+                    <option value="Sophia">👧 Sophia</option>
+                    <option value="Glória">👵 Glória</option>
+                    <option value="Outros">📦 Outros</option>
+                </select>
+            </div>
+            <div class="flex gap-2">
+                <input type="url" id="novo-link" placeholder="🔗 Link online do produto (opcional)" class="flex-1 p-2 bg-white border border-slate-300 rounded-xl text-xs outline-none">
+            </div>
+            <div class="flex justify-between items-center gap-2 flex-wrap">
+                <div class="flex items-center gap-2">
+                    <span class="text-xs font-bold text-slate-600">Valor:</span>
+                    <input type="number" id="novo-val" placeholder="0.00" class="w-24 p-2 bg-white border border-slate-300 rounded-xl font-bold text-xs">
+                    <select id="novo-moeda" class="p-2 bg-white border border-slate-300 rounded-xl font-bold text-xs">
+                        <option value="EUR">EUR (€)</option>
+                        <option value="CHF">CHF</option>
+                        <option value="BRL">R$ (BRL)</option>
+                    </select>
+                </div>
+                <button onclick="adicionarItem()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-xl font-bold text-xs shadow-sm active:scale-95">✓ Adicionar</button>
+            </div>
+        </div>
+
+        <!-- LISTA DE ITENS SALVOS -->
+        <div class="bg-white p-4 rounded-3xl border border-slate-200 shadow-sm space-y-3">
+            <h3 class="font-extrabold text-xs uppercase text-slate-800 border-b pb-2">📋 Itens na Lista</h3>
+            <div id="lista-compras" class="space-y-2"></div>
+        </div>
+    </div>
+
+    <!-- NAVEGAÇÃO FIXA INFERIOR -->
+    <nav class="fixed bottom-0 left-0 right-0 z-50 bg-slate-900/95 backdrop-blur-md text-white px-3 py-2 shadow-2xl border-t border-slate-800 flex items-center justify-around gap-1 max-w-4xl mx-auto rounded-t-2xl">
+        <a href="principal.html" class="py-1 px-3 rounded-xl hover:bg-slate-800 text-slate-300 font-extrabold text-[11px] flex flex-col items-center">
+            <span>🏠</span><span class="text-[9px]">Início</span>
+        </a>
+        <a href="roteiro.html" class="py-1 px-3 rounded-xl hover:bg-slate-800 text-slate-300 font-extrabold text-[11px] flex flex-col items-center">
+            <span>✈️</span><span class="text-[9px]">Roteiro</span>
+        </a>
+        <a href="hub.html" class="py-1 px-3 rounded-xl hover:bg-slate-800 text-slate-300 font-extrabold text-[11px] flex flex-col items-center">
+            <span>📋</span><span class="text-[9px]">Hub</span>
+        </a>
+        <a href="orcamento.html" class="py-1 px-3 rounded-xl hover:bg-slate-800 text-slate-300 font-extrabold text-[11px] flex flex-col items-center">
+            <span>💰</span><span class="text-[9px]">Orçamento</span>
+        </a>
+        <a href="compras.html" class="py-1 px-3 rounded-xl bg-pink-600 text-white font-extrabold text-[11px] flex flex-col items-center">
+            <span>🛍️</span><span class="text-[9px]">Compras</span>
+        </a>
+    </nav>
+
+    <script>
+        const SUPABASE_URL = 'https://jmeepzdvmmjngxwvayqb.supabase.co';
+        const SUPABASE_ANON_KEY = 'sb_publishable_54ORrLbP7naW7n-KlKCdUA_hZnpjguH';
+        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        const CHAVE_APP = "mariana_viagem_europa_dados_fixos_definitiva";
+
+        let dadosApp = { compras: [], cotacaoEur: 6.20, cotacaoChf: 6.50 };
+
+        function mostrarToast(msg) {
+            const container = document.getElementById('toast-container');
+            if (!container) return;
+            const toast = document.createElement('div');
+            toast.className = `bg-emerald-600 text-white px-4 py-2 rounded-2xl shadow-xl font-bold text-xs pointer-events-auto`;
+            toast.innerText = msg;
+            container.appendChild(toast);
+            setTimeout(() => toast.remove(), 2500);
+        }
+
+        async function salvarStorage() {
+            localStorage.setItem(CHAVE_APP, JSON.stringify(dadosApp));
+            try { await supabaseClient.from('app_dados').upsert({ id: '1', conteudo: dadosApp }); } catch(e){}
+        }
+
+        async function carregarDados() {
+            try {
+                let { data } = await supabaseClient.from('app_dados').select('conteudo').eq('id', '1').single();
+                if (data && data.conteudo) dadosApp = data.conteudo;
+                else {
+                    let local = localStorage.getItem(CHAVE_APP);
+                    if (local) dadosApp = JSON.parse(local);
+                }
+            } catch(e) {
+                let local = localStorage.getItem(CHAVE_APP);
+                if (local) dadosApp = JSON.parse(local);
+            }
+            renderizarCompras();
+        }
+
+        function renderizarCompras() {
+            const resumo = document.getElementById('resumo-pessoas');
+            const lista = document.getElementById('lista-compras');
+            if (!resumo || !lista) return;
+
+            let cotEur = parseFloat(dadosApp.cotacaoEur) || 6.20;
+            let cotChf = parseFloat(dadosApp.cotacaoChf) || 6.50;
+
+            let totais = { "Mariana": 0, "Sophia": 0, "Glória": 0, "Outros": 0 };
+
+            (dadosApp.compras || []).forEach(it => {
+                let val = parseFloat(it.valor) || 0;
+                let valBrl = it.moeda === 'EUR' ? val * cotEur : (it.moeda === 'CHF' ? val * cotChf : val);
+                let p = it.publico || 'Mariana';
+                if (!totais[p]) totais[p] = 0;
+                totais[p] += valBrl;
+            });
+
+            resumo.innerHTML = Object.keys(totais).map(p => `
+                <div class="bg-pink-50/70 p-3 rounded-2xl border border-pink-200 text-center">
+                    <span class="text-[10px] font-bold text-pink-900 block">${p}</span>
+                    <div class="font-black text-xs text-pink-700">R$ ${totais[p].toFixed(2)}</div>
+                </div>
+            `).join('');
+
+            lista.innerHTML = (dadosApp.compras || []).map(it => `
+                <div class="p-3 bg-slate-50 border border-slate-200 rounded-2xl flex justify-between items-center text-xs ${it.concluido ? 'opacity-60 bg-emerald-50/50' : ''}">
+                    <div class="flex items-center gap-2 flex-1">
+                        <input type="checkbox" ${it.concluido ? 'checked' : ''} onchange="alternarConcluido('${it.id}')" class="w-4 h-4 accent-emerald-600 rounded">
+                        <div>
+                            <span class="font-bold ${it.concluido ? 'line-through text-slate-400' : 'text-slate-800'}">${it.descricao}</span>
+                            <span class="text-[10px] bg-white border px-1.5 py-0.5 rounded text-slate-500 ml-1.5">${it.publico}</span>
+                            ${it.link ? `<a href="${it.link}" target="_blank" class="text-sky-600 font-bold ml-1.5">🔗 Link</a>` : ''}
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="font-black text-slate-900">${it.valor > 0 ? `${it.valor}${it.moeda}` : 'Grátis'}</span>
+                        <button onclick="excluirItem('${it.id}')" class="text-rose-600 font-bold px-1.5">✕</button>
+                    </div>
+                </div>
+            `).join('') || '<p class="text-xs text-slate-400">Nenhum item na lista ainda.</p>';
+        }
+
+        function adicionarItem() {
+            let desc = document.getElementById('novo-desc').value.trim();
+            if (!desc) { alert("Digite o nome do item."); return; }
+
+            if (!dadosApp.compras) dadosApp.compras = [];
+            dadosApp.compras.unshift({
+                id: 'c_' + Date.now(),
+                descricao: desc,
+                publico: document.getElementById('novo-pub').value,
+                link: document.getElementById('novo-link').value.trim(),
+                valor: parseFloat(document.getElementById('novo-val').value) || 0,
+                moeda: document.getElementById('novo-moeda').value,
+                concluido: false
+            });
+
+            document.getElementById('novo-desc').value = '';
+            document.getElementById('novo-link').value = '';
+            document.getElementById('novo-val').value = '';
+
+            salvarStorage();
+            renderizarCompras();
+            mostrarToast("Item adicionado na lista!");
+        }
+
+        function alternarConcluido(id) {
+            let it = dadosApp.compras.find(i => String(i.id) === String(id));
+            if (it) {
+                it.concluido = !it.concluido;
+                salvarStorage();
+                renderizarCompras();
+            }
+        }
+
+        function excluirItem(id) {
+            if (confirm("Remover este item?")) {
+                dadosApp.compras = dadosApp.compras.filter(i => String(i.id) !== String(id));
+                salvarStorage();
+                renderizarCompras();
+                mostrarToast("Item removido.", "info");
+            }
+        }
+
+        function compartilharWhatsApp() {
+            if (!dadosApp.compras || dadosApp.compras.length === 0) {
+                alert("Nenhum item para compartilhar.");
+                return;
+            }
+            let texto = "🛍️ *Lista de Compras - Viagem Europa*\n\n";
+            dadosApp.compras.forEach(it => {
+                texto += `${it.concluido ? '✅' : '⏳'} *${it.descricao}* (${it.publico}) - ${it.valor > 0 ? `${it.valor}${it.moeda}` : 'A verificar'}\n`;
+                if (it.link) texto += `   Link: ${it.link}\n`;
+            });
+            window.open("https://api.whatsapp.com/send?text=" + encodeURIComponent(texto), '_blank');
+        }
+
+        window.addEventListener('DOMContentLoaded', carregarDados);
+    </script>
+</body>
+</html>
