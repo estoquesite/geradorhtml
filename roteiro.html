@@ -324,16 +324,32 @@
         </div>
 
 
+        <!-- TAB 2: ITINERÁRIO EDITÁVEL (antigo editar.html, agora dentro do Roteiro) -->
+        <div id="tab-itinerario" class="space-y-3 hidden">
+            <div id="filtros-container" class="bg-slate-200/80 p-2 rounded-2xl overflow-x-auto flex gap-1.5 text-xs items-center no-scrollbar shadow-inner border border-slate-300/40"></div>
 
 
+            <div class="flex justify-between items-center px-3 py-2.5 bg-white rounded-2xl border border-slate-200 shadow-xs">
+                <h2 class="text-xs font-extrabold uppercase text-slate-700 tracking-wider">📦 Blocos de Destino</h2>
+                <div class="flex gap-1.5">
+                    <button onclick="desfazerUltimaAcao()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-300 px-3 py-1.5 rounded-xl font-bold text-xs transition shadow-xs active:scale-95">↩️ Voltar</button>
+                    <button onclick="adicionarBloco()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-3.5 py-1.5 rounded-xl font-bold text-xs transition shadow-sm shadow-indigo-600/20 active:scale-95">➕ Novo Bloco</button>
+                </div>
+            </div>
 
 
-
-
-
-
-
-
+            <!-- BARRA DE FILTRO / ORDENAÇÃO DOS BLOCOS -->
+            <div class="flex justify-between items-center bg-white px-3 py-2.5 rounded-2xl border border-slate-200 shadow-xs text-xs">
+                <span class="font-extrabold uppercase text-slate-600 tracking-wider">🗂️ Agrupar / Filtrar Blocos:</span>
+                <select id="select-ordenacao-blocos" onchange="mudarOrdenacaoBlocos(this.value)" class="p-1.5 bg-slate-50 border border-slate-300 rounded-xl font-bold text-xs outline-none text-slate-700 shadow-xs">
+                    <option value="original">📌 Ordem Original</option>
+                    <option value="alfabetica">🔤 Por Destino (Alfabética)</option>
+                    <option value="cor">🎨 Por Cor</option>
+                </select>
+            </div>
+            
+            <div id="lista-blocos" class="space-y-3"></div>
+        </div>
 
 
     </div>
@@ -447,6 +463,7 @@
 
 <script src="nucleo/nucleo-00-base.js"></script>
 <script>
+        /* ================= FUNÇÕES DO ROTEIRO (aba Roteiro) ================= */
         function compartilharRoteiroWhatsApp() {
             let blocosAprovados = dadosApp.itinerario.filter(item => item.bloqueado === true);
             if(blocosAprovados.length === 0) {
@@ -531,10 +548,785 @@
                 diasSub.innerText = `Aproveite cada momento deste roteiro maravilhoso!`;
             }
         }
+
+        /* ================= FUNÇÕES DO EDITAR (agora dentro do Roteiro) ================= */
+        async function adicionarFotoExtraTrecho(itemId, trechoId, condId, event) {
+            const file = event.target.files[0];
+            if (file) {
+                registarEstadoAnterior();
+                const fotoComp = await comprimirImagem(file, 800, 0.7);
+                if (!fotoComp) return;
+                let item = dadosApp.itinerario.find(i => String(i.id) === String(itemId));
+                if (item && item.trechos) {
+                    let tr = item.trechos.find(t => String(t.id) === String(trechoId));
+                    if (tr && tr.conducoes) {
+                        let cond = tr.conducoes.find(c => String(c.id) === String(condId));
+                        if (cond) {
+                            if (!cond.fotosExtras) cond.fotosExtras = [];
+                            cond.fotosExtras.push(fotoComp);
+                            salvarStorage();
+                            renderizarBlocos();
+                            mostrarToast("Foto adicionada!", "sucesso");
+                        }
+                    }
+                }
+            }
+        }
+
+        function removerFotoExtraTrecho(itemId, trechoId, condId, fotoIndex) {
+            if(confirm("Tem a certeza que deseja remover esta foto?")) {
+                registarEstadoAnterior();
+                let item = dadosApp.itinerario.find(i => String(i.id) === String(itemId));
+                if (item && item.trechos) {
+                    let tr = item.trechos.find(t => String(t.id) === String(trechoId));
+                    if (tr && tr.conducoes) {
+                        let cond = tr.conducoes.find(c => String(c.id) === String(condId));
+                        if (cond && cond.fotosExtras) {
+                            cond.fotosExtras.splice(fotoIndex, 1);
+                            salvarStorage();
+                            renderizarBlocos();
+                            mostrarToast("Foto removida.", "info");
+                        }
+                    }
+                }
+            }
+        }
+
+        function imprimirBlocoUnico(id) {
+            let item = dadosApp.itinerario.find(i => String(i.id) === String(id));
+            if(!item) return;
+            let win = window.open('', '_blank');
+            let dIni = item.dataInicio ? item.dataInicio.split('-').reverse().join('/') : '?';
+            let dFim = item.dataFim ? item.dataFim.split('-').reverse().join('/') : '?';
+            let corCard = item.cor || obterCorPorCategoria(item.categoria);
+            
+            let trechosStr = '';
+            if(item.trechos && item.trechos.length > 0) {
+                item.trechos.forEach(tr => {
+                    let conducoesStr = '';
+                    if(tr.conducoes && tr.conducoes.length > 0) {
+                        tr.conducoes.forEach(cond => {
+                            conducoesStr += `<div class="ml-4 text-slate-700">• <b>${cond.transporte}</b> (${cond.valor} ${cond.moeda})${cond.notas ? ' - ' + cond.notas : ''}</div>`;
+                        });
+                    }
+                    trechosStr += '<li class="mb-2"><b>' + (tr.origem || '?') + ' ➔ ' + (tr.destino || '?') + '</b>' + conducoesStr + '</li>';
+                });
+            } else {
+                trechosStr = '<li>Nenhum trecho registado.</li>';
+            }
+
+
+            let itensStr = '';
+            if(item.itens && item.itens.length > 0) {
+                item.itens.forEach(it => {
+                    if(it.texto && it.texto.trim() !== '') {
+                        itensStr += '<li class="mb-1">• ' + it.texto + '</li>';
+                    }
+                });
+            }
+
+
+            win.document.write('<html><head><meta charset="utf-8"><title>Roteiro - ' + (item.categoria || '') + '</title><script src="https://cdn.tailwindcss.com"><\/script></head><body class="p-8 bg-white text-slate-900 font-sans">');
+            win.document.write('<div class="p-6 rounded-3xl border-2 shadow-sm space-y-4" style="border-color: ' + corCard + ';">');
+            win.document.write('<div class="flex justify-between items-center border-b pb-3"><h2 class="text-xl font-black uppercase text-indigo-950">' + (item.categoria || 'Destino') + '</h2><span class="font-bold text-sm text-slate-600">📅 ' + dIni + ' ➔ ' + dFim + '</span></div>');
+            win.document.write('<div><h3 class="font-bold text-xs uppercase text-slate-700 mb-1">🚄 Rota & Conduções:</h3><ul class="list-disc pl-5 text-xs text-slate-800">' + trechosStr + '</ul></div>');
+            if(itensStr) {
+                win.document.write('<div><h3 class="font-bold text-xs uppercase text-slate-700 mb-1">📌 Notas / Textos:</h3><ul class="text-xs text-slate-800">' + itensStr + '</ul></div>');
+            }
+            win.document.write('</div>');
+            win.document.write('<script>setTimeout(() => { window.print(); window.close(); }, 500);<\/script></body></html>');
+            win.document.close();
+        }
+
+        function alternarBloqueio(id) {
+            registarEstadoAnterior();
+            const item = dadosApp.itinerario.find(i => String(i.id) === String(id));
+            if(item) { 
+                item.bloqueado = !item.bloqueado; 
+                salvarStorage(); 
+                atualizarTudo(); 
+                mostrarToast(item.bloqueado ? "Bloco aprovado para o Roteiro Oficial! 🔒" : "Bloco liberado para edição.", "sucesso");
+            }
+        }
+
+        function atualizarCorBlocoLocal(id, corHex) {
+            registarEstadoAnterior();
+            let item = dadosApp.itinerario.find(i => String(i.id) === String(id));
+            if(item) {
+                item.cor = corHex;
+                if(item.categoria) {
+                    if(!dadosApp.coresDestinos) dadosApp.coresDestinos = {};
+                    dadosApp.coresDestinos[item.categoria] = corHex;
+                }
+                salvarStorage();
+                atualizarTudo();
+            }
+        }
+
+        function atualizarCampo(id, campo, val) {
+            registarEstadoAnterior();
+            let item = dadosApp.itinerario.find(i => String(i.id) === String(id));
+            if(item) {
+                item[campo] = val;
+                salvarStorage();
+                atualizarTudo();
+            }
+        }
+
+        function apagarBloco(id) {
+            if(confirm("Deseja realmente excluir este bloco?")) {
+                registarEstadoAnterior();
+                dadosApp.itinerario = dadosApp.itinerario.filter(i => String(i.id) !== String(id));
+                salvarStorage();
+                atualizarTudo();
+                mostrarToast("Bloco excluído.", "info");
+            }
+        }
+
+        function moverBloco(id, direcao) {
+            registarEstadoAnterior();
+            let idx = dadosApp.itinerario.findIndex(i => String(i.id) === String(id));
+            if(idx < 0) return;
+            let targetIdx = idx + direcao;
+            if(targetIdx < 0 || targetIdx >= dadosApp.itinerario.length) return;
+            let temp = dadosApp.itinerario[idx];
+            dadosApp.itinerario[idx] = dadosApp.itinerario[targetIdx];
+            dadosApp.itinerario[targetIdx] = temp;
+            salvarStorage();
+            atualizarTudo();
+        }
+
+        function mudarOrdenacaoBlocos(val) {
+            registarEstadoAnterior();
+            blocoOrdenacao = val;
+            dadosApp.blocoOrdenacao = val;
+            salvarStorage();
+            renderizarBlocos();
+        }
+
+        function gerenciarDestinos() {
+            if (!dadosApp.destinosCadastrados || dadosApp.destinosCadastrados.length === 0) {
+                mostrarToast("Não há destinos cadastrados para gerir.", "info");
+                return;
+            }
+            let lista = dadosApp.destinosCadastrados.join(', ');
+            let escolha = prompt("Destinos atuais:\n[" + lista + "]\n\nDigite exatamente o nome do destino que deseja APAGAR ou RENOMEAR:");
+            if (!escolha || escolha.trim() === '') return;
+            let destEncontrado = dadosApp.destinosCadastrados.find(d => d.toLowerCase() === escolha.trim().toLowerCase());
+            if (!destEncontrado) {
+                mostrarToast("Destino não encontrado.", "erro");
+                return;
+            }
+            let acao = prompt(`O que deseja fazer com o destino "${destEncontrado}"?\n\n1 - Renomear\n2 - Apagar\n\nDigite 1 ou 2:`);
+            if (acao === '1') {
+                let novoNome = prompt("Digite o novo nome para o destino:", destEncontrado);
+                if (novoNome && novoNome.trim() !== '') {
+                    registarEstadoAnterior();
+                    let novoLimpo = novoNome.trim();
+                    dadosApp.destinosCadastrados = dadosApp.destinosCadastrados.map(d => d === destEncontrado ? novoLimpo : d);
+                    dadosApp.itinerario.forEach(b => {
+                        if (b.categoria === destEncontrado) b.categoria = novoLimpo;
+                    });
+                    if (dadosApp.coresDestinos[destEncontrado]) {
+                        dadosApp.coresDestinos[novoLimpo] = dadosApp.coresDestinos[destEncontrado];
+                        delete dadosApp.coresDestinos[destEncontrado];
+                    }
+                    if (destinoFiltro === destEncontrado) destinoFiltro = novoLimpo;
+                    salvarStorage();
+                    atualizarTudo();
+                    mostrarToast("Destino renomeado com sucesso!", "sucesso");
+                }
+            } else if (acao === '2') {
+                if (confirm(`Deseja realmente apagar o destino "${destEncontrado}"?`)) {
+                    registarEstadoAnterior();
+                    dadosApp.destinosCadastrados = dadosApp.destinosCadastrados.filter(d => d !== destEncontrado);
+                    if (destinoFiltro === destEncontrado) destinoFiltro = 'todos';
+                    salvarStorage();
+                    atualizarTudo();
+                    mostrarToast("Destino apagado!", "info");
+                }
+            }
+        }
+
+        function gerenciarOrigens() {
+            if (!dadosApp.origensCadastrados || dadosApp.origensCadastrados.length === 0) {
+                mostrarToast("Não há origens registadas.", "info");
+                return;
+            }
+            let lista = dadosApp.origensCadastrados.join(', ');
+            let escolha = prompt("Origens atuais:\n[" + lista + "]\n\nDigite exatamente o nome da origem que deseja APAGAR ou RENOMEAR:");
+            if (!escolha || escolha.trim() === '') return;
+            let encontrada = dadosApp.origensCadastrados.find(o => o.toLowerCase() === escolha.trim().toLowerCase());
+            if (!encontrada) {
+                mostrarToast("Origem não encontrada.", "erro");
+                return;
+            }
+            let acao = prompt(`O que deseja fazer com a origem "${encontrada}"?\n\n1 - Renomear\n2 - Apagar\n\nDigite 1 ou 2:`);
+            if (acao === '1') {
+                let novoNome = prompt("Digite o novo nome para a origem:", encontrada);
+                if (novoNome && novoNome.trim() !== '') {
+                    registarEstadoAnterior();
+                    let novoLimpo = novoNome.trim();
+                    dadosApp.origensCadastrados = dadosApp.origensCadastrados.map(o => o === encontrada ? novoLimpo : o);
+                    dadosApp.itinerario.forEach(b => {
+                        if (b.trechos) {
+                            b.trechos.forEach(tr => {
+                                if (tr.origem === encontrada) tr.origem = novoLimpo;
+                            });
+                        }
+                    });
+                    salvarStorage();
+                    atualizarTudo();
+                    mostrarToast("Origem renomeada!", "sucesso");
+                }
+            } else if (acao === '2') {
+                if (confirm(`Deseja realmente apagar a origem "${encontrada}"?`)) {
+                    registarEstadoAnterior();
+                    dadosApp.origensCadastrados = dadosApp.origensCadastrados.filter(o => o !== encontrada);
+                    dadosApp.itinerario.forEach(b => {
+                        if (b.trechos) {
+                            b.trechos.forEach(tr => {
+                                if (tr.origem === encontrada) tr.origem = '';
+                            });
+                        }
+                    });
+                    salvarStorage();
+                    atualizarTudo();
+                    mostrarToast("Origem apagada!", "info");
+                }
+            }
+        }
+
+        function gerenciarDestinosLocais() {
+            if (!dadosApp.destinosCadastradosLocais || dadosApp.destinosCadastradosLocais.length === 0) {
+                mostrarToast("Não há destinos registados.", "info");
+                return;
+            }
+            let lista = dadosApp.destinosCadastradosLocais.join(', ');
+            let escolha = prompt("Destinos atuais:\n[" + lista + "]\n\nDigite exatamente o nome do destino que deseja APAGAR ou RENOMEAR:");
+            if (!escolha || escolha.trim() === '') return;
+            let encontrada = dadosApp.destinosCadastradosLocais.find(d => d.toLowerCase() === escolha.trim().toLowerCase());
+            if (!encontrada) {
+                mostrarToast("Destino não encontrado.", "erro");
+                return;
+            }
+            let acao = prompt(`O que deseja fazer com o destino "${encontrada}"?\n\n1 - Renomear\n2 - Apagar\n\nDigite 1 ou 2:`);
+            if (acao === '1') {
+                let novoNome = prompt("Digite o novo nome para o destino:", encontrada);
+                if (novoNome && novoNome.trim() !== '') {
+                    registarEstadoAnterior();
+                    let novoLimpo = novoNome.trim();
+                    dadosApp.destinosCadastradosLocais = dadosApp.destinosCadastradosLocais.map(d => d === encontrada ? novoLimpo : d);
+                    dadosApp.itinerario.forEach(b => {
+                        if (b.trechos) {
+                            b.trechos.forEach(tr => {
+                                if (tr.destino === encontrada) tr.destino = novoLimpo;
+                            });
+                        }
+                    });
+                    salvarStorage();
+                    atualizarTudo();
+                    mostrarToast("Destino renomeado!", "sucesso");
+                }
+            } else if (acao === '2') {
+                if (confirm(`Deseja realmente apagar o destino "${encontrada}"?`)) {
+                    registarEstadoAnterior();
+                    dadosApp.destinosCadastradosLocais = dadosApp.destinosCadastradosLocais.filter(d => d !== encontrada);
+                    dadosApp.itinerario.forEach(b => {
+                        if (b.trechos) {
+                            b.trechos.forEach(tr => {
+                                if (tr.destino === encontrada) tr.destino = '';
+                            });
+                        }
+                    });
+                    salvarStorage();
+                    atualizarTudo();
+                    mostrarToast("Destino apagado!", "info");
+                }
+            }
+        }
+
+        function adicionarNovoDestinoFiltro() {
+            let novo = prompt("Nome do novo destino:");
+            if(novo && novo.trim() !== '') {
+                let limpo = novo.trim();
+                let corNova = prompt("Escolha a cor HEX para este destino (ex: #ff007f neon pink):", "#ff007f");
+                if(!dadosApp.destinosCadastrados.includes(limpo)) dadosApp.destinosCadastrados.push(limpo);
+                if(!dadosApp.coresDestinos) dadosApp.coresDestinos = {};
+                dadosApp.coresDestinos[limpo] = corNova || "#ff007f";
+                
+                registarEstadoAnterior();
+                let novoBloco = {
+                    id: Date.now(),
+                    categoria: limpo,
+                    dataInicio: "",
+                    dataFim: "",
+                    cor: dadosApp.coresDestinos[limpo],
+                    bloqueado: false,
+                    concluido: false,
+                    trechos: [
+                        { 
+                            id: Date.now() + 1, 
+                            origem: "", 
+                            destino: "", 
+                            concluido: false, 
+                            conducoes: [
+                                { id: Date.now() + 11, transporte: "Trem", valor: 0, moeda: "EUR", notas: "", fotosExtras: [] },
+                                { id: Date.now() + 12, transporte: "Ônibus", valor: 0, moeda: "EUR", notas: "", fotosExtras: [] }
+                            ]
+                        }
+                    ],
+                    itens: []
+                };
+                if(!dadosApp.itinerario) dadosApp.itinerario = [];
+                dadosApp.itinerario.unshift(novoBloco);
+
+
+                salvarStorage();
+                atualizarTudo();
+                filtrarDestino(limpo);
+                mostrarToast(`Destino ${limpo} adicionado!`, "sucesso");
+            }
+        }
+
+        function filtrarDestino(cat) { 
+            destinoFiltro = cat; 
+            renderizarFiltros(); 
+            renderizarBlocos(); 
+            renderizarModoLeitura();
+        }
+
+        function renderizarBlocos() {
+            const container = document.getElementById('lista-blocos');
+            if(!container) return;
+            container.innerHTML = '';
+            
+            let filtrados = [...dadosApp.itinerario];
+            if(destinoFiltro !== 'todos') {
+                filtrados = filtrados.filter(i => (i.categoria || "").toLowerCase().includes(destinoFiltro.toLowerCase()));
+            }
+
+
+            filtrados.sort((a, b) => {
+                if (blocoOrdenacao === 'alfabetica') {
+                    return (a.categoria || '').localeCompare(b.categoria || '');
+                } else if (blocoOrdenacao === 'cor') {
+                    return (a.cor || '').localeCompare(b.cor || '');
+                }
+                return 0;
+            });
+
+
+            if(filtrados.length === 0) {
+                container.innerHTML = '<div class="bg-white p-5 rounded-2xl text-center text-xs text-slate-400 border border-slate-200 shadow-xs space-y-2"><p class="font-bold text-slate-700">Nenhum bloco encontrado.</p><button onclick="destinoFiltro=\'todos\'; atualizarTudo();" class="bg-indigo-600 hover:bg-indigo-700 text-white px-3.5 py-2 rounded-xl font-bold text-xs transition shadow-xs active:scale-95">Mostrar Todos</button></div>';
+                return;
+            }
+
+
+            filtrados.forEach((item) => {
+                let corHex = item.cor || obterCorPorCategoria(item.categoria);
+                item.cor = corHex;
+                let totalDias = calcularDias(item.dataInicio, item.dataFim);
+                let lockIcon = item.bloqueado ? '🔒 Roteiro OK' : '🔓 Editar';
+                let lockBg = item.bloqueado ? 'bg-emerald-600 hover:bg-emerald-700 text-white' : 'bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-300';
+
+
+                let opcoesDestino = '';
+                if(!dadosApp.destinosCadastrados.includes(item.categoria)) dadosApp.destinosCadastrados.push(item.categoria);
+                dadosApp.destinosCadastrados.forEach(d => {
+                    opcoesDestino += '<option value="' + d + '" ' + (item.categoria === d ? 'selected' : '') + '>' + d + '</option>';
+                });
+                opcoesDestino += '<option value="novo_destino">➕ Outro...</option>';
+
+
+                let trechosHtml = '';
+                if(item.trechos && item.trechos.length > 0) {
+                    item.trechos.forEach(tr => {
+                        let opcoesOrigem = '';
+                        if(!dadosApp.origensCadastrados) dadosApp.origensCadastrados = [];
+                        dadosApp.origensCadastrados.forEach(l => {
+                            opcoesOrigem += '<option value="' + l + '" ' + (tr.origem === l ? 'selected' : '') + '>' + l + '</option>';
+                        });
+                        opcoesOrigem += '<option value="outra_origem">➕ Outra Origem...</option>';
+
+
+                        let opcoesDest = '';
+                        if(!dadosApp.destinosCadastradosLocais) dadosApp.destinosCadastradosLocais = [];
+                        dadosApp.destinosCadastradosLocais.forEach(l => {
+                            opcoesDest += '<option value="' + l + '" ' + (tr.destino === l ? 'selected' : '') + '>' + l + '</option>';
+                        });
+                        opcoesDest += '<option value="outro_destino_local">➕ Outro Destino...</option>';
+
+
+                        if(!tr.conducoes) tr.conducoes = [{ id: Date.now(), transporte: "Trem", valor: 0, moeda: "EUR", notas: "", fotosExtras: [] }];
+
+
+                        let conducoesEditHtml = '';
+                        tr.conducoes.forEach((cond, condIdx) => {
+                            let listaFotosExtrasEdit = '';
+                            if(cond.fotosExtras && cond.fotosExtras.length > 0) {
+                                cond.fotosExtras.forEach((fUrl, fIdx) => {
+                                    listaFotosExtrasEdit += `<div class="flex items-center gap-1 bg-purple-50 p-1 rounded-xl border border-purple-200"><img src="${fUrl}" class="w-9 h-9 object-cover rounded-full border-2 border-indigo-500 cursor-pointer shadow-xs" onclick="abrirLeitorArquivo('${fUrl}', 'Foto')" title="Ver foto"><button onclick="removerFotoExtraTrecho('${item.id}', '${tr.id}', '${cond.id}', ${fIdx})" class="text-red-600 hover:text-red-700 font-bold text-[10px] px-1 transition">✕</button></div>`;
+                                });
+                            }
+
+
+                            conducoesEditHtml += `
+                                <div class="bg-slate-50 p-3 rounded-xl border border-slate-200/90 space-y-2 mt-2 shadow-2xs">
+                                    <div class="flex items-center gap-1.5 flex-wrap">
+                                        <select onchange="atualizarConducaoItem('${item.id}', '${tr.id}', '${cond.id}', 'transporte', this.value)" class="w-28 shrink-0 p-1.5 bg-white border border-slate-300 rounded-xl font-bold text-xs outline-none shadow-2xs">
+                                            <option value="Trem" ${cond.transporte==='Trem'?'selected':''}>🚂 Trem</option>
+                                            <option value="Ônibus" ${cond.transporte==='Ônibus'?'selected':''}>🚌 Ônibus</option>
+                                            <option value="Avião" ${cond.transporte==='Avião'?'selected':''}>✈️ Avião</option>
+                                            <option value="Metrô" ${cond.transporte==='Metrô'?'selected':''}>🚇 Metrô</option>
+                                            <option value="Carro" ${cond.transporte==='Carro'?'selected':''}>🚗 Carro</option>
+                                            <option value="Outro" ${cond.transporte==='Outro'?'selected':''}>📦 Outro</option>
+                                        </select>
+                                        <input type="text" value="${cond.valor || 0}" onchange="atualizarConducaoItem('${item.id}', '${tr.id}', '${cond.id}', 'valor', limparNumero(this.value)); atualizarTudo();" class="w-16 shrink-0 p-1.5 bg-white border border-slate-300 rounded-xl font-bold text-xs text-right outline-none shadow-2xs" placeholder="0">
+                                        <select onchange="atualizarConducaoItem('${item.id}', '${tr.id}', '${cond.id}', 'moeda', this.value); atualizarTudo();" class="w-16 shrink-0 p-1.5 bg-white border border-slate-300 rounded-xl font-bold text-xs outline-none shadow-2xs">
+                                            <option value="EUR" ${cond.moeda==='EUR'?'selected':''}>EUR</option>
+                                            <option value="CHF" ${cond.moeda==='CHF'?'selected':''}>CHF</option>
+                                        </select>
+                                        
+                                        <!-- BOTÕES MODERNOS DE ANEXO E CÂMERA -->
+                                        <label class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-2.5 py-1.5 rounded-xl font-bold text-[10px] cursor-pointer border border-slate-300 inline-flex items-center gap-1 shadow-2xs shrink-0 transition active:scale-95" title="Anexar imagem guardada">📁 Anexar<input type="file" accept="image/*" onchange="adicionarFotoExtraTrecho('${item.id}', '${tr.id}', '${cond.id}', event)" class="hidden"></label>
+                                        
+                                        <label class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-2.5 py-1.5 rounded-xl font-bold text-[10px] cursor-pointer border border-slate-300 inline-flex items-center gap-1 shadow-2xs shrink-0 transition active:scale-95" title="Tirar foto com a câmera">📷 Câmera<input type="file" accept="image/*" capture="environment" onchange="adicionarFotoExtraTrecho('${item.id}', '${tr.id}', '${cond.id}', event)" class="hidden"></label>
+
+
+                                        ${tr.conducoes.length > 1 ? `<button onclick="removerConducaoItem('${item.id}', '${tr.id}', '${cond.id}')" class="text-rose-600 hover:text-rose-700 font-bold px-2 py-1.5 rounded-xl bg-rose-50 hover:bg-rose-100 border border-rose-200 text-xs transition active:scale-95" title="Remover condução">✕</button>` : ''}
+                                    </div>
+                                    ${listaFotosExtrasEdit ? '<div class="flex gap-1.5 flex-wrap items-center pt-1">' + listaFotosExtrasEdit + '</div>' : ''}
+                                    <input type="text" value="${cond.notas || ''}" onchange="atualizarConducaoItem('${item.id}', '${tr.id}', '${cond.id}', 'notas', this.value)" class="w-full p-2 bg-white border border-slate-300 rounded-xl font-medium text-xs outline-none focus:border-indigo-600 shadow-2xs" placeholder="Detalhes desta condução (ex: Linha 8)...">
+                                </div>
+                            `;
+                        });
+
+
+                        trechosHtml += '<div class="bg-white p-3 rounded-2xl border border-slate-200 space-y-2.5 mb-3 shadow-xs">' +
+                            '<div class="flex items-center gap-1.5 min-w-0 border-b border-slate-100 pb-2">' +
+                                '<select onchange="lidarSelecaoOrigemTrecho(\'' + item.id + '\', \'' + tr.id + '\', this.value)" class="flex-1 min-w-0 p-2 bg-slate-50 border border-slate-300 rounded-xl font-bold text-xs truncate shadow-2xs"><option value="">Origem...</option>' + opcoesOrigem + '</select>' +
+                                '<span class="shrink-0 font-bold text-slate-400">➔</span>' +
+                                '<select onchange="lidarSelecaoDestinoTrecho(\'' + item.id + '\', \'' + tr.id + '\', this.value)" class="flex-1 min-w-0 p-2 bg-slate-50 border border-slate-300 rounded-xl font-bold text-xs truncate shadow-2xs"><option value="">Destino...</option>' + opcoesDest + '</select>' +
+                                '<button onclick="removerTrecho(\'' + item.id + '\', \'' + tr.id + '\')" class="text-rose-600 hover:text-rose-700 font-bold px-2.5 py-2 rounded-xl bg-rose-50 hover:bg-rose-100 border border-rose-200 transition active:scale-95" title="Apagar Rota">✕</button>' +
+                            '</div>' +
+                            '<div class="space-y-1.5">' +
+                                '<span class="font-bold text-[10px] uppercase text-slate-500 block">Ônibus e Conduções desta Rota:</span>' +
+                                conducoesEditHtml +
+                                '<button onclick="adicionarConducaoVazia(\'' + item.id + '\', \'' + tr.id + '\')" class="w-full mt-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 rounded-xl text-xs transition shadow-sm shadow-indigo-600/20 flex items-center justify-center gap-1.5 active:scale-95">' +
+                                    '<span>➕</span> Adicionar mais um Ônibus / Condução (<b>+</b>)' +
+                                '</button>' +
+                            '</div>' +
+                        '</div>';
+                    });
+                }
+
+
+                let itensHtml = '';
+                if(item.itens && item.itens.length > 0) {
+                    item.itens.forEach(it => {
+                        let itTextoSafe = (it.texto || '').replace(/"/g, '&quot;');
+                        itensHtml += '<div class="flex items-center gap-1.5 bg-white p-2 rounded-xl border border-slate-200 text-xs min-w-0 mb-1.5 shadow-2xs">' +
+                            '<input type="text" value="' + itTextoSafe + '" onchange="atualizarTextoItemBloco(\'' + item.id + '\', \'' + it.id + '\', this.value)" class="flex-1 min-w-0 bg-transparent outline-none font-bold text-slate-800 text-xs" placeholder="Escreva um texto livre...">' +
+                            '<button onclick="removerItemBloco(\'' + item.id + '\', \'' + it.id + '\')" class="text-rose-600 hover:text-rose-700 font-bold px-2.5 py-1.5 rounded-xl bg-rose-50 border border-rose-200 text-xs shrink-0 hover:bg-rose-100 transition active:scale-95">✕</button>' +
+                        '</div>';
+                    });
+                }
+
+
+                let card = document.createElement('div');
+                card.className = 'p-4 rounded-2xl border border-slate-300 space-y-3 transition shadow-sm min-w-0';
+                card.style.backgroundColor = corHex;
+
+
+                let coresPaleta = ["#ff007f", "#00ff66", "#00ffff", "#ccff00", "#ff3300", "#a855f7", "#3b82f6", "#f59e0b", "#ec4899", "#10b981", "#8b5cf6", "#64748b"];
+                let paletaHtml = '<div class="flex items-center gap-1.5 bg-white px-3 py-1.5 rounded-xl border border-slate-300 shadow-2xs flex-wrap"><span class="font-bold text-[11px] text-slate-700 mr-1">Cor:</span>';
+                coresPaleta.forEach(col => {
+                    let ring = corHex === col ? 'ring-2 ring-slate-900 scale-110' : '';
+                    paletaHtml += '<button onclick="atualizarCorBlocoLocal(\'' + item.id + '\', \'' + col + '\')" style="background-color: ' + col + ';" class="w-5 h-5 rounded-full shadow-2xs transition transform hover:scale-110 active:scale-95 ' + ring + '"></button>';
+                });
+                paletaHtml += '<label class="flex items-center gap-1 bg-slate-100 hover:bg-slate-200 px-2 py-0.5 rounded-lg border border-slate-300 cursor-pointer text-[10px] font-bold text-slate-700 ml-1 transition active:scale-95" title="Escolher cor">🎨 Outra <input type="color" value="' + corHex + '" onchange="atualizarCorBlocoLocal(\'' + item.id + '\', this.value)" class="w-4 h-4 rounded cursor-pointer border-0 p-0 bg-transparent"></label>';
+                paletaHtml += '</div>';
+
+
+                card.innerHTML = '<div class="flex flex-col gap-2 border-b border-black/10 pb-2.5">' +
+                    '<div class="flex justify-between items-center gap-2 flex-wrap">' +
+                        '<div class="flex items-center gap-2 flex-wrap">' +
+                            '<select onchange="lidarSelecaoDestino(\'' + item.id + '\', this.value)" class="bg-white text-indigo-950 font-black px-3 py-1.5 rounded-xl text-xs border border-slate-300 outline-none shadow-xs">' + opcoesDestino + '</select>' +
+                            '<span class="bg-indigo-600 text-white font-bold px-2.5 py-1 rounded-xl text-xs shadow-xs">📅 ' + totalDias + 'd</span>' +
+                        '</div>' +
+                        '<button onclick="imprimirBlocoUnico(\'' + item.id + '\')" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3.5 py-1.5 rounded-xl font-bold text-xs transition shadow-xs active:scale-95">🖨️ Imprimir Bloco</button>' +
+                    '</div>' +
+                    '<div class="flex items-center gap-1.5 bg-white p-1 rounded-xl border border-slate-300 text-xs font-bold shadow-xs self-start">' +
+                        '<input type="date" value="' + (item.dataInicio || '') + '" onchange="atualizarDataInicio(\'' + item.id + '\', this.value)" class="bg-transparent outline-none text-xs" title="Início">' +
+                        '<span>➔</span>' +
+                        '<input type="date" value="' + (item.dataFim || '') + '" onchange="atualizarCampo(\'' + item.id + '\', \'dataFim\', this.value)" class="bg-transparent outline-none text-xs" title="Fim">' +
+                    '</div>' +
+                '</div>' +
+                    '<div class="bg-white/95 p-3 rounded-2xl border border-slate-200 space-y-3 text-xs min-w-0 shadow-inner">' +
+                        '<div class="space-y-1.5">' +
+                            '<div class="flex justify-between items-center flex-wrap gap-1">' +
+                                '<span class="font-bold text-slate-700 uppercase text-[10px]">🚄 Rotas & Conduções</span>' +
+                                '<div class="flex gap-1.5">' +
+                                    '<button onclick="gerenciarOrigens()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-300 px-2.5 py-1 rounded-lg text-[10px] font-bold transition active:scale-95" title="Gerir Origens">⚙️ Origens</button>' +
+                                    '<button onclick="gerenciarDestinosLocais()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-300 px-2.5 py-1 rounded-lg text-[10px] font-bold transition active:scale-95" title="Gerir Destinos">⚙️ Destinos</button>' +
+                                    '<button onclick="adicionarTrecho(\'' + item.id + '\')" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1 rounded-xl text-[11px] font-bold transition shadow-xs active:scale-95">➕ Nova Rota</button>' +
+                                '</div>' +
+                            '</div>' +
+                            '<div class="space-y-1.5 min-w-0">' + (trechosHtml || '<p class="text-xs text-slate-400 italic">Nenhuma rota adicionada.</p>') + '</div>' +
+                        '</div>' +
+                        '<div class="space-y-1.5 pt-2.5 border-t border-slate-200">' +
+                            '<div class="flex justify-between items-center"><span class="font-bold text-slate-700 uppercase text-[10px]">📌 Notas</span><button type="button" onclick="adicionarItemBloco(\'' + item.id + '\')" class="bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-1 rounded-xl text-[11px] font-bold transition shadow-xs cursor-pointer active:scale-95">➕ Texto</button></div>' +
+                            '<div class="space-y-1.5 min-w-0">' + (itensHtml || '<p class="text-xs text-slate-400 italic">Nenhum texto adicionado.</p>') + '</div>' +
+                        '</div>' +
+                    '</div>' +
+                    '<div class="flex justify-between items-center pt-2 border-t border-black/10 flex-wrap gap-2">' +
+                        paletaHtml +
+                        '<div class="flex items-center gap-1.5">' +
+                            '<button onclick="alternarBloqueio(\'' + item.id + '\')" class="' + lockBg + ' px-3.5 py-1.5 rounded-xl font-bold text-xs shadow-xs transition active:scale-95">' + lockIcon + '</button>' +
+                            '<button onclick="moverBloco(\'' + item.id + '\', -1)" class="bg-white hover:bg-slate-100 text-slate-700 border border-slate-300 px-2.5 py-1.5 rounded-xl font-bold transition shadow-2xs active:scale-95">⬆️</button>' +
+                            '<button onclick="moverBloco(\'' + item.id + '\', 1)" class="bg-white hover:bg-slate-100 text-slate-700 border border-slate-300 px-2.5 py-1.5 rounded-xl font-bold transition shadow-2xs active:scale-95">⬇️</button>' +
+                            '<button onclick="apagarBloco(\'' + item.id + '\')" class="bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 px-3 py-1.5 rounded-xl font-bold transition active:scale-95">Excluir ✕</button>' +
+                        '</div>' +
+                    '</div>';
+                container.appendChild(card);
+            });
+        }
+
+        function lidarSelecaoOrigemTrecho(itemId, trechoId, valor) {
+            registarEstadoAnterior();
+            if(valor === 'outra_origem') {
+                let novo = prompt("Nova origem:");
+                if(novo && novo.trim() !== '') {
+                    let limpo = novo.trim();
+                    if(!dadosApp.origensCadastrados.includes(limpo)) dadosApp.origensCadastrados.push(limpo);
+                    atualizarTrecho(itemId, trechoId, 'origem', limpo);
+                    mostrarToast("Nova origem adicionada!", "sucesso");
+                } else { renderizarBlocos(); }
+            } else {
+                atualizarTrecho(itemId, trechoId, 'origem', valor);
+            }
+        }
+
+        function lidarSelecaoDestinoTrecho(itemId, trechoId, valor) {
+            registarEstadoAnterior();
+            if(valor === 'outro_destino_local') {
+                let novo = prompt("Novo destino:");
+                if(novo && novo.trim() !== '') {
+                    let limpo = novo.trim();
+                    if(!dadosApp.destinosCadastradosLocais.includes(limpo)) dadosApp.destinosCadastradosLocais.push(limpo);
+                    atualizarTrecho(itemId, trechoId, 'destino', limpo);
+                    mostrarToast("Novo destino local adicionado!", "sucesso");
+                } else { renderizarBlocos(); }
+            } else {
+                atualizarTrecho(itemId, trechoId, 'destino', valor);
+            }
+        }
+
+        function adicionarItemBloco(itemId) {
+            registarEstadoAnterior();
+            let item = dadosApp.itinerario.find(i => String(i.id) === String(itemId));
+            if(item) {
+                if(!item.itens) item.itens = [];
+                item.itens.push({ id: Date.now(), texto: "" });
+                salvarStorage();
+                renderizarBlocos();
+            }
+        }
+
+        function removerItemBloco(itemId, subId) {
+            registarEstadoAnterior();
+            let item = dadosApp.itinerario.find(i => String(i.id) === String(itemId));
+            if(item && item.itens) {
+                item.itens = item.itens.filter(i => String(i.id) !== String(subId));
+                salvarStorage();
+                renderizarBlocos();
+            }
+        }
+
+        function atualizarTextoItemBloco(itemId, subId, val) {
+            let item = dadosApp.itinerario.find(i => String(i.id) === String(itemId));
+            if(item && item.itens) {
+                let it = item.itens.find(i => String(i.id) === String(subId));
+                if(it) {
+                    it.texto = val;
+                    localStorage.setItem(CHAVE_APP, JSON.stringify(dadosApp));
+                }
+            }
+        }
+
+        function atualizarDataInicio(id, val) {
+            registarEstadoAnterior();
+            let item = dadosApp.itinerario.find(i => String(i.id) === String(id));
+            if(item) {
+                item.dataInicio = val;
+                if(!item.dataFim || item.dataFim < val) {
+                    item.dataFim = val;
+                }
+                salvarStorage();
+                atualizarTudo();
+            }
+        }
+
+        function adicionarTrecho(itemId) {
+            registarEstadoAnterior();
+            let item = dadosApp.itinerario.find(i => String(i.id) === String(itemId));
+            if(item) {
+                if(!item.trechos) item.trechos = [];
+                item.trechos.push({ 
+                    id: Date.now(), 
+                    origem: "", 
+                    destino: "", 
+                    concluido: false, 
+                    conducoes: [
+                        { id: Date.now() + 1, transporte: "Trem", valor: 0, moeda: "EUR", notas: "", fotosExtras: [] }
+                    ] 
+                });
+                salvarStorage();
+                atualizarTudo();
+                mostrarToast("Nova rota criada!", "sucesso");
+            }
+        }
+
+        function removerTrecho(itemId, trechoId) {
+            registarEstadoAnterior();
+            let item = dadosApp.itinerario.find(i => String(i.id) === String(itemId));
+            if(item && item.trechos) {
+                item.trechos = item.trechos.filter(t => String(t.id) !== String(trechoId));
+                salvarStorage();
+                atualizarTudo();
+                mostrarToast("Rota removida.", "info");
+            }
+        }
+
+        function atualizarTrecho(itemId, trechoId, campo, val) {
+            let item = dadosApp.itinerario.find(i => String(i.id) === String(itemId));
+            if(item && item.trechos) {
+                let tr = item.trechos.find(t => String(t.id) === String(trechoId));
+                if(tr) {
+                    tr[campo] = val;
+                    localStorage.setItem(CHAVE_APP, JSON.stringify(dadosApp));
+                }
+            }
+        }
+
+        function adicionarConducaoVazia(itemId, trechoId) {
+            registarEstadoAnterior();
+            let item = dadosApp.itinerario.find(i => String(i.id) === String(itemId));
+            if(item && item.trechos) {
+                let tr = item.trechos.find(t => String(t.id) === String(trechoId));
+                if(tr) {
+                    if(!tr.conducoes) tr.conducoes = [];
+                    tr.conducoes.push({
+                        id: Date.now() + Math.random(),
+                        transporte: "Ônibus",
+                        valor: 0,
+                        moeda: "EUR",
+                        notas: "",
+                        fotosExtras: []
+                    });
+                    salvarStorage();
+                    renderizarBlocos();
+                    mostrarToast("Condução adicionada!", "sucesso");
+                }
+            }
+        }
+
+        function removerConducaoItem(itemId, trechoId, condId) {
+            registarEstadoAnterior();
+            let item = dadosApp.itinerario.find(i => String(i.id) === String(itemId));
+            if(item && item.trechos) {
+                let tr = item.trechos.find(t => String(t.id) === String(trechoId));
+                if(tr && tr.conducoes) {
+                    tr.conducoes = tr.conducoes.filter(c => String(c.id) !== String(condId));
+                    salvarStorage();
+                    renderizarBlocos();
+                }
+            }
+        }
+
+        function atualizarConducaoItem(itemId, trechoId, condId, campo, valor) {
+            let item = dadosApp.itinerario.find(i => String(i.id) === String(itemId));
+            if(item && item.trechos) {
+                let tr = item.trechos.find(t => String(t.id) === String(trechoId));
+                if(tr && tr.conducoes) {
+                    let cond = tr.conducoes.find(c => String(c.id) === String(condId));
+                    if(cond) {
+                        cond[campo] = valor;
+                        salvarStorage();
+                    }
+                }
+            }
+        }
+
+        function adicionarBloco() {
+            registarEstadoAnterior();
+            let destinoInicial = (destinoFiltro !== 'todos') ? destinoFiltro : ((dadosApp.destinosCadastrados && dadosApp.destinosCadastrados.length > 0) ? dadosApp.destinosCadastrados[0] : "Zurique");
+            
+            let novoItem = {
+                id: Date.now(), 
+                categoria: destinoInicial, 
+                dataInicio: "", 
+                dataFim: "", 
+                cor: obterCorPorCategoria(destinoInicial), 
+                bloqueado: false, 
+                concluido: false, 
+                trechos: [
+                    { 
+                        id: Date.now() + 1, 
+                        origem: "", 
+                        destino: "", 
+                        concluido: false, 
+                        conducoes: [
+                            { id: Date.now() + 11, transporte: "Trem", valor: 0, moeda: "EUR", notas: "", fotosExtras: [] },
+                            { id: Date.now() + 12, transporte: "Ônibus", valor: 0, moeda: "EUR", notas: "", fotosExtras: [] }
+                        ] 
+                    }
+                ], 
+                itens: []
+            };
+            if(!dadosApp.itinerario) dadosApp.itinerario = [];
+            dadosApp.itinerario.unshift(novoItem);
+            salvarStorage();
+            mudarTab('itinerario');
+            atualizarTudo();
+            mostrarToast("Novo bloco de destino criado!", "sucesso");
+        }
+
+        function lidarSelecaoDestino(id, valor) {
+            registarEstadoAnterior();
+            if(valor === 'novo_destino') {
+                let novo = prompt("Nome do destino:");
+                if(novo && novo.trim() !== '') {
+                    let limpo = novo.trim();
+                    if(!dadosApp.destinosCadastrados.includes(limpo)) dadosApp.destinosCadastrados.push(limpo);
+                    let corNova = prompt("Escolha a cor HEX para este destino (ex: #ff007f):", "#ff007f");
+                    if(!dadosApp.coresDestinos) dadosApp.coresDestinos = {};
+                    dadosApp.coresDestinos[limpo] = corNova || "#ff007f";
+                    
+                    let item = dadosApp.itinerario.find(i => String(i.id) === String(id));
+                    if(item) {
+                        item.categoria = limpo;
+                        item.cor = dadosApp.coresDestinos[limpo];
+                    }
+                    salvarStorage();
+                    atualizarTudo();
+                    mostrarToast(`Destino ${limpo} criado!`, "sucesso");
+                } else { renderizarBlocos(); }
+            } else {
+                let item = dadosApp.itinerario.find(i => String(i.id) === String(id));
+                if(item) {
+                    item.categoria = valor;
+                    item.cor = obterCorPorCategoria(valor);
+                }
+                salvarStorage();
+                atualizarTudo();
+            }
+        }
 </script>
 <script>
 /* funções de outras páginas viram "vazias" aqui, para o núcleo não dar erro */
-(function(n){n.forEach(function(f){if(typeof window[f]==="undefined")window[f]=function(){}})})(["abrirEdicaoConducaoOrcamento", "abrirEdicaoItemDireto", "abrirModalTarefa", "adicionarBloco", "adicionarChat", "adicionarConducaoVazia", "adicionarContato", "adicionarDespesa", "adicionarFotoExtraTrecho", "adicionarItemBloco", "adicionarItemChecklist", "adicionarItemUnicoForm", "adicionarNovoDestinoFiltro", "adicionarNovoStatusTarefa", "adicionarTarefa", "adicionarTrecho", "adicionarVoo", "adicionarVoucher", "alternarBloqueio", "alternarConcluidoItemDireto", "alternarItemChecklist", "anexarPdfVoo", "anexarPdfVoucher", "apagarBloco", "apagarChat", "apagarConducaoOrcamento", "apagarContato", "apagarDespesa", "apagarItemChecklist", "apagarItemDireto", "apagarTarefa", "apagarVoo", "apagarVoucher", "atualizarCampo", "atualizarChat", "atualizarConducaoItem", "atualizarContatoNome", "atualizarContatoNumero", "atualizarCorBlocoLocal", "atualizarDataInicio", "atualizarItemChecklistText", "atualizarOrcamentoDescricao", "atualizarTarefaTexto", "atualizarTextoItemBloco", "atualizarTrecho", "atualizarTudo", "atualizarVoo", "atualizarVoucherTitulo", "buscarCotacaoAoVivo", "calcularConversaoRapida", "calcularDivisaoConta", "compartilharComprasWhatsApp", "fecharModalTarefa", "filtrarComprasTitulo", "filtrarDestino", "filtrarTarefas", "filtrarUtilidade", "gerenciarDestinos", "gerenciarDestinosLocais", "gerenciarOrigens", "imprimirBlocoUnico", "iniciarArrastoHub", "lidarSelecaoDestino", "lidarSelecaoDestinoTarefa", "lidarSelecaoDestinoTrecho", "lidarSelecaoOrigemTrecho", "lidarSelecaoStatusTarefa", "moverBloco", "moverSecaoHub", "mudarOrcamentoSubTab", "mudarOrdenacaoBlocos", "mudarOrdenacaoCompras", "mudarTab", "obterCorPorTituloCompra", "permitirDropHub", "registarEstadoAnterior", "removerConducaoItem", "removerFotoExtraTrecho", "removerItemBloco", "removerTrecho", "renderizarBlocos", "renderizarFiltrosTarefas", "renderizarModoLeitura", "renderizarOrcamentoTab", "salvarCotacao", "salvarDespesaValor", "salvarEFecharItemDireto", "salvarEdicaoConducaoOrcamento", "salvarSaldo", "salvarTarefaModal", "soltarHub", "v289AbrirCalendario", "v289AbrirMontagemDia", "v289AdicionarCampoParada", "v289CalHoje", "v289CalMudarMes", "v289ColarMapsClipboard", "v289ConfirmarEnviarRoteiro", "v289EditarEtapa", "v289ExcluirEtapa", "v289FecharCalendario", "v289FecharMontador", "v289InterpretarMapsUrl", "v289MoverEtapa", "v289RemoverFotoTemp", "v289ResetFormEtapa", "v289SalvarEtapaNoPercurso", "v289SelecionarTransporte", "v289SetTranspBtn", "v289TestarLinkMaps", "v289UploadFotoEtapa", "v289VoltarAoCalendario"]);
+(function(n){n.forEach(function(f){if(typeof window[f]==="undefined")window[f]=function(){}})})(["abrirEdicaoConducaoOrcamento", "abrirEdicaoItemDireto", "abrirModalTarefa", "adicionarChat", "adicionarContato", "adicionarDespesa", "adicionarItemChecklist", "adicionarItemUnicoForm", "adicionarNovoStatusTarefa", "adicionarTarefa", "adicionarVoo", "adicionarVoucher", "alternarConcluidoItemDireto", "alternarItemChecklist", "anexarPdfVoo", "anexarPdfVoucher", "apagarChat", "apagarConducaoOrcamento", "apagarContato", "apagarDespesa", "apagarItemChecklist", "apagarItemDireto", "apagarTarefa", "apagarVoo", "apagarVoucher", "atualizarChat", "atualizarContatoNome", "atualizarContatoNumero", "atualizarItemChecklistText", "atualizarOrcamentoDescricao", "atualizarTarefaTexto", "atualizarTudo", "atualizarVoo", "atualizarVoucherTitulo", "buscarCotacaoAoVivo", "calcularConversaoRapida", "calcularDivisaoConta", "compartilharComprasWhatsApp", "fecharModalTarefa", "filtrarComprasTitulo", "filtrarTarefas", "filtrarUtilidade", "iniciarArrastoHub", "lidarSelecaoDestinoTarefa", "lidarSelecaoStatusTarefa", "moverSecaoHub", "mudarOrcamentoSubTab", "mudarOrdenacaoCompras", "mudarTab", "obterCorPorTituloCompra", "permitirDropHub", "registarEstadoAnterior", "renderizarFiltrosTarefas", "renderizarModoLeitura", "renderizarOrcamentoTab", "salvarCotacao", "salvarDespesaValor", "salvarEFecharItemDireto", "salvarEdicaoConducaoOrcamento", "salvarSaldo", "salvarTarefaModal", "soltarHub", "v289AbrirCalendario", "v289AbrirMontagemDia", "v289AdicionarCampoParada", "v289CalHoje", "v289CalMudarMes", "v289ColarMapsClipboard", "v289ConfirmarEnviarRoteiro", "v289EditarEtapa", "v289ExcluirEtapa", "v289FecharCalendario", "v289FecharMontador", "v289InterpretarMapsUrl", "v289MoverEtapa", "v289RemoverFotoTemp", "v289ResetFormEtapa", "v289SalvarEtapaNoPercurso", "v289SelecionarTransporte", "v289SetTranspBtn", "v289TestarLinkMaps", "v289UploadFotoEtapa", "v289VoltarAoCalendario"]);
 </script>
     <!-- ================= INÍCIO: BOTÃO E POP-UP DE RELÓGIOS ================= -->
 <!-- Botão redondo -->
@@ -599,15 +1391,16 @@
 <link rel="stylesheet" href="nucleo/nucleo-11-v290-barra.css">
 <script src="nucleo/nucleo-11-v290-barra.js"></script>
 <script>
-/* NAVEGAÇÃO ENTRE PÁGINAS: os botões da barra de baixo abrem o arquivo de cada categoria */
+/* NAVEGAÇÃO ENTRE PÁGINAS: os botões da barra de baixo abrem o arquivo de cada categoria.
+   O Editar agora vive DENTRO do Roteiro, então 'leitura' e 'itinerario' ficam nesta mesma página. */
 (function(){
   var MINHA="leitura", KEY="roteiro";
-  var ABA={leitura:'roteiro.html',itinerario:'editar.html',utilidades:'hub.html',orcamento:'orcamento.html',compras:'compras.html'};
+  var ABA={utilidades:'hub.html',orcamento:'orcamento.html',compras:'compras.html'};
   var livre=false;
   ['pointerdown','keydown','touchstart'].forEach(function(ev){document.addEventListener(ev,function(){livre=true},true)});
   var orig=window.mudarTab;
   window.mudarTab=function(t){
-    if(livre && ABA[t] && t!==MINHA){ location.href=ABA[t]; return; }
+    if(livre && ABA[t]){ location.href=ABA[t]; return; }
     return orig.apply(this,arguments);
   };
   var n=0, iv=setInterval(function(){
