@@ -1,613 +1,289 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<script src="https://cdn.tailwindcss.com"></script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<link rel="stylesheet" href="style.css">
-
-<title>Roteiro Europa - Roteiro</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Roteiro Europa - Roteiro & Itinerário</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <meta name="theme-color" content="#4c1d95">
+    <style>
+        button, a, label, select, input { -webkit-tap-highlight-color: transparent; }
+        button:active, a:active { transform: scale(0.97); }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
 </head>
-<body class="bg-slate-100 text-slate-800 min-h-screen pb-32 select-none transition-colors duration-200">
-<div class="fixed top-4 right-4 z-[999] flex flex-col gap-2 pointer-events-none" id="toast-container"></div>
-<div class="fixed inset-0 z-[100] bg-slate-900/90 flex items-center justify-center p-4 backdrop-blur-md hidden" id="tela-bloqueio">
-<div class="bg-white p-6 sm:p-8 rounded-3xl shadow-2xl max-w-sm w-full space-y-4 text-center text-xs border border-slate-100">
-<div class="w-14 h-14 bg-indigo-50 text-indigo-600 rounded-2xl mx-auto flex items-center justify-center text-2xl font-black shadow-inner border border-indigo-100">🔒</div>
-<div>
-<h2 class="text-sm font-black text-slate-900">Área Protegida</h2>
-<p class="text-slate-500 mt-0.5 text-[11px]">Insira a sua senha PIN ou utilize a biometria/digital.</p>
-</div>
-<div class="space-y-2.5">
-<input class="w-full p-3 bg-slate-50 border border-slate-300 rounded-xl text-center text-base font-black tracking-widest outline-none text-slate-900 focus:border-indigo-600 focus:ring-2 focus:ring-indigo-100 transition" id="input-pin" maxlength="6" onkeypress="if(event.key==='Enter')desbloquearComPin()" placeholder="••••" type="password"/>
-<button class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-xl transition shadow-md shadow-indigo-600/20 text-xs active:scale-95" onclick="desbloquearComPin()">
-                    🔓 Desbloquear com Senha
-                </button>
-<button class="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-3 rounded-xl transition border border-slate-300/80 text-xs flex items-center justify-center gap-1.5 active:scale-95" onclick="desbloquearComBiometria()">
-<span>👆</span> Entrar com Digital / FaceID
-                </button>
-</div>
-<div class="text-red-500 font-bold text-[11px] hidden" id="erro-pin">Senha incorreta (Padrão: 1510).</div>
-</div>
-</div>
-<header class="bg-slate-900 text-white px-3 py-2 shadow-md border-b border-slate-800 text-xs flex justify-between items-center z-50 relative gap-1 flex-wrap">
-<span class="font-bold tracking-wide flex items-center gap-1.5">
-<span>🚄</span> Roteiro Europa - Mariana
+<body class="bg-slate-100 text-slate-800 min-h-screen pb-24 select-none">
+
+    <div id="toast-container" class="fixed top-4 right-4 z-[999] flex flex-col gap-2 pointer-events-none"></div>
+
+    <header class="bg-slate-900 text-white px-3 py-2.5 shadow-md border-b border-slate-800 text-xs flex justify-between items-center z-50 sticky top-0">
+        <span class="font-bold flex items-center gap-1.5">
+            <span>✈️</span> Roteiro Oficial & Itinerário
         </span>
-<div class="flex items-center gap-1.5 flex-wrap">
-<a class="bg-indigo-600 hover:bg-indigo-700 text-white px-2.5 py-1.5 rounded-lg font-bold text-[10px] transition shadow-xs flex items-center gap-1 active:scale-95" href="https://translate.google.com/?hl=pt&amp;sl=auto&amp;tl=pt&amp;op=images" target="_blank" title="Google Tradutor &amp; Câmera">🌐 Tradutor</a>
-<button class="bg-slate-800 hover:bg-slate-700 text-slate-200 hover:text-white px-2.5 py-1.5 rounded-lg font-bold text-[10px] transition shadow-xs border border-slate-700 active:scale-95" onclick="window.location.reload()" title="Atualizar Página">🔄</button>
-<button class="bg-emerald-600 hover:bg-emerald-700 text-white px-2.5 py-1.5 rounded-lg font-bold text-[10px] transition shadow-xs active:scale-95" onclick="exportarPdfPrint()" title="Imprimir Tudo">🖨️</button>
-<span class="bg-indigo-950/80 text-indigo-200 border border-indigo-800/50 px-2 py-0.5 rounded-md font-mono font-bold text-[9px]">v289.1 (Pro)</span>
-</div>
-</header>
-<div class="fixed inset-0 z-[200] bg-slate-900/90 backdrop-blur-sm hidden flex flex-col p-2 sm:p-6" id="modal-leitor-pdf">
-<div class="bg-white rounded-3xl shadow-2xl flex-1 flex flex-col overflow-hidden border border-slate-300 max-w-4xl mx-auto w-full">
-<div class="bg-slate-900 text-white px-4 py-3 flex justify-between items-center text-xs">
-<span class="font-bold truncate" id="pdf-titulo-modal">📄 Visualizador</span>
-<div class="flex items-center gap-2">
-<a class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-xl font-bold text-xs transition shadow-xs" download="ficheiro" href="#" id="pdf-btn-download">📥 Baixar</a>
-<button class="bg-slate-800 hover:bg-slate-700 text-white font-bold px-3 py-1.5 rounded-xl text-xs transition active:scale-95" onclick="fecharLeitorPdf()">✕ Fechar</button>
-</div>
-</div>
-<div class="flex-1 bg-slate-100 p-2 flex items-center justify-center overflow-auto" id="visualizador-conteudo-area">
-<iframe class="w-full h-full rounded-2xl border bg-white shadow-inner hidden" id="pdf-iframe-view" src=""></iframe>
-</div>
-</div>
-</div>
-<div class="fixed inset-0 z-[200] bg-slate-900/70 backdrop-blur-sm hidden flex items-center justify-center p-4" id="modal-clima">
-<div class="bg-white p-6 rounded-3xl shadow-2xl max-w-sm w-full space-y-3.5 text-xs border border-slate-200 text-center">
-<div class="flex justify-between items-center border-b pb-2">
-<h3 class="font-black text-xs text-slate-900 flex items-center gap-1.5"><span>🌤️</span> <span id="clima-cidade-nome">Clima em Tempo Real</span></h3>
-<button class="text-slate-400 hover:text-slate-600 font-bold text-sm p-1 rounded-lg" onclick="fecharClimaModal()">✕</button>
-</div>
-<div class="space-y-3 py-2" id="clima-conteudo">
-<div class="text-3xl animate-bounce">⏳</div>
-<p class="font-bold text-slate-600">A consultar satélite meteorológico ao vivo...</p>
-</div>
-<button class="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-2.5 rounded-xl font-bold text-xs shadow-md shadow-indigo-600/20 active:scale-95 transition" onclick="fecharClimaModal()">Fechar</button>
-</div>
-</div>
-<div class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4" id="modal-tarefa">
-<div class="bg-white p-5 rounded-3xl shadow-2xl max-w-sm w-full space-y-3 text-xs border border-slate-200">
-<div class="flex justify-between items-center border-b pb-2">
-<h3 class="font-bold text-xs text-slate-900">✏️ Editar Tarefa</h3>
-<button class="text-slate-400 hover:text-slate-600 font-bold text-sm p-1 rounded-lg" onclick="fecharModalTarefa()">✕</button>
-</div>
-<input id="tarefa-edit-id" type="hidden"/>
-<div>
-<label class="block font-semibold text-slate-600 mb-1 text-xs">Descrição da Tarefa</label>
-<textarea class="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-xl outline-none text-slate-800 font-bold text-xs focus:border-indigo-600" id="tarefa-edit-texto" placeholder="Descreva a tarefa..." rows="3"></textarea>
-</div>
-<div class="flex gap-2 pt-1">
-<button class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white py-2.5 rounded-xl font-bold text-xs shadow-xs active:scale-95 transition" onclick="salvarTarefaModal()">Guardar</button>
-<button class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2.5 rounded-xl text-xs font-bold border border-slate-300 active:scale-95 transition" onclick="fecharModalTarefa()">Cancelar</button>
-</div>
-</div>
-</div>
-<nav class="fixed bottom-0 left-0 right-0 z-50 bg-slate-900/95 backdrop-blur-md text-white px-3 py-2.5 shadow-2xl border-t border-slate-800 text-xs flex items-center justify-around gap-1 overflow-x-auto no-scrollbar max-w-4xl mx-auto rounded-t-2xl">
-<span class="bg-indigo-600/30 text-indigo-300 border border-indigo-500/30 px-2 py-1 rounded-lg font-mono font-bold text-[9px] shrink-0">v289.1</span>
-<button class="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white px-3 py-1.5 rounded-xl font-bold transition shrink-0 flex items-center gap-1.5 text-xs shadow-sm shadow-purple-900/30 active:scale-95" onclick="abrirGeminiModal()">
-<span>✨</span> Gemini
-        </button>
-<button class="bg-purple-600/90 hover:bg-purple-600 text-white px-3 py-1.5 rounded-xl font-bold transition shrink-0 flex items-center gap-1 text-xs shadow-xs active:scale-95" onclick="ativarMicrofone()">
-<span>🎤</span> Ditar
-        </button>
-<button class="bg-slate-800 hover:bg-slate-700 text-slate-200 hover:text-white border border-slate-700 px-2.5 py-1.5 rounded-xl font-bold transition shrink-0 flex items-center gap-1 text-xs shadow-xs active:scale-95" onclick="baixarBackupJson()" title="Baixar Backup do Roteiro">
-<span>📥</span> Backup
-        </button>
-<label class="bg-slate-800 hover:bg-slate-700 text-slate-200 hover:text-white border border-slate-700 px-2.5 py-1.5 rounded-xl font-bold transition shrink-0 flex items-center gap-1 text-xs shadow-xs cursor-pointer active:scale-95" title="Restaurar Backup">
-<span>📤</span> Restaurar
-            <input accept=".json" class="hidden" onchange="restaurarBackupJson(event)" type="file"/>
-</label>
-<button class="bg-slate-800 hover:bg-slate-700 text-slate-200 hover:text-white border border-slate-700 px-2.5 py-1.5 rounded-xl font-bold transition shrink-0 flex items-center gap-1 text-xs active:scale-95" onclick="alternarTema()">
-<span>🌓</span> Tema
-        </button>
-<button class="bg-slate-800 hover:bg-slate-700 text-amber-300 border border-slate-700 px-2.5 py-1.5 rounded-xl font-bold transition shrink-0 flex items-center gap-1 text-xs active:scale-95" onclick="alterarSenhaPin()">
-<span>🔑</span> Senha
-        </button>
-<button class="bg-emerald-600/90 hover:bg-emerald-600 text-white px-2.5 py-1.5 rounded-xl font-bold transition shrink-0 flex items-center gap-1 text-xs shadow-xs active:scale-95" onclick="instalarApp()">
-<span>📱</span> App
-        </button>
-</nav>
-<div class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4" id="modal-gemini">
-<div class="bg-white p-4 rounded-3xl shadow-2xl max-w-sm w-full space-y-3 text-xs flex flex-col h-[400px] border border-slate-200">
-<div class="flex justify-between items-center border-b pb-2">
-<h3 class="font-bold text-xs text-slate-900 flex items-center gap-1"><span>✨</span> Assistente Gemini IA</h3>
-<button class="text-slate-400 hover:text-slate-600 font-bold text-sm p-1 rounded-lg" onclick="fecharGeminiModal()">✕</button>
-</div>
-<div class="flex-1 overflow-y-auto space-y-2 p-2.5 bg-slate-50 rounded-2xl border text-xs" id="gemini-chat-log">
-<div class="bg-indigo-50 text-indigo-900 p-2.5 rounded-xl font-medium">Olá, Mariana! Podes pedir-me para anotar algo escrevendo "anotar [texto]" ou consultar o saldo.</div>
-</div>
-<div class="flex gap-2 pt-1">
-<input class="flex-1 p-2.5 bg-slate-100 border border-slate-300 rounded-xl outline-none text-slate-800 font-medium text-xs focus:border-indigo-600" id="gemini-input" onkeypress="if(event.key==='Enter')enviarMensagemGemini()" placeholder="Ex: anotar comprar bilhete ou saldo..." type="text"/>
-<button class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2.5 rounded-xl font-bold text-xs shadow-xs active:scale-95 transition" onclick="enviarMensagemGemini()">Enviar</button>
-</div>
-</div>
-</div>
-<button class="fab-relogio" onclick="togglePopupRelogio()" title="Abrir Relógios">
-  🕒
-</button>
-<div class="popup-relogio" id="meuPopupRelogio">
-<div class="popup-relogio-header">
-<span>Relógios Mundiais</span>
-<button onclick="togglePopupRelogio()">✕</button>
-</div>
-<!-- Carrega a sua página de relógios criada anteriormente -->
-<iframe src="Relógio.html"></iframe>
-</div>
-<div class="v289-modal-overlay hidden" id="v289-modal-calendario" onclick="if(event.target===this)window.v289FecharCalendario()" style="display:none !important;">
-<div class="v289-modal-card">
-<!-- Header Calendário -->
-<div class="bg-gradient-to-r from-slate-900 to-indigo-950 text-white p-4 flex items-center justify-between border-b border-indigo-900/40">
-<div class="flex items-center gap-2">
-<span class="text-xl">📅</span>
-<div>
-<h3 class="text-sm font-black tracking-wide" id="v289-cal-titulo-mes">Outubro 2026</h3>
-<p class="text-[10px] text-slate-300">Toque num dia para ver ou montar o roteiro</p>
-</div>
-</div>
-<div class="flex items-center gap-1.5">
-<button class="w-8 h-8 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold flex items-center justify-center transition active:scale-95" onclick="window.v289CalMudarMes(-1)" type="button">‹</button>
-<button class="px-2.5 py-1 text-[10px] rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold transition active:scale-95" onclick="window.v289CalHoje()" type="button">Hoje</button>
-<button class="w-8 h-8 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold flex items-center justify-center transition active:scale-95" onclick="window.v289CalMudarMes(1)" type="button">›</button>
-<button class="w-8 h-8 rounded-xl bg-slate-800 hover:bg-rose-600 text-white font-bold flex items-center justify-center transition active:scale-95 ml-1" onclick="window.v289FecharCalendario()" type="button">✕</button>
-</div>
-</div>
-<!-- Corpo com a Grade -->
-<div class="p-3 sm:p-4 overflow-y-auto flex-1 space-y-3">
-<div class="v289-cal-grid" id="v289-cal-dias-semana">
-<div class="v289-cal-dow text-rose-500">Dom</div>
-<div class="v289-cal-dow">Seg</div>
-<div class="v289-cal-dow">Ter</div>
-<div class="v289-cal-dow">Qua</div>
-<div class="v289-cal-dow">Qui</div>
-<div class="v289-cal-dow">Sex</div>
-<div class="v289-cal-dow text-indigo-500">Sáb</div>
-</div>
-<div class="v289-cal-grid" id="v289-cal-corpo-dias">
-<!-- Renderizado dinamicamente via JS -->
-</div>
-<!-- Legenda Rápida -->
-<div class="pt-2 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-500 px-1">
-<div class="flex items-center gap-1.5">
-<span class="w-2.5 h-2.5 rounded-full bg-emerald-500 inline-block"></span>
-<span>Dia com percurso</span>
-</div>
-<div class="flex items-center gap-1.5">
-<span class="w-2.5 h-2.5 rounded-full bg-indigo-500 inline-block"></span>
-<span>Hoje</span>
-</div>
-<div class="text-[10px] text-indigo-600 font-bold">
-          Toque para planejar
+        <div class="flex items-center gap-1.5">
+            <button onclick="adicionarBloco()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-2.5 py-1.5 rounded-lg font-bold text-[10px] active:scale-95">➕ Novo Bloco</button>
+            <button onclick="window.print()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-2.5 py-1.5 rounded-lg font-bold text-[10px] active:scale-95">🖨️ PDF</button>
+            <a href="principal.html" class="bg-slate-800 hover:bg-slate-700 text-white px-2.5 py-1.5 rounded-lg font-bold text-[10px] border border-slate-700">🏠 Início</a>
         </div>
-</div>
-</div>
-</div>
-</div>
-<div class="v289-modal-overlay hidden" id="v289-modal-montador" onclick="if(event.target===this)window.v289FecharMontador()" style="display:none !important;">
-<div class="v289-modal-card" style="max-width: 540px;">
-<!-- Header Montador -->
-<div class="bg-gradient-to-r from-indigo-900 to-slate-900 text-white p-3.5 flex items-center justify-between border-b border-indigo-800/40">
-<div class="flex items-center gap-2">
-<button class="px-2 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold transition flex items-center gap-1 active:scale-95" onclick="window.v289VoltarAoCalendario()" type="button">
-<span>‹</span> <span>Calendário</span>
-</button>
-<div>
-<h3 class="text-xs sm:text-sm font-black tracking-wide" id="v289-montador-titulo-dia">16 de Outubro de 2026</h3>
-<p class="text-[10px] text-indigo-300">Montagem por etapas do dia</p>
-</div>
-</div>
-<button class="w-8 h-8 rounded-xl bg-slate-800 hover:bg-rose-600 text-white font-bold flex items-center justify-center transition active:scale-95" onclick="window.v289FecharMontador()" type="button">✕</button>
-</div>
-<!-- Corpo com formulário de etapas e prévia visual -->
-<div class="p-3 sm:p-4 overflow-y-auto flex-1 space-y-4">
-<!-- 0. Seleção de Destino / Cidade do dia -->
-<div class="bg-indigo-50/70 border border-indigo-100 rounded-2xl p-2.5 flex items-center justify-between gap-2">
-<div class="flex items-center gap-1.5 text-xs font-black text-indigo-900">
-<span>🏙️</span> <span>Destino / Cidade:</span>
-</div>
-<div class="flex-1 max-w-[220px]">
-<input class="w-full bg-white border border-indigo-200 rounded-xl px-2.5 py-1.5 text-xs font-bold text-slate-800 outline-none focus:border-indigo-600" id="v289-inp-cidade" list="v289-datalist-destinos" placeholder="Ex: Zurique, Paris..." type="text"/>
-<datalist id="v289-datalist-destinos"></datalist>
-</div>
-</div>
-<!-- 1. FORMULÁRIO DA ETAPA ATUAL -->
-<div class="bg-slate-50 border border-slate-200 rounded-2xl p-3 space-y-3 shadow-xs">
-<div class="flex items-center justify-between">
-<span class="text-xs font-black uppercase tracking-wider text-slate-700 flex items-center gap-1.5">
-<span class="bg-indigo-600 text-white px-2 py-0.5 rounded-lg text-[10px]" id="v289-form-etapa-badge">Etapa 1</span>
-<span id="v289-form-etapa-titulo">Novo Trecho</span>
-</span>
-<button class="text-[10px] text-slate-500 hover:text-rose-600 font-bold hidden" id="v289-btn-cancelar-edicao" onclick="window.v289ResetFormEtapa()" type="button">
-            ✕ Limpar
-          </button>
-</div>
-<!-- “De onde?” → “Para onde?” -->
-<div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-<div>
-<label class="block text-[10px] font-black uppercase text-slate-500 mb-1 flex items-center gap-1">
-<span>🟢</span> <span>De onde? (Origem)</span>
-</label>
-<input class="w-full bg-white border border-slate-300 rounded-xl px-2.5 py-1.5 text-xs text-slate-800 font-semibold outline-none focus:border-indigo-600 focus:ring-1 focus:ring-indigo-100" id="v289-inp-origem" placeholder="Ex: Hotel, Estação..." type="text"/>
-</div>
-<div>
-<label class="block text-[10px] font-black uppercase text-slate-500 mb-1 flex items-center gap-1">
-<span>🏁</span> <span>Para onde? (Destino)</span>
-</label>
-<input class="w-full bg-white border border-slate-300 rounded-xl px-2.5 py-1.5 text-xs text-slate-800 font-semibold outline-none focus:border-indigo-600 focus:ring-1 focus:ring-indigo-100" id="v289-inp-destino" placeholder="Ex: Lago, Museu, Restaurante..." type="text"/>
-</div>
-</div>
-<!-- “Cola o link do Maps” -->
-<div>
-<label class="block text-[10px] font-black uppercase text-slate-500 mb-1 flex items-center justify-between">
-<span class="flex items-center gap-1"><span>🗺️</span> <span>Link do Google Maps</span></span>
-<span class="text-[9px] text-indigo-600 font-bold cursor-pointer" onclick="window.v289ColarMapsClipboard()">📋 Colar</span>
-</label>
-<div class="flex gap-1.5">
-<input class="flex-1 bg-white border border-slate-300 rounded-xl px-2.5 py-1.5 text-xs text-slate-700 outline-none focus:border-indigo-600" id="v289-inp-maps" onchange="window.v289InterpretarMapsUrl(this.value)" placeholder="Cole o link de rota do Maps (https://...)" type="url"/>
-<button class="bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 px-2.5 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1 active:scale-95" onclick="window.v289TestarLinkMaps()" title="Testar link no Maps" type="button">
-<span>↗️</span>
-</button>
-</div>
-</div>
-<!-- “Escolhe o transporte” -->
-<div>
-<label class="block text-[10px] font-black uppercase text-slate-500 mb-1.5">
-            🚆 Escolha o Transporte:
-          </label>
-<div class="flex gap-1.5 overflow-x-auto no-scrollbar pb-1">
-<button class="v289-transp-btn active" data-transp="Trem" onclick="window.v289SelecionarTransporte('Trem', this)" type="button">
-<span class="text-base">🚆</span>
-<span>Trem</span>
-</button>
-<button class="v289-transp-btn" data-transp="Avião" onclick="window.v289SelecionarTransporte('Avião', this)" type="button">
-<span class="text-base">✈️</span>
-<span>Avião</span>
-</button>
-<button class="v289-transp-btn" data-transp="Carro" onclick="window.v289SelecionarTransporte('Carro', this)" type="button">
-<span class="text-base">🚗</span>
-<span>Carro</span>
-</button>
-<button class="v289-transp-btn" data-transp="Ônibus" onclick="window.v289SelecionarTransporte('Ônibus', this)" type="button">
-<span class="text-base">🚌</span>
-<span>Ônibus</span>
-</button>
-<button class="v289-transp-btn" data-transp="A pé" onclick="window.v289SelecionarTransporte('A pé', this)" type="button">
-<span class="text-base">🚶</span>
-<span>A pé</span>
-</button>
-</div>
-</div>
-<!-- “Adiciona uma parada” -->
-<div class="space-y-1.5">
-<div class="flex items-center justify-between">
-<label class="text-[10px] font-black uppercase text-slate-500 flex items-center gap-1">
-<span>📍</span> <span>Paradas Intermediárias:</span>
-</label>
-<button class="text-[10px] text-indigo-600 hover:text-indigo-800 font-extrabold flex items-center gap-1 active:scale-95" onclick="window.v289AdicionarCampoParada()" type="button">
-<span>➕</span> <span>Adicionar Parada</span>
-</button>
-</div>
-<div class="space-y-1.5" id="v289-lista-paradas-temp">
-<!-- Campos de paradas adicionados dinamicamente -->
-</div>
-</div>
-<!-- “Editar sem perder recursos: Detalhes recolhidos” -->
-<details class="v289-detalhes">
-<summary>
-<span class="flex items-center gap-1.5">
-<span>⚙️</span>
-<span>Detalhes (Horário, Valor, Fotos &amp; Observações)</span>
-</span>
-<span class="text-[10px] text-slate-400">▾</span>
-</summary>
-<div class="pt-2 space-y-2">
-<div class="grid grid-cols-2 gap-2">
-<div>
-<label class="block text-[9px] font-bold text-slate-500 mb-0.5">Horário / Linha</label>
-<input class="w-full bg-white border border-slate-300 rounded-lg px-2 py-1 text-xs text-slate-800" id="v289-inp-horario" placeholder="Ex: 09:30 - Linha S10" type="text"/>
-</div>
-<div>
-<label class="block text-[9px] font-bold text-slate-500 mb-0.5">Valor / Custo</label>
-<div class="flex gap-1">
-<input class="w-full bg-white border border-slate-300 rounded-lg px-2 py-1 text-xs text-slate-800" id="v289-inp-valor" placeholder="0.00" step="0.5" type="number"/>
-<select class="bg-white border border-slate-300 rounded-lg px-1 py-1 text-xs text-slate-800 font-bold" id="v289-inp-moeda">
-<option value="EUR">€</option>
-<option value="CHF">CHF</option>
-<option value="BRL">R$</option>
-</select>
-</div>
-</div>
-</div>
-<div>
-<label class="block text-[9px] font-bold text-slate-500 mb-0.5">Observações / Dicas</label>
-<textarea class="w-full bg-white border border-slate-300 rounded-lg p-2 text-xs text-slate-800" id="v289-inp-notas" placeholder="Dicas de bilhete, plataforma, lockers, ingressos..." rows="2"></textarea>
-</div>
-<div>
-<label class="block text-[9px] font-bold text-slate-500 mb-0.5">Fotos da Parada / Rota</label>
-<div class="flex items-center gap-2">
-<label class="bg-slate-200 hover:bg-slate-300 text-slate-700 px-2.5 py-1 rounded-lg text-[10px] font-bold cursor-pointer transition active:scale-95">
-<span>📷</span> Escolher Foto
-                  <input accept="image/*" class="hidden" onchange="window.v289UploadFotoEtapa(event)" type="file"/>
-</label>
-<span class="text-[10px] text-slate-500" id="v289-foto-status">Nenhuma foto adicionada</span>
-</div>
-<div class="flex gap-1.5 mt-1.5 overflow-x-auto no-scrollbar" id="v289-foto-preview"></div>
-</div>
-</div>
-</details>
-<!-- Botão para Salvar/Adicionar esta Etapa -->
-<button class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-extrabold py-2.5 rounded-xl text-xs transition shadow-sm shadow-indigo-600/20 flex items-center justify-center gap-1.5 active:scale-95" id="v289-btn-salvar-etapa" onclick="window.v289SalvarEtapaNoPercurso()" type="button">
-<span>➕</span> <span id="v289-btn-salvar-etapa-txt">Adicionar Esta Etapa ao Percurso</span>
-</button>
-</div>
-<!-- 2. PRÉVIA VISUAL DO PERCURSO DO DIA (LINHA COM INÍCIO, PARADAS E DESTINO) -->
-<div class="bg-white border border-slate-200 rounded-2xl p-3 space-y-2.5 shadow-xs">
-<div class="flex items-center justify-between border-b border-slate-100 pb-2">
-<span class="text-xs font-black uppercase tracking-wider text-slate-800 flex items-center gap-1.5">
-<span>🗺️</span> <span>Prévia Visual do Percurso</span>
-<span class="bg-slate-100 text-slate-600 text-[10px] font-bold px-2 py-0.5 rounded-full" id="v289-contador-etapas">0 etapas</span>
-</span>
-<span class="text-[10px] text-slate-400">Editável etapa a etapa</span>
-</div>
-<div class="space-y-3 py-1" id="v289-container-timeline">
-<!-- Renderizado dinamicamente -->
-<div class="text-center py-6 text-slate-400 text-xs font-semibold">
-            Nenhuma etapa adicionada para este dia ainda.<br/>Preencha os campos acima e clique em "Adicionar Esta Etapa"!
-          </div>
-</div>
-</div>
-</div>
-<!-- Rodapé: Enviar para o Roteiro -->
-<div class="bg-slate-50 p-3 sm:p-4 border-t border-slate-200 flex items-center justify-between gap-2">
-<button class="px-3 py-2 rounded-xl bg-slate-200 hover:bg-slate-300 text-slate-700 text-xs font-bold transition active:scale-95" onclick="window.v289FecharMontador()" title="Fechar e voltar à página principal" type="button">
-        ✕ Fechar
-      </button>
-<button class="px-3 py-2 rounded-xl bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 text-xs font-bold transition active:scale-95" onclick="window.v289VoltarAoCalendario()" title="Voltar ao calendário mensal" type="button">
-        📅 Calendário
-      </button>
-<button class="flex-1 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-black py-2.5 px-4 rounded-xl text-xs transition shadow-md shadow-emerald-600/25 flex items-center justify-center gap-2 active:scale-95" onclick="window.v289ConfirmarEnviarRoteiro()" type="button">
-<span>🚀</span> <span>Enviar para o Roteiro Oficial</span>
-</button>
-</div>
-</div>
-</div>
-<div class="max-w-4xl mx-auto p-3 sm:p-6 space-y-4 pt-4">
-<div class="bg-gradient-to-r from-indigo-950 via-slate-900 to-indigo-900 text-white p-2 sm:p-2.5 rounded-2xl shadow-md border border-indigo-800/40 flex items-center justify-between gap-1.5">
-<div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar flex-1 py-0.5 px-0.5" id="barClockItems">
-<!-- Relógios entram aqui automaticamente com as cores neon e cabem na tela -->
-</div>
-<button class="bg-white/10 hover:bg-white/20 text-white w-7 h-7 sm:w-8 sm:h-8 rounded-xl flex items-center justify-center shrink-0 border border-white/20 transition active:scale-95 text-xs" onclick="toggleClockConfig()" title="Configurar Cidades e Cores">⚙️</button>
-</div>
-<div class="fixed inset-0 z-[300] bg-slate-900/70 backdrop-blur-sm hidden flex items-center justify-center p-4" id="barClockModal">
-<div class="bg-white p-5 rounded-3xl shadow-2xl max-w-sm w-full space-y-3.5 text-xs border border-slate-200">
-<div class="flex justify-between items-center border-b pb-2">
-<h3 class="font-black text-xs text-slate-900 flex items-center gap-1.5"><span>⚙️</span> Cidades, Fusos &amp; Ordem</h3>
-<button class="text-slate-400 hover:text-slate-600 font-bold text-sm p-1 rounded-lg" onclick="toggleClockConfig()">✕</button>
-</div>
-<div class="bg-indigo-50 text-indigo-900 p-2 rounded-xl text-[10px] font-bold">
-                    💡 Dica: Toque em <b>Fixar no Topo (📌)</b> ou dê um clique direto no relógio da barra para colocá-lo como seu país atual!
-                </div>
-<div class="space-y-2.5 max-h-[55vh] overflow-y-auto pr-1" id="barClockForm"></div>
-<div class="flex gap-2 pt-2 border-t border-slate-100">
-<button class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white py-2.5 rounded-xl font-bold text-xs shadow-xs active:scale-95 transition" onclick="saveClockConfig()">Salvar</button>
-<button class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2.5 rounded-xl text-xs font-bold border border-slate-300 active:scale-95 transition" onclick="toggleClockConfig()">Cancelar</button>
-</div>
-</div>
-</div>
-<script>
-            (function() {
-                const coresNeon = [
-                    { nome: "Verde Neon", hex: "#00ff66" },
-                    { nome: "Ciano Neon", hex: "#00ffff" },
-                    { nome: "Rosa Neon", hex: "#ff007f" },
-                    { nome: "Amarelo Neon", hex: "#ccff00" },
-                    { nome: "Roxo Elétrico", hex: "#a855f7" },
-                    { nome: "Laranja Neon", hex: "#ff5500" },
-                    { nome: "Branco", hex: "#ffffff" }
-                ];
+    </header>
 
+    <div class="max-w-4xl mx-auto p-3 sm:p-6 space-y-4 pt-4">
 
-                const defaultClocks = [
-                    { name: "Zurique", tz: "Europe/Zurich", color: "#00ff66" },
-                    { name: "França", tz: "Europe/Paris", color: "#00ffff" },
-                    { name: "Alemanha", tz: "Europe/Berlin", color: "#ff007f" },
-                    { name: "Brasil", tz: "America/Sao_Paulo", color: "#ccff00" }
-                ];
+        <!-- Barra de Progresso e Filtros de Destino -->
+        <div class="bg-white p-3.5 rounded-2xl shadow-xs border border-slate-200 flex justify-between items-center">
+            <div>
+                <h2 class="text-xs font-black uppercase tracking-wider text-slate-800">✈️ Destinos Aprovados</h2>
+                <p class="text-[10px] text-slate-500">Marque o cadeado (🔒) no modo edição para aprovar para o roteiro oficial.</p>
+            </div>
+            <div id="progresso-viagem" class="bg-indigo-600 text-white px-3 py-1.5 rounded-xl text-xs font-black shadow-inner">0 / 0 Aprovados</div>
+        </div>
 
+        <div id="filtros-container" class="bg-slate-200/80 p-2 rounded-2xl overflow-x-auto flex gap-1.5 text-xs items-center no-scrollbar shadow-inner border border-slate-300/40"></div>
 
-                const timezoneOptions = [
-                    { label: "Suíça / Zurique (CET)", tz: "Europe/Zurich" },
-                    { label: "França / Paris (CET)", tz: "Europe/Paris" },
-                    { label: "Alemanha / Freiburg (CET)", tz: "Europe/Berlin" },
-                    { label: "Brasil / Rio - SP (UTC-3)", tz: "America/Sao_Paulo" },
-                    { label: "Reino Unido / Londres (UTC+0)", tz: "Europe/London" },
-                    { label: "EUA / Nova York (UTC-5)", tz: "America/New_York" }
-                ];
+        <!-- Abas Internas: Modo Leitura vs Modo Edição -->
+        <div class="flex gap-2">
+            <button id="btn-modo-leitura" onclick="alternarVisao('leitura')" class="flex-1 py-2 rounded-xl bg-indigo-600 text-white font-extrabold text-xs shadow-sm">📖 Visualizar Roteiro</button>
+            <button id="btn-modo-edicao" onclick="alternarVisao('edicao')" class="flex-1 py-2 rounded-xl bg-white text-slate-700 font-extrabold text-xs shadow-xs border border-slate-200">✏️ Editar Percursos</button>
+        </div>
 
+        <!-- Seção 1: Visualização do Roteiro Oficial -->
+        <div id="secao-leitura" class="space-y-3">
+            <div id="lista-leitura-html" class="grid grid-cols-1 gap-3"></div>
+        </div>
 
-                let userClocks = JSON.parse(localStorage.getItem("app_travel_clocks")) || defaultClocks;
+        <!-- Seção 2: Edição dos Blocos -->
+        <div id="secao-edicao" class="space-y-3 hidden">
+            <div id="lista-blocos" class="space-y-3"></div>
+        </div>
+    </div>
 
+    <!-- NAVEGAÇÃO FIXA INFERIOR -->
+    <nav class="fixed bottom-0 left-0 right-0 z-50 bg-slate-900/95 backdrop-blur-md text-white px-3 py-2 shadow-2xl border-t border-slate-800 flex items-center justify-around gap-1 max-w-4xl mx-auto rounded-t-2xl">
+        <a href="principal.html" class="py-1 px-3 rounded-xl hover:bg-slate-800 text-slate-300 font-extrabold text-[11px] flex flex-col items-center">
+            <span>🏠</span><span class="text-[9px]">Início</span>
+        </a>
+        <a href="roteiro.html" class="py-1 px-3 rounded-xl bg-indigo-600 text-white font-extrabold text-[11px] flex flex-col items-center">
+            <span>✈️</span><span class="text-[9px]">Roteiro</span>
+        </a>
+        <a href="hub.html" class="py-1 px-3 rounded-xl hover:bg-slate-800 text-slate-300 font-extrabold text-[11px] flex flex-col items-center">
+            <span>📋</span><span class="text-[9px]">Hub</span>
+        </a>
+        <a href="orcamento.html" class="py-1 px-3 rounded-xl hover:bg-slate-800 text-slate-300 font-extrabold text-[11px] flex flex-col items-center">
+            <span>💰</span><span class="text-[9px]">Orçamento</span>
+        </a>
+        <a href="compras.html" class="py-1 px-3 rounded-xl hover:bg-slate-800 text-slate-300 font-extrabold text-[11px] flex flex-col items-center">
+            <span>🛍️</span><span class="text-[9px]">Compras</span>
+        </a>
+    </nav>
 
-                function updateClocks() {
-                    const container = document.getElementById("barClockItems");
-                    if (!container) return;
-                    container.innerHTML = "";
-                    const now = new Date();
+    <script>
+        const SUPABASE_URL = 'https://jmeepzdvmmjngxwvayqb.supabase.co';
+        const SUPABASE_ANON_KEY = 'sb_publishable_54ORrLbP7naW7n-KlKCdUA_hZnpjguH';
+        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        const CHAVE_APP = "mariana_viagem_europa_dados_fixos_definitiva";
 
+        let destinoFiltro = 'todos';
+        let dadosApp = {
+            destinosCadastrados: ["Zurique", "Freiburg", "França", "Interlaken", "Disney"],
+            coresDestinos: { "Zurique": "#3b82f6", "Freiburg": "#f59e0b", "França": "#ec4899", "Interlaken": "#10b981", "Disney": "#8b5cf6" },
+            itinerario: []
+        };
 
-                    userClocks.forEach((c, idx) => {
-                        if (!c.name.trim()) return;
-                        const time = new Intl.DateTimeFormat("pt-BR", {
-                            timeZone: c.tz,
-                            hour: "2-digit",
-                            minute: "2-digit"
-                        }).format(now);
+        function mostrarToast(msg, tipo = 'sucesso') {
+            const container = document.getElementById('toast-container');
+            if (!container) return;
+            const toast = document.createElement('div');
+            toast.className = `bg-emerald-600 text-white px-4 py-2 rounded-2xl shadow-xl font-bold text-xs pointer-events-auto`;
+            toast.innerText = msg;
+            container.appendChild(toast);
+            setTimeout(() => toast.remove(), 2500);
+        }
 
+        async function salvarStorage() {
+            localStorage.setItem(CHAVE_APP, JSON.stringify(dadosApp));
+            try {
+                await supabaseClient.from('app_dados').upsert({ id: '1', conteudo: dadosApp });
+            } catch(e){}
+        }
 
-                        const corAtual = c.color || "#00ff66";
-                        const ehPrimeiro = idx === 0;
-
-
-                        const pill = document.createElement("button");
-                        pill.type = "button";
-                        pill.onclick = () => window.moverPaisParaPrimeiro(idx);
-                        pill.className = "bg-white/10 px-2 py-1 rounded-xl flex items-center gap-1.5 shrink-0 shadow-2xs transition-all active:scale-95";
-                        pill.style.border = `1px solid ${corAtual}66`;
-                        pill.title = "Toque para destacar como país onde você está";
-
-
-                        pill.innerHTML = `
-                            <span class="text-[9px] uppercase font-black tracking-wide flex items-center gap-1" style="color: ${corAtual}; text-shadow: 0 0 6px ${corAtual}66;">
-                                <span style="font-size: 7px;">${ehPrimeiro ? '📍' : '●'}</span>${c.name}
-                            </span>
-                            <span class="text-[11px] font-black text-white tracking-tight">${time}</span>
-                        `;
-                        container.appendChild(pill);
-                    });
+        async function carregarDados() {
+            try {
+                let { data } = await supabaseClient.from('app_dados').select('conteudo').eq('id', '1').single();
+                if (data && data.conteudo) dadosApp = data.conteudo;
+                else {
+                    let local = localStorage.getItem(CHAVE_APP);
+                    if (local) dadosApp = JSON.parse(local);
                 }
+            } catch(e) {
+                let local = localStorage.getItem(CHAVE_APP);
+                if (local) dadosApp = JSON.parse(local);
+            }
+            renderizarTudo();
+        }
 
+        function alternarVisao(modo) {
+            if (modo === 'leitura') {
+                document.getElementById('secao-leitura').classList.remove('hidden');
+                document.getElementById('secao-edicao').classList.add('hidden');
+                document.getElementById('btn-modo-leitura').className = "flex-1 py-2 rounded-xl bg-indigo-600 text-white font-extrabold text-xs shadow-sm";
+                document.getElementById('btn-modo-edicao').className = "flex-1 py-2 rounded-xl bg-white text-slate-700 font-extrabold text-xs shadow-xs border border-slate-200";
+            } else {
+                document.getElementById('secao-leitura').classList.add('hidden');
+                document.getElementById('secao-edicao').classList.remove('hidden');
+                document.getElementById('btn-modo-edicao').className = "flex-1 py-2 rounded-xl bg-indigo-600 text-white font-extrabold text-xs shadow-sm";
+                document.getElementById('btn-modo-leitura').className = "flex-1 py-2 rounded-xl bg-white text-slate-700 font-extrabold text-xs shadow-xs border border-slate-200";
+            }
+        }
 
-                window.moverPaisParaPrimeiro = function(index) {
-                    if (index === 0) return;
-                    const item = userClocks.splice(index, 1)[0];
-                    userClocks.unshift(item);
-                    localStorage.setItem("app_travel_clocks", JSON.stringify(userClocks));
-                    updateClocks();
-                    if (window.mostrarToast) {
-                        window.mostrarToast(`📍 ${item.name} definido como país atual!`, 'sucesso');
-                    }
-                };
+        function renderizarTudo() {
+            renderizarFiltros();
+            renderizarLeitura();
+            renderizarEdicao();
+        }
 
+        function renderizarFiltros() {
+            const container = document.getElementById('filtros-container');
+            if (!container) return;
+            let html = `<button onclick="filtrarDestino('todos')" class="px-3 py-1.5 ${destinoFiltro==='todos'?'bg-indigo-600 text-white font-bold':'bg-white text-slate-700 font-semibold'} rounded-xl text-xs shrink-0">Todos</button>`;
+            (dadosApp.destinosCadastrados || []).forEach(d => {
+                let ativo = destinoFiltro === d;
+                let cor = dadosApp.coresDestinos[d] || '#6366f1';
+                html += `<button onclick="filtrarDestino('${d}')" style="background-color:${cor};" class="px-3 py-1.5 text-white font-bold rounded-xl text-xs shrink-0 ${ativo?'ring-2 ring-slate-900 scale-105':''}">${d}</button>`;
+            });
+            container.innerHTML = html;
+        }
 
-                window.toggleClockConfig = function() {
-                    const modal = document.getElementById("barClockModal");
-                    if (!modal) return;
-                    const isVisible = !modal.classList.contains("hidden");
-                    if (isVisible) {
-                        modal.classList.add("hidden");
-                    } else {
-                        buildForm();
-                        modal.classList.remove("hidden");
-                    }
-                };
+        function filtrarDestino(d) {
+            destinoFiltro = d;
+            renderizarTudo();
+        }
 
+        function renderizarLeitura() {
+            const container = document.getElementById('lista-leitura-html');
+            if (!container) return;
+            container.innerHTML = '';
 
-                function buildForm() {
-                    const form = document.getElementById("barClockForm");
-                    form.innerHTML = "";
-                    userClocks.forEach((c, i) => {
-                        const row = document.createElement("div");
-                        row.className = "bg-slate-50 p-2.5 rounded-xl border border-slate-200 space-y-1.5";
-                        const optionsHtml = timezoneOptions.map(opt => 
-                            `<option value="${opt.tz}" ${opt.tz === c.tz ? 'selected' : ''}>${opt.label}</option>`
-                        ).join("");
+            let aprovados = (dadosApp.itinerario || []).filter(b => b.bloqueado);
+            if (destinoFiltro !== 'todos') aprovados = aprovados.filter(b => b.categoria === destinoFiltro);
 
+            document.getElementById('progresso-viagem').innerText = `${aprovados.length} / ${(dadosApp.itinerario||[]).length} Aprovados`;
 
-                        const corAtual = c.color || "#00ff66";
+            if (aprovados.length === 0) {
+                container.innerHTML = '<div class="bg-white p-6 rounded-2xl text-center text-xs text-slate-400 border border-slate-200">Nenhum bloco aprovado ainda. Vá em "Editar Percursos" e clique em 🔒 para aprovar.</div>';
+                return;
+            }
 
+            aprovados.forEach(b => {
+                let card = document.createElement('div');
+                card.className = "bg-white p-4 rounded-3xl border border-slate-200 shadow-sm space-y-3";
+                let cor = dadosApp.coresDestinos[b.categoria] || '#6366f1';
+                card.style.borderLeft = `6px solid ${cor}`;
 
-                        let paletaHtml = '<div class="flex items-center gap-1 pt-0.5 flex-wrap"><span class="text-[10px] font-bold text-slate-500">Cor:</span>';
-                        coresNeon.forEach(cor => {
-                            const ativo = corAtual.toLowerCase() === cor.hex.toLowerCase() ? 'ring-2 ring-slate-900 scale-110 shadow-xs' : 'opacity-80 hover:opacity-100';
-                            paletaHtml += `<button type="button" onclick="selecionarCorRelogio(${i}, '${cor.hex}')" style="background-color: ${cor.hex};" class="w-4 h-4 rounded-full border border-black/20 transition active:scale-90 ${ativo}" title="${cor.nome}"></button>`;
-                        });
-                        paletaHtml += `<input type="color" value="${corAtual}" onchange="selecionarCorRelogio(${i}, this.value)" class="w-5 h-5 rounded cursor-pointer border-0 p-0 bg-transparent ml-1" title="Cor livre"></div>`;
+                let trechosHtml = (b.trechos || []).map((t, idx) => `
+                    <div class="bg-slate-50 p-3 rounded-2xl border border-slate-200 space-y-1.5 text-xs">
+                        <div class="font-bold text-slate-800">Etapa ${idx+1}: ${t.origem || 'Início'} ➔ ${t.destino || 'Destino'}</div>
+                        ${(t.conducoes||[]).map(c => `<div class="text-[11px] text-indigo-700 font-semibold">• ${c.transporte} ${c.valor ? `(${c.valor} ${c.moeda})` : ''} ${c.notas ? `- ${c.notas}` : ''}</div>`).join('')}
+                    </div>
+                `).join('');
 
+                card.innerHTML = `
+                    <div class="flex justify-between items-center border-b border-slate-100 pb-2">
+                        <span class="font-black px-2.5 py-1 rounded-xl text-xs text-white" style="background-color:${cor}">${b.categoria}</span>
+                        <span class="text-xs font-bold text-slate-500">📅 ${b.dataInicio || '?'} a ${b.dataFim || '?'}</span>
+                    </div>
+                    <div class="space-y-2">${trechosHtml || '<p class="text-xs text-slate-400">Sem trechos definidos.</p>'}</div>
+                `;
+                container.appendChild(card);
+            });
+        }
 
-                        row.innerHTML = `
-                            <div class="flex justify-between items-center">
-                                <label class="text-[10px] font-bold text-slate-500 uppercase block">Relógio ${i + 1}</label>
-                                <button type="button" onclick="moverPaisParaPrimeiro(${i}); buildForm();" class="text-[10px] font-bold text-indigo-600 hover:text-indigo-800 flex items-center gap-0.5">
-                                    ${i === 0 ? '📍 País Atual' : '📌 Pôr em 1º'}
-                                </button>
-                            </div>
-                            <div class="flex gap-1.5">
-                                <input type="text" id="clk-name-${i}" value="${c.name}" class="w-1/2 p-2 bg-white border border-slate-300 rounded-xl font-bold text-xs outline-none focus:border-indigo-600" placeholder="Nome">
-                                <select id="clk-tz-${i}" class="w-1/2 p-2 bg-white border border-slate-300 rounded-xl font-bold text-xs outline-none">${optionsHtml}</select>
-                            </div>
-                            <input type="hidden" id="clk-color-${i}" value="${corAtual}">
-                            ${paletaHtml}
-                        `;
-                        form.appendChild(row);
-                    });
-                }
+        function renderizarEdicao() {
+            const container = document.getElementById('lista-blocos');
+            if (!container) return;
+            container.innerHTML = '';
 
+            let blocos = dadosApp.itinerario || [];
+            if (destinoFiltro !== 'todos') blocos = blocos.filter(b => b.categoria === destinoFiltro);
 
-                window.selecionarCorRelogio = function(index, hex) {
-                    const inputColor = document.getElementById(`clk-color-${index}`);
-                    if (inputColor) inputColor.value = hex;
-                    userClocks[index].color = hex;
-                    buildForm();
-                };
+            blocos.forEach((b, idx) => {
+                let card = document.createElement('div');
+                card.className = "bg-white p-4 rounded-2xl border border-slate-200 shadow-sm space-y-3";
+                let cor = dadosApp.coresDestinos[b.categoria] || '#6366f1';
 
+                card.innerHTML = `
+                    <div class="flex justify-between items-center gap-2 flex-wrap border-b pb-2">
+                        <div class="flex items-center gap-2">
+                            <span class="font-black px-2.5 py-1 rounded-xl text-xs text-white" style="background-color:${cor}">${b.categoria}</span>
+                            <button onclick="alternarBloqueio('${b.id}')" class="px-2.5 py-1 rounded-xl text-xs font-bold ${b.bloqueado ? 'bg-emerald-600 text-white' : 'bg-slate-200 text-slate-700'}">
+                                ${b.bloqueado ? '🔒 Aprovado' : '🔓 Em Edição'}
+                            </button>
+                        </div>
+                        <button onclick="excluirBloco('${b.id}')" class="text-rose-600 hover:text-rose-800 text-xs font-bold">✕ Excluir</button>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2 text-xs">
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-500">Data Início</label>
+                            <input type="date" value="${b.dataInicio||''}" onchange="atualizarData('${b.id}', 'dataInicio', this.value)" class="w-full p-2 bg-slate-50 border rounded-xl">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-500">Data Fim</label>
+                            <input type="date" value="${b.dataFim||''}" onchange="atualizarData('${b.id}', 'dataFim', this.value)" class="w-full p-2 bg-slate-50 border rounded-xl">
+                        </div>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
 
-                window.saveClockConfig = function() {
-                    userClocks.forEach((c, i) => {
-                        const nameEl = document.getElementById(`clk-name-${i}`);
-                        const tzEl = document.getElementById(`clk-tz-${i}`);
-                        const colorEl = document.getElementById(`clk-color-${i}`);
-                        if (nameEl) c.name = nameEl.value;
-                        if (tzEl) c.tz = tzEl.value;
-                        if (colorEl) c.color = colorEl.value;
-                    });
-                    localStorage.setItem("app_travel_clocks", JSON.stringify(userClocks));
-                    window.toggleClockConfig();
-                    updateClocks();
-                };
+        function adicionarBloco() {
+            let cat = prompt("Qual a cidade/destino do bloco?", "Zurique");
+            if (!cat) return;
+            if (!dadosApp.destinosCadastrados.includes(cat)) dadosApp.destinosCadastrados.push(cat);
+            if (!dadosApp.coresDestinos[cat]) dadosApp.coresDestinos[cat] = "#4f46e5";
 
+            dadosApp.itinerario.unshift({
+                id: Date.now(),
+                categoria: cat,
+                dataInicio: "",
+                dataFim: "",
+                bloqueado: false,
+                trechos: [{ id: Date.now() + 1, origem: "", destino: "", conducoes: [{ id: Date.now() + 2, transporte: "Trem", valor: 0, moeda: "EUR" }] }]
+            });
+            salvarStorage();
+            renderizarTudo();
+            mostrarToast("Bloco criado com sucesso!");
+        }
 
-                setInterval(updateClocks, 1000);
-                setTimeout(updateClocks, 50);
-            })();
-        </script>
+        function alternarBloqueio(id) {
+            let b = dadosApp.itinerario.find(item => String(item.id) === String(id));
+            if (b) {
+                b.bloqueado = !b.bloqueado;
+                salvarStorage();
+                renderizarTudo();
+                mostrarToast(b.bloqueado ? "Bloco aprovado para o Roteiro Oficial! 🔒" : "Bloco retornado para edição.");
+            }
+        }
 
-<nav class="bg-white rounded-2xl shadow-sm border border-slate-200 p-1.5 grid grid-cols-4 gap-1 sticky top-2 z-40">
-  <a href="roteiro.html" class="rounded-xl bg-indigo-600 text-white font-extrabold text-[11px] py-2.5 flex flex-col items-center gap-0.5">
-    <span>✈️</span><span>Roteiro</span>
-  </a>
-  <a href="editar.html" class="rounded-xl bg-white text-slate-700 hover:bg-slate-50 font-extrabold text-[11px] py-2.5 flex flex-col items-center gap-0.5">
-    <span>📅</span><span>Editar</span>
-  </a>
-  <a href="orcamento.html" class="rounded-xl bg-white text-slate-700 hover:bg-slate-50 font-extrabold text-[11px] py-2.5 flex flex-col items-center gap-0.5">
-    <span>💰</span><span>Orçamento</span>
-  </a>
-  <a href="agenda.html" class="rounded-xl bg-white text-slate-700 hover:bg-slate-50 font-extrabold text-[11px] py-2.5 flex flex-col items-center gap-0.5">
-    <span>🗓️</span><span>Agenda</span>
-  </a>
-</nav>
+        function atualizarData(id, campo, val) {
+            let b = dadosApp.itinerario.find(item => String(item.id) === String(id));
+            if (b) {
+                b[campo] = val;
+                salvarStorage();
+            }
+        }
 
-<div class="space-y-3" id="tab-leitura">
-<!-- HERO CARD MODERNO: CONTAGEM REGRESSIVA INTELIGENTE -->
-<div class="bg-gradient-to-r from-indigo-900 via-indigo-800 to-purple-900 text-white p-4 rounded-2xl shadow-md flex justify-between items-center flex-wrap gap-2 border border-indigo-700/40" id="banner-contagem-regressiva">
-<div class="flex items-center gap-2.5">
-<span class="text-2xl animate-pulse">⏳</span>
-<div>
-<div class="text-xs font-black uppercase tracking-wider text-indigo-200" id="contagem-dias-texto">Calculando data de viagem...</div>
-<div class="text-[10px] text-slate-300" id="contagem-dias-sub">Baseado nas datas do seu itinerário oficial</div>
-</div>
-</div>
-<div class="flex items-center gap-1.5">
-<button class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-2 rounded-xl font-bold text-xs transition shadow-sm flex items-center gap-1.5 active:scale-95" onclick="compartilharRoteiroWhatsApp()" title="Partilhar roteiro aprovado no WhatsApp">
-<span>📲</span> WhatsApp
-                    </button>
-</div>
-</div>
-<div class="bg-white p-3.5 rounded-2xl shadow-xs border border-slate-200 flex justify-between items-center">
-<div>
-<h2 class="text-xs font-black uppercase tracking-wider text-slate-800 flex items-center gap-1"><span>✈️</span> Roteiro Oficial (Aprovados)</h2>
-<p class="text-[10px] text-slate-500">Tranque blocos no Editar (🔒) para aparecerem aqui.</p>
-</div>
-<div class="bg-indigo-600 text-white px-3 py-1.5 rounded-xl text-xs font-black shadow-inner" id="progresso-viagem">0 / 0 Aprovados</div>
-</div>
-<!-- Filtros por Destino -->
-<div class="bg-slate-200/80 p-2 rounded-2xl overflow-x-auto flex gap-1.5 text-xs items-center no-scrollbar shadow-inner border border-slate-300/40" id="filtros-leitura-container"></div>
-<!-- GRELHA DE ROTEIRO -->
-<div class="grid grid-cols-1 sm:grid-cols-2 gap-3" id="lista-leitura-html"></div>
-</div>
-</div>
-<script src="app.js"></script>
+        function excluirBloco(id) {
+            if (confirm("Excluir este bloco de viagem?")) {
+                dadosApp.itinerario = dadosApp.itinerario.filter(item => String(item.id) !== String(id));
+                salvarStorage();
+                renderizarTudo();
+                mostrarToast("Bloco removido.", "info");
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', carregarDados);
+    </script>
 </body>
 </html>
