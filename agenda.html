@@ -1,0 +1,1781 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Roteiro Europa - Mariana — Agenda</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+
+    <!-- Melhoria Global de Suavidade e Efeito de Toque nos Botões -->
+    <style>
+        button, a, label, select, input {
+            -webkit-tap-highlight-color: transparent;
+        }
+        button:active, a:active {
+            transform: scale(0.97);
+        }
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+<!--GERADOR-APP-->
+<meta name="theme-color" content="#4c1d95">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Roteiro">
+<link rel="icon" type="image/png" href="icone.png">
+<link rel="apple-touch-icon" href="icone.png">
+<script src="nucleo/nucleo-icone.js"></script>
+<!--/GERADOR-APP-->
+<script>try{localStorage.setItem('tab_ativa_v269','leitura')}catch(e){}</script>
+</head>
+<body class="bg-slate-100 text-slate-800 min-h-screen pb-32 select-none transition-colors duration-200">
+
+
+    <!-- CONTAINER DE NOTIFICAÇÕES TOAST MODERNAS FLUTUANTES -->
+    <div id="toast-container" class="fixed top-4 right-4 z-[999] flex flex-col gap-2 pointer-events-none"></div>
+
+
+    <!-- TELA DE BLOQUEIO / SEGURANÇA (SENHA 1510 & BIOMETRIA NATIVA) -->
+    <div id="tela-bloqueio" class="fixed inset-0 z-[100] bg-slate-900/90 flex items-center justify-center p-4 backdrop-blur-md hidden">
+        <div class="bg-white p-6 sm:p-8 rounded-3xl shadow-2xl max-w-sm w-full space-y-4 text-center text-xs border border-slate-100">
+            <div class="w-14 h-14 bg-indigo-50 text-indigo-600 rounded-2xl mx-auto flex items-center justify-center text-2xl font-black shadow-inner border border-indigo-100">🔒</div>
+            <div>
+                <h2 class="text-sm font-black text-slate-900">Área Protegida</h2>
+                <p class="text-slate-500 mt-0.5 text-[11px]">Insira a sua senha PIN ou utilize a biometria/digital.</p>
+            </div>
+            <div class="space-y-2.5">
+                <input type="password" id="input-pin" maxlength="6" class="w-full p-3 bg-slate-50 border border-slate-300 rounded-xl text-center text-base font-black tracking-widest outline-none text-slate-900 focus:border-indigo-600 focus:ring-2 focus:ring-indigo-100 transition" placeholder="••••" onkeypress="if(event.key==='Enter')desbloquearComPin()">
+                <button onclick="desbloquearComPin()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-xl transition shadow-md shadow-indigo-600/20 text-xs active:scale-95">
+                    🔓 Desbloquear com Senha
+                </button>
+                <button onclick="desbloquearComBiometria()" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-3 rounded-xl transition border border-slate-300/80 text-xs flex items-center justify-center gap-1.5 active:scale-95">
+                    <span>👆</span> Entrar com Digital / FaceID
+                </button>
+            </div>
+            <div id="erro-pin" class="text-red-500 font-bold text-[11px] hidden">Senha incorreta (Padrão: 1510).</div>
+        </div>
+    </div>
+
+
+    <!-- CABEÇALHO SUPERIOR COMPACTO COM TRADUTOR E ATUALIZAR -->
+    <header class="bg-slate-900 text-white px-3 py-2 shadow-md border-b border-slate-800 text-xs flex justify-between items-center z-50 relative gap-1 flex-wrap">
+        <span class="font-bold tracking-wide flex items-center gap-1.5">
+            <span>🚄</span> Roteiro Europa - Mariana
+        </span>
+        <div class="flex items-center gap-1.5 flex-wrap">
+            <a href="https://translate.google.com/?hl=pt&sl=auto&tl=pt&op=images" target="_blank" class="bg-indigo-600 hover:bg-indigo-700 text-white px-2.5 py-1.5 rounded-lg font-bold text-[10px] transition shadow-xs flex items-center gap-1 active:scale-95" title="Google Tradutor & Câmera">🌐 Tradutor</a>
+            <button onclick="window.location.reload()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 hover:text-white px-2.5 py-1.5 rounded-lg font-bold text-[10px] transition shadow-xs border border-slate-700 active:scale-95" title="Atualizar Página">🔄</button>
+            <button onclick="exportarPdfPrint()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-2.5 py-1.5 rounded-lg font-bold text-[10px] transition shadow-xs active:scale-95" title="Imprimir Tudo">🖨️</button>
+            <span class="bg-indigo-950/80 text-indigo-200 border border-indigo-800/50 px-2 py-0.5 rounded-md font-mono font-bold text-[9px]">v289.1 (Pro)</span>
+        </div>
+    </header>
+
+
+    <!-- CONTEÚDO PRINCIPAL -->
+    <div class="max-w-4xl mx-auto p-3 sm:p-6 space-y-4 pt-4">
+
+
+        <!-- BARRA INTEGRADA DE RELÓGIOS COM CORES NEON (COMPACTA E REORDENÁVEL) -->
+        <div class="bg-gradient-to-r from-indigo-950 via-slate-900 to-indigo-900 text-white p-2 sm:p-2.5 rounded-2xl shadow-md border border-indigo-800/40 flex items-center justify-between gap-1.5">
+            <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar flex-1 py-0.5 px-0.5" id="barClockItems">
+                <!-- Relógios entram aqui automaticamente com as cores neon e cabem na tela -->
+            </div>
+            <button onclick="toggleClockConfig()" class="bg-white/10 hover:bg-white/20 text-white w-7 h-7 sm:w-8 sm:h-8 rounded-xl flex items-center justify-center shrink-0 border border-white/20 transition active:scale-95 text-xs" title="Configurar Cidades e Cores">⚙️</button>
+        </div>
+
+
+        <!-- MODAL DE CONFIGURAÇÃO DOS RELÓGIOS & CORES -->
+        <div id="barClockModal" class="fixed inset-0 z-[300] bg-slate-900/70 backdrop-blur-sm hidden flex items-center justify-center p-4">
+            <div class="bg-white p-5 rounded-3xl shadow-2xl max-w-sm w-full space-y-3.5 text-xs border border-slate-200">
+                <div class="flex justify-between items-center border-b pb-2">
+                    <h3 class="font-black text-xs text-slate-900 flex items-center gap-1.5"><span>⚙️</span> Cidades, Fusos & Ordem</h3>
+                    <button onclick="toggleClockConfig()" class="text-slate-400 hover:text-slate-600 font-bold text-sm p-1 rounded-lg">✕</button>
+                </div>
+                <div class="bg-indigo-50 text-indigo-900 p-2 rounded-xl text-[10px] font-bold">
+                    💡 Dica: Toque em <b>Fixar no Topo (📌)</b> ou dê um clique direto no relógio da barra para colocá-lo como seu país atual!
+                </div>
+                <div id="barClockForm" class="space-y-2.5 max-h-[55vh] overflow-y-auto pr-1"></div>
+                <div class="flex gap-2 pt-2 border-t border-slate-100">
+                    <button onclick="saveClockConfig()" class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white py-2.5 rounded-xl font-bold text-xs shadow-xs active:scale-95 transition">Salvar</button>
+                    <button onclick="toggleClockConfig()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2.5 rounded-xl text-xs font-bold border border-slate-300 active:scale-95 transition">Cancelar</button>
+                </div>
+            </div>
+        </div>
+
+
+        <script>
+            (function() {
+                const coresNeon = [
+                    { nome: "Verde Neon", hex: "#00ff66" },
+                    { nome: "Ciano Neon", hex: "#00ffff" },
+                    { nome: "Rosa Neon", hex: "#ff007f" },
+                    { nome: "Amarelo Neon", hex: "#ccff00" },
+                    { nome: "Roxo Elétrico", hex: "#a855f7" },
+                    { nome: "Laranja Neon", hex: "#ff5500" },
+                    { nome: "Branco", hex: "#ffffff" }
+                ];
+
+
+                const defaultClocks = [
+                    { name: "Zurique", tz: "Europe/Zurich", color: "#00ff66" },
+                    { name: "França", tz: "Europe/Paris", color: "#00ffff" },
+                    { name: "Alemanha", tz: "Europe/Berlin", color: "#ff007f" },
+                    { name: "Brasil", tz: "America/Sao_Paulo", color: "#ccff00" }
+                ];
+
+
+                const timezoneOptions = [
+                    { label: "Suíça / Zurique (CET)", tz: "Europe/Zurich" },
+                    { label: "França / Paris (CET)", tz: "Europe/Paris" },
+                    { label: "Alemanha / Freiburg (CET)", tz: "Europe/Berlin" },
+                    { label: "Brasil / Rio - SP (UTC-3)", tz: "America/Sao_Paulo" },
+                    { label: "Reino Unido / Londres (UTC+0)", tz: "Europe/London" },
+                    { label: "EUA / Nova York (UTC-5)", tz: "America/New_York" }
+                ];
+
+
+                let userClocks = JSON.parse(localStorage.getItem("app_travel_clocks")) || defaultClocks;
+
+
+                function updateClocks() {
+                    const container = document.getElementById("barClockItems");
+                    if (!container) return;
+                    container.innerHTML = "";
+                    const now = new Date();
+
+
+                    userClocks.forEach((c, idx) => {
+                        if (!c.name.trim()) return;
+                        const time = new Intl.DateTimeFormat("pt-BR", {
+                            timeZone: c.tz,
+                            hour: "2-digit",
+                            minute: "2-digit"
+                        }).format(now);
+
+
+                        const corAtual = c.color || "#00ff66";
+                        const ehPrimeiro = idx === 0;
+
+
+                        const pill = document.createElement("button");
+                        pill.type = "button";
+                        pill.onclick = () => window.moverPaisParaPrimeiro(idx);
+                        pill.className = "bg-white/10 px-2 py-1 rounded-xl flex items-center gap-1.5 shrink-0 shadow-2xs transition-all active:scale-95";
+                        pill.style.border = `1px solid ${corAtual}66`;
+                        pill.title = "Toque para destacar como país onde você está";
+
+
+                        pill.innerHTML = `
+                            <span class="text-[9px] uppercase font-black tracking-wide flex items-center gap-1" style="color: ${corAtual}; text-shadow: 0 0 6px ${corAtual}66;">
+                                <span style="font-size: 7px;">${ehPrimeiro ? '📍' : '●'}</span>${c.name}
+                            </span>
+                            <span class="text-[11px] font-black text-white tracking-tight">${time}</span>
+                        `;
+                        container.appendChild(pill);
+                    });
+                }
+
+
+                window.moverPaisParaPrimeiro = function(index) {
+                    if (index === 0) return;
+                    const item = userClocks.splice(index, 1)[0];
+                    userClocks.unshift(item);
+                    localStorage.setItem("app_travel_clocks", JSON.stringify(userClocks));
+                    updateClocks();
+                    if (window.mostrarToast) {
+                        window.mostrarToast(`📍 ${item.name} definido como país atual!`, 'sucesso');
+                    }
+                };
+
+
+                window.toggleClockConfig = function() {
+                    const modal = document.getElementById("barClockModal");
+                    if (!modal) return;
+                    const isVisible = !modal.classList.contains("hidden");
+                    if (isVisible) {
+                        modal.classList.add("hidden");
+                    } else {
+                        buildForm();
+                        modal.classList.remove("hidden");
+                    }
+                };
+
+
+                function buildForm() {
+                    const form = document.getElementById("barClockForm");
+                    form.innerHTML = "";
+                    userClocks.forEach((c, i) => {
+                        const row = document.createElement("div");
+                        row.className = "bg-slate-50 p-2.5 rounded-xl border border-slate-200 space-y-1.5";
+                        const optionsHtml = timezoneOptions.map(opt => 
+                            `<option value="${opt.tz}" ${opt.tz === c.tz ? 'selected' : ''}>${opt.label}</option>`
+                        ).join("");
+
+
+                        const corAtual = c.color || "#00ff66";
+
+
+                        let paletaHtml = '<div class="flex items-center gap-1 pt-0.5 flex-wrap"><span class="text-[10px] font-bold text-slate-500">Cor:</span>';
+                        coresNeon.forEach(cor => {
+                            const ativo = corAtual.toLowerCase() === cor.hex.toLowerCase() ? 'ring-2 ring-slate-900 scale-110 shadow-xs' : 'opacity-80 hover:opacity-100';
+                            paletaHtml += `<button type="button" onclick="selecionarCorRelogio(${i}, '${cor.hex}')" style="background-color: ${cor.hex};" class="w-4 h-4 rounded-full border border-black/20 transition active:scale-90 ${ativo}" title="${cor.nome}"></button>`;
+                        });
+                        paletaHtml += `<input type="color" value="${corAtual}" onchange="selecionarCorRelogio(${i}, this.value)" class="w-5 h-5 rounded cursor-pointer border-0 p-0 bg-transparent ml-1" title="Cor livre"></div>`;
+
+
+                        row.innerHTML = `
+                            <div class="flex justify-between items-center">
+                                <label class="text-[10px] font-bold text-slate-500 uppercase block">Relógio ${i + 1}</label>
+                                <button type="button" onclick="moverPaisParaPrimeiro(${i}); buildForm();" class="text-[10px] font-bold text-indigo-600 hover:text-indigo-800 flex items-center gap-0.5">
+                                    ${i === 0 ? '📍 País Atual' : '📌 Pôr em 1º'}
+                                </button>
+                            </div>
+                            <div class="flex gap-1.5">
+                                <input type="text" id="clk-name-${i}" value="${c.name}" class="w-1/2 p-2 bg-white border border-slate-300 rounded-xl font-bold text-xs outline-none focus:border-indigo-600" placeholder="Nome">
+                                <select id="clk-tz-${i}" class="w-1/2 p-2 bg-white border border-slate-300 rounded-xl font-bold text-xs outline-none">${optionsHtml}</select>
+                            </div>
+                            <input type="hidden" id="clk-color-${i}" value="${corAtual}">
+                            ${paletaHtml}
+                        `;
+                        form.appendChild(row);
+                    });
+                }
+
+
+                window.selecionarCorRelogio = function(index, hex) {
+                    const inputColor = document.getElementById(`clk-color-${index}`);
+                    if (inputColor) inputColor.value = hex;
+                    userClocks[index].color = hex;
+                    buildForm();
+                };
+
+
+                window.saveClockConfig = function() {
+                    userClocks.forEach((c, i) => {
+                        const nameEl = document.getElementById(`clk-name-${i}`);
+                        const tzEl = document.getElementById(`clk-tz-${i}`);
+                        const colorEl = document.getElementById(`clk-color-${i}`);
+                        if (nameEl) c.name = nameEl.value;
+                        if (tzEl) c.tz = tzEl.value;
+                        if (colorEl) c.color = colorEl.value;
+                    });
+                    localStorage.setItem("app_travel_clocks", JSON.stringify(userClocks));
+                    window.toggleClockConfig();
+                    updateClocks();
+                };
+
+
+                setInterval(updateClocks, 1000);
+                setTimeout(updateClocks, 50);
+            })();
+        </script>
+        <!-- SEPARADORES (TABS) - OS 5 CARTÕES PRINCIPAIS ALINHADOS -->
+        <div class="grid grid-cols-5 gap-1.5 bg-slate-200/90 p-1.5 rounded-2xl shadow-inner text-center border border-slate-300/50">
+            <button onclick="mudarTab('leitura')" id="tab-btn-leitura" class="py-2.5 px-1 rounded-xl bg-indigo-600 text-white font-extrabold shadow-sm transition text-[11px] flex flex-col items-center gap-0.5 active:scale-95"><span>✈️</span><span class="text-[8px] uppercase tracking-wider">Roteiro</span></button>
+            <button onclick="mudarTab('itinerario')" id="tab-btn-itinerario" class="py-2.5 px-1 rounded-xl bg-white text-slate-700 font-extrabold shadow-xs transition text-[11px] flex flex-col items-center gap-0.5 hover:bg-slate-50 active:scale-95"><span>📅</span><span class="text-[8px] uppercase tracking-wider">Editar</span></button>
+            <button onclick="mudarTab('utilidades')" id="tab-btn-utilidades" class="py-2.5 px-1 rounded-xl bg-white text-slate-700 font-extrabold shadow-xs transition text-[11px] flex flex-col items-center gap-0.5 hover:bg-slate-50 active:scale-95"><span>📋</span><span class="text-[8px] uppercase tracking-wider">Hub</span></button>
+            <button onclick="mudarTab('orcamento')" id="tab-btn-orcamento" class="py-2.5 px-1 rounded-xl bg-white text-slate-700 font-extrabold shadow-xs transition text-[11px] flex flex-col items-center gap-0.5 hover:bg-slate-50 active:scale-95"><span>💰</span><span class="text-[8px] uppercase tracking-wider">Orç.</span></button>
+            <button onclick="mudarTab('compras')" id="tab-btn-compras" class="py-2.5 px-1 rounded-xl bg-white text-slate-700 font-extrabold shadow-xs transition text-[11px] flex flex-col items-center gap-0.5 hover:bg-slate-50 active:scale-95"><span>🛍️</span><span class="text-[8px] uppercase tracking-wider">Compras</span></button>
+        </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        <!-- AGENDA: página própria (o calendário abre sozinho) -->
+        <div id="tab-agenda" class="space-y-3">
+            <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200 text-center space-y-3">
+                <div class="text-3xl">📅</div>
+                <h2 class="font-black text-slate-900 text-sm">Agenda</h2>
+                <p class="text-slate-500 text-xs">Calendário mensal e montagem do dia por etapas.</p>
+                <button onclick="(window.v289AbrirCalendario||window.abrirCalendario)()" class="bg-indigo-600 text-white px-5 py-2.5 rounded-xl font-bold text-xs active:scale-95">Abrir calendário</button>
+            </div>
+        </div>
+
+
+
+    </div>
+
+
+    <!-- MODAL DO LEITOR DE PDF / FOTOS COM ZOOM -->
+    <div id="modal-leitor-pdf" class="fixed inset-0 z-[200] bg-slate-900/90 backdrop-blur-sm hidden flex flex-col p-2 sm:p-6">
+        <div class="bg-white rounded-3xl shadow-2xl flex-1 flex flex-col overflow-hidden border border-slate-300 max-w-4xl mx-auto w-full">
+            <div class="bg-slate-900 text-white px-4 py-3 flex justify-between items-center text-xs">
+                <span id="pdf-titulo-modal" class="font-bold truncate">📄 Visualizador</span>
+                <div class="flex items-center gap-2">
+                    <a id="pdf-btn-download" href="#" download="ficheiro" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-xl font-bold text-xs transition shadow-xs">📥 Baixar</a>
+                    <button onclick="fecharLeitorPdf()" class="bg-slate-800 hover:bg-slate-700 text-white font-bold px-3 py-1.5 rounded-xl text-xs transition active:scale-95">✕ Fechar</button>
+                </div>
+            </div>
+            <div id="visualizador-conteudo-area" class="flex-1 bg-slate-100 p-2 flex items-center justify-center overflow-auto">
+                <iframe id="pdf-iframe-view" class="w-full h-full rounded-2xl border bg-white shadow-inner hidden" src=""></iframe>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- MODAL DO CLIMA AO VIVO (OPEN-METEO) -->
+    <div id="modal-clima" class="fixed inset-0 z-[200] bg-slate-900/70 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="bg-white p-6 rounded-3xl shadow-2xl max-w-sm w-full space-y-3.5 text-xs border border-slate-200 text-center">
+            <div class="flex justify-between items-center border-b pb-2">
+                <h3 class="font-black text-xs text-slate-900 flex items-center gap-1.5"><span>🌤️</span> <span id="clima-cidade-nome">Clima em Tempo Real</span></h3>
+                <button onclick="fecharClimaModal()" class="text-slate-400 hover:text-slate-600 font-bold text-sm p-1 rounded-lg">✕</button>
+            </div>
+            <div id="clima-conteudo" class="space-y-3 py-2">
+                <div class="text-3xl animate-bounce">⏳</div>
+                <p class="font-bold text-slate-600">A consultar satélite meteorológico ao vivo...</p>
+            </div>
+            <button onclick="fecharClimaModal()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-2.5 rounded-xl font-bold text-xs shadow-md shadow-indigo-600/20 active:scale-95 transition">Fechar</button>
+        </div>
+    </div>
+
+
+    <!-- MODAL DE EDITAR TAREFA -->
+    <div id="modal-tarefa" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="bg-white p-5 rounded-3xl shadow-2xl max-w-sm w-full space-y-3 text-xs border border-slate-200">
+            <div class="flex justify-between items-center border-b pb-2">
+                <h3 class="font-bold text-xs text-slate-900">✏️ Editar Tarefa</h3>
+                <button onclick="fecharModalTarefa()" class="text-slate-400 hover:text-slate-600 font-bold text-sm p-1 rounded-lg">✕</button>
+            </div>
+            <input type="hidden" id="tarefa-edit-id">
+            <div>
+                <label class="block font-semibold text-slate-600 mb-1 text-xs">Descrição da Tarefa</label>
+                <textarea id="tarefa-edit-texto" rows="3" class="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-xl outline-none text-slate-800 font-bold text-xs focus:border-indigo-600" placeholder="Descreva a tarefa..."></textarea>
+            </div>
+            <div class="flex gap-2 pt-1">
+                <button onclick="salvarTarefaModal()" class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white py-2.5 rounded-xl font-bold text-xs shadow-xs active:scale-95 transition">Guardar</button>
+                <button onclick="fecharModalTarefa()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2.5 rounded-xl text-xs font-bold border border-slate-300 active:scale-95 transition">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- BARRA DE FERRAMENTAS FIXA MODERNA COM BACKUP E RESTAURAÇÃO -->
+    <nav class="fixed bottom-0 left-0 right-0 z-50 bg-slate-900/95 backdrop-blur-md text-white px-3 py-2.5 shadow-2xl border-t border-slate-800 text-xs flex items-center justify-around gap-1 overflow-x-auto no-scrollbar max-w-4xl mx-auto rounded-t-2xl">
+        <span class="bg-indigo-600/30 text-indigo-300 border border-indigo-500/30 px-2 py-1 rounded-lg font-mono font-bold text-[9px] shrink-0">v289.1</span>
+        
+        <button onclick="abrirGeminiModal()" class="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white px-3 py-1.5 rounded-xl font-bold transition shrink-0 flex items-center gap-1.5 text-xs shadow-sm shadow-purple-900/30 active:scale-95">
+            <span>✨</span> Gemini
+        </button>
+        
+        <button onclick="ativarMicrofone()" class="bg-purple-600/90 hover:bg-purple-600 text-white px-3 py-1.5 rounded-xl font-bold transition shrink-0 flex items-center gap-1 text-xs shadow-xs active:scale-95">
+            <span>🎤</span> Ditar
+        </button>
+        
+        <button onclick="baixarBackupJson()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 hover:text-white border border-slate-700 px-2.5 py-1.5 rounded-xl font-bold transition shrink-0 flex items-center gap-1 text-xs shadow-xs active:scale-95" title="Baixar Backup do Roteiro">
+            <span>📥</span> Backup
+        </button>
+        
+        <label class="bg-slate-800 hover:bg-slate-700 text-slate-200 hover:text-white border border-slate-700 px-2.5 py-1.5 rounded-xl font-bold transition shrink-0 flex items-center gap-1 text-xs shadow-xs cursor-pointer active:scale-95" title="Restaurar Backup">
+            <span>📤</span> Restaurar
+            <input type="file" accept=".json" onchange="restaurarBackupJson(event)" class="hidden">
+        </label>
+        
+        <button onclick="alternarTema()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 hover:text-white border border-slate-700 px-2.5 py-1.5 rounded-xl font-bold transition shrink-0 flex items-center gap-1 text-xs active:scale-95">
+            <span>🌓</span> Tema
+        </button>
+        
+        <button onclick="alterarSenhaPin()" class="bg-slate-800 hover:bg-slate-700 text-amber-300 border border-slate-700 px-2.5 py-1.5 rounded-xl font-bold transition shrink-0 flex items-center gap-1 text-xs active:scale-95">
+            <span>🔑</span> Senha
+        </button>
+        
+        <button onclick="instalarApp()" class="bg-emerald-600/90 hover:bg-emerald-600 text-white px-2.5 py-1.5 rounded-xl font-bold transition shrink-0 flex items-center gap-1 text-xs shadow-xs active:scale-95">
+            <span>📱</span> App
+        </button>
+    </nav>
+
+
+    <!-- MODAL DA GEMINI IA -->
+    <div id="modal-gemini" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="bg-white p-4 rounded-3xl shadow-2xl max-w-sm w-full space-y-3 text-xs flex flex-col h-[400px] border border-slate-200">
+            <div class="flex justify-between items-center border-b pb-2">
+                <h3 class="font-bold text-xs text-slate-900 flex items-center gap-1"><span>✨</span> Assistente Gemini IA</h3>
+                <button onclick="fecharGeminiModal()" class="text-slate-400 hover:text-slate-600 font-bold text-sm p-1 rounded-lg">✕</button>
+            </div>
+            <div id="gemini-chat-log" class="flex-1 overflow-y-auto space-y-2 p-2.5 bg-slate-50 rounded-2xl border text-xs">
+                <div class="bg-indigo-50 text-indigo-900 p-2.5 rounded-xl font-medium">Olá, Mariana! Podes pedir-me para anotar algo escrevendo "anotar [texto]" ou consultar o saldo.</div>
+            </div>
+            <div class="flex gap-2 pt-1">
+                <input type="text" id="gemini-input" class="flex-1 p-2.5 bg-slate-100 border border-slate-300 rounded-xl outline-none text-slate-800 font-medium text-xs focus:border-indigo-600" placeholder="Ex: anotar comprar bilhete ou saldo..." onkeypress="if(event.key==='Enter')enviarMensagemGemini()">
+                <button onclick="enviarMensagemGemini()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2.5 rounded-xl font-bold text-xs shadow-xs active:scale-95 transition">Enviar</button>
+            </div>
+        </div>
+    </div>
+
+
+<script src="nucleo/nucleo-00-base.js"></script>
+<script>
+/* funções de outras páginas viram "vazias" aqui, para o núcleo não dar erro */
+(function(n){n.forEach(function(f){if(typeof window[f]==="undefined")window[f]=function(){}})})(["abrirEdicaoConducaoOrcamento", "abrirEdicaoItemDireto", "abrirModalTarefa", "adicionarBloco", "adicionarChat", "adicionarConducaoVazia", "adicionarContato", "adicionarDespesa", "adicionarFotoExtraTrecho", "adicionarItemBloco", "adicionarItemChecklist", "adicionarItemUnicoForm", "adicionarNovoDestinoFiltro", "adicionarNovoStatusTarefa", "adicionarTarefa", "adicionarTrecho", "adicionarVoo", "adicionarVoucher", "alternarBloqueio", "alternarConcluidoItemDireto", "alternarItemChecklist", "anexarPdfVoo", "anexarPdfVoucher", "apagarBloco", "apagarChat", "apagarConducaoOrcamento", "apagarContato", "apagarDespesa", "apagarItemChecklist", "apagarItemDireto", "apagarTarefa", "apagarVoo", "apagarVoucher", "atualizarCampo", "atualizarChat", "atualizarConducaoItem", "atualizarContagemRegressiva", "atualizarContatoNome", "atualizarContatoNumero", "atualizarCorBlocoLocal", "atualizarDataInicio", "atualizarItemChecklistText", "atualizarOrcamentoDescricao", "atualizarTarefaTexto", "atualizarTextoItemBloco", "atualizarTrecho", "atualizarVoo", "atualizarVoucherTitulo", "buscarCotacaoAoVivo", "calcularConversaoRapida", "calcularDivisaoConta", "compartilharComprasWhatsApp", "compartilharRoteiroWhatsApp", "fecharModalTarefa", "filtrarComprasTitulo", "filtrarDestino", "filtrarTarefas", "filtrarUtilidade", "gerenciarDestinos", "gerenciarDestinosLocais", "gerenciarOrigens", "imprimirBlocoUnico", "iniciarArrastoHub", "lidarSelecaoDestino", "lidarSelecaoDestinoTarefa", "lidarSelecaoDestinoTrecho", "lidarSelecaoOrigemTrecho", "lidarSelecaoStatusTarefa", "moverBloco", "moverSecaoHub", "mudarOrcamentoSubTab", "mudarOrdenacaoBlocos", "mudarOrdenacaoCompras", "obterCorPorTituloCompra", "permitirDropHub", "removerConducaoItem", "removerFotoExtraTrecho", "removerItemBloco", "removerTrecho", "renderizarBlocos", "renderizarFiltrosTarefas", "renderizarOrcamentoTab", "salvarCotacao", "salvarDespesaValor", "salvarEFecharItemDireto", "salvarEdicaoConducaoOrcamento", "salvarSaldo", "salvarTarefaModal", "soltarHub"]);
+</script>
+    <!-- ================= INÍCIO: BOTÃO E POP-UP DE RELÓGIOS ================= -->
+<!-- Botão redondo -->
+<button class="fab-relogio" onclick="togglePopupRelogio()" title="Abrir Relógios">
+  🕒
+</button>
+<!-- Pop-up -->
+<div class="popup-relogio" id="meuPopupRelogio">
+  <div class="popup-relogio-header">
+    <span>Relógios Mundiais</span>
+    <button onclick="togglePopupRelogio()">✕</button>
+  </div>
+  <!-- Carrega a sua página de relógios criada anteriormente -->
+  <iframe src="Relógio.html"></iframe>
+</div>
+<!-- ================= FIM: BOTÃO E POP-UP DE RELÓGIOS ================= -->
+<link rel="stylesheet" href="nucleo/nucleo-01-relogio.css">
+<script src="nucleo/nucleo-01-relogio.js"></script>
+<!-- ===== CAMADA v271: visual moderno em todas as telas, topo fixo, swipe, bloqueio novo, instalação ===== -->
+<meta name="theme-color" content="#1e1b4b">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<!-- ===== FIM DA CAMADA v271 ===== -->
+<link rel="stylesheet" href="nucleo/nucleo-02-v271-visual.css">
+<script src="nucleo/nucleo-02-v271-visual.js"></script>
+<!-- ===== CAMADA v272: visual delicado, pulsos, hub claro, orçamento turquesa, personalização ===== -->
+<!-- ===== FIM DA CAMADA v272 ===== -->
+<link rel="stylesheet" href="nucleo/nucleo-03-v272-visual.css">
+<script src="nucleo/nucleo-03-v272-visual.js"></script>
+<!-- ===== CAMADA v274: menu que aparece ao rolar, cores por destino, painel de cores por aba, letras legíveis =====
+     Substitui a v273. Use a ferramenta "Juntar" (ela remove a v273 sozinha) ou cole antes de </body> depois de apagar a v273. -->
+<!-- ===== FIM DA CAMADA v274 ===== -->
+<link rel="stylesheet" href="nucleo/nucleo-04-v274-menu-flutuante.css">
+<script src="nucleo/nucleo-04-v274-menu-flutuante.js"></script>
+<!-- ===== CAMADA v275: modo offline, sincronização com fusão, fotos/PDFs separados, login opcional ===== -->
+<!-- ===== FIM DA CAMADA v275 ===== -->
+<!--V276-->
+<script src="nucleo/nucleo-05-v275-offline-sync.js"></script>
+<!--/V276-->
+<link rel="stylesheet" href="nucleo/nucleo-06-v276-v282-listas.css">
+<script src="nucleo/nucleo-06-v276-v282-listas.js"></script>
+<!-- ===== CAMADA v283 ===== -->
+<!-- ===== FIM DA CAMADA v283 ===== -->
+<!--V284-->
+<link rel="stylesheet" href="nucleo/nucleo-07-v283-edicao.css">
+<script src="nucleo/nucleo-07-v283-edicao.js"></script>
+<!--/V284-->
+<!--V285-->
+<!--/V285-->
+<!--V286-->
+<!--/V286-->
+<!--V287-->
+<!--/V287-->
+<link rel="stylesheet" href="nucleo/nucleo-08-v284-v287-roteiro.css">
+<script src="nucleo/nucleo-08-v284-v287-roteiro.js"></script>
+<!-- ===== CAMADA v288: papel de parede interativo toque abre/fecha, cores da setinha e quadradinho, roteiro 1 linha com X à direita, montagem rápida do Maps ===== -->
+<!-- ===== FIM DA CAMADA v288 ===== -->
+<link rel="stylesheet" href="nucleo/nucleo-09-v288-montagem-maps.css">
+<script src="nucleo/nucleo-09-v288-montagem-maps.js"></script>
+<!-- ===== CAMADA v289: Calendário Mensal na barra flutuante, Montagem por etapas (Origem, Destino, Maps, Transporte, Paradas), Prévia visual sequencial, Enviar para o Roteiro, Detalhes recolhidos ===== -->
+<!-- MODAIS DO CALENDÁRIO MENSAL E DA MONTAGEM POR ETAPAS -->
+<div id="v289-modal-calendario" class="v289-modal-overlay hidden" style="display:none !important;" onclick="if(event.target===this)window.v289FecharCalendario()">
+  <div class="v289-modal-card">
+    <!-- Header Calendário -->
+    <div class="bg-gradient-to-r from-slate-900 to-indigo-950 text-white p-4 flex items-center justify-between border-b border-indigo-900/40">
+      <div class="flex items-center gap-2">
+        <span class="text-xl">📅</span>
+        <div>
+          <h3 class="text-sm font-black tracking-wide" id="v289-cal-titulo-mes">Outubro 2026</h3>
+          <p class="text-[10px] text-slate-300">Toque num dia para ver ou montar o roteiro</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-1.5">
+        <button type="button" onclick="window.v289CalMudarMes(-1)" class="w-8 h-8 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold flex items-center justify-center transition active:scale-95">‹</button>
+        <button type="button" onclick="window.v289CalHoje()" class="px-2.5 py-1 text-[10px] rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold transition active:scale-95">Hoje</button>
+        <button type="button" onclick="window.v289CalMudarMes(1)" class="w-8 h-8 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold flex items-center justify-center transition active:scale-95">›</button>
+        <button type="button" onclick="window.v289FecharCalendario()" class="w-8 h-8 rounded-xl bg-slate-800 hover:bg-rose-600 text-white font-bold flex items-center justify-center transition active:scale-95 ml-1">✕</button>
+      </div>
+    </div>
+    <!-- Corpo com a Grade -->
+    <div class="p-3 sm:p-4 overflow-y-auto flex-1 space-y-3">
+      <div class="v289-cal-grid" id="v289-cal-dias-semana">
+        <div class="v289-cal-dow text-rose-500">Dom</div>
+        <div class="v289-cal-dow">Seg</div>
+        <div class="v289-cal-dow">Ter</div>
+        <div class="v289-cal-dow">Qua</div>
+        <div class="v289-cal-dow">Qui</div>
+        <div class="v289-cal-dow">Sex</div>
+        <div class="v289-cal-dow text-indigo-500">Sáb</div>
+      </div>
+      <div class="v289-cal-grid" id="v289-cal-corpo-dias">
+        <!-- Renderizado dinamicamente via JS -->
+      </div>
+      <!-- Legenda Rápida -->
+      <div class="pt-2 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-500 px-1">
+        <div class="flex items-center gap-1.5">
+          <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 inline-block"></span>
+          <span>Dia com percurso</span>
+        </div>
+        <div class="flex items-center gap-1.5">
+          <span class="w-2.5 h-2.5 rounded-full bg-indigo-500 inline-block"></span>
+          <span>Hoje</span>
+        </div>
+        <div class="text-[10px] text-indigo-600 font-bold">
+          Toque para planejar
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- MODAL DE MONTAGEM POR ETAPAS DO DIA -->
+<div id="v289-modal-montador" class="v289-modal-overlay hidden" style="display:none !important;" onclick="if(event.target===this)window.v289FecharMontador()">
+  <div class="v289-modal-card" style="max-width: 540px;">
+    <!-- Header Montador -->
+    <div class="bg-gradient-to-r from-indigo-900 to-slate-900 text-white p-3.5 flex items-center justify-between border-b border-indigo-800/40">
+      <div class="flex items-center gap-2">
+        <button type="button" onclick="window.v289VoltarAoCalendario()" class="px-2 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold transition flex items-center gap-1 active:scale-95">
+          <span>‹</span> <span>Calendário</span>
+        </button>
+        <div>
+          <h3 class="text-xs sm:text-sm font-black tracking-wide" id="v289-montador-titulo-dia">16 de Outubro de 2026</h3>
+          <p class="text-[10px] text-indigo-300">Montagem por etapas do dia</p>
+        </div>
+      </div>
+      <button type="button" onclick="window.v289FecharMontador()" class="w-8 h-8 rounded-xl bg-slate-800 hover:bg-rose-600 text-white font-bold flex items-center justify-center transition active:scale-95">✕</button>
+    </div>
+    <!-- Corpo com formulário de etapas e prévia visual -->
+    <div class="p-3 sm:p-4 overflow-y-auto flex-1 space-y-4">
+      <!-- 0. Seleção de Destino / Cidade do dia -->
+      <div class="bg-indigo-50/70 border border-indigo-100 rounded-2xl p-2.5 flex items-center justify-between gap-2">
+        <div class="flex items-center gap-1.5 text-xs font-black text-indigo-900">
+          <span>🏙️</span> <span>Destino / Cidade:</span>
+        </div>
+        <div class="flex-1 max-w-[220px]">
+          <input type="text" id="v289-inp-cidade" list="v289-datalist-destinos" placeholder="Ex: Zurique, Paris..." class="w-full bg-white border border-indigo-200 rounded-xl px-2.5 py-1.5 text-xs font-bold text-slate-800 outline-none focus:border-indigo-600">
+          <datalist id="v289-datalist-destinos"></datalist>
+        </div>
+      </div>
+      <!-- 1. FORMULÁRIO DA ETAPA ATUAL -->
+      <div class="bg-slate-50 border border-slate-200 rounded-2xl p-3 space-y-3 shadow-xs">
+        <div class="flex items-center justify-between">
+          <span class="text-xs font-black uppercase tracking-wider text-slate-700 flex items-center gap-1.5">
+            <span id="v289-form-etapa-badge" class="bg-indigo-600 text-white px-2 py-0.5 rounded-lg text-[10px]">Etapa 1</span>
+            <span id="v289-form-etapa-titulo">Novo Trecho</span>
+          </span>
+          <button type="button" id="v289-btn-cancelar-edicao" onclick="window.v289ResetFormEtapa()" class="text-[10px] text-slate-500 hover:text-rose-600 font-bold hidden">
+            ✕ Limpar
+          </button>
+        </div>
+        <!-- “De onde?” → “Para onde?” -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+          <div>
+            <label class="block text-[10px] font-black uppercase text-slate-500 mb-1 flex items-center gap-1">
+              <span>🟢</span> <span>De onde? (Origem)</span>
+            </label>
+            <input type="text" id="v289-inp-origem" placeholder="Ex: Hotel, Estação..." class="w-full bg-white border border-slate-300 rounded-xl px-2.5 py-1.5 text-xs text-slate-800 font-semibold outline-none focus:border-indigo-600 focus:ring-1 focus:ring-indigo-100">
+          </div>
+          <div>
+            <label class="block text-[10px] font-black uppercase text-slate-500 mb-1 flex items-center gap-1">
+              <span>🏁</span> <span>Para onde? (Destino)</span>
+            </label>
+            <input type="text" id="v289-inp-destino" placeholder="Ex: Lago, Museu, Restaurante..." class="w-full bg-white border border-slate-300 rounded-xl px-2.5 py-1.5 text-xs text-slate-800 font-semibold outline-none focus:border-indigo-600 focus:ring-1 focus:ring-indigo-100">
+          </div>
+        </div>
+        <!-- “Cola o link do Maps” -->
+        <div>
+          <label class="block text-[10px] font-black uppercase text-slate-500 mb-1 flex items-center justify-between">
+            <span class="flex items-center gap-1"><span>🗺️</span> <span>Link do Google Maps</span></span>
+            <span class="text-[9px] text-indigo-600 font-bold cursor-pointer" onclick="window.v289ColarMapsClipboard()">📋 Colar</span>
+          </label>
+          <div class="flex gap-1.5">
+            <input type="url" id="v289-inp-maps" onchange="window.v289InterpretarMapsUrl(this.value)" placeholder="Cole o link de rota do Maps (https://...)" class="flex-1 bg-white border border-slate-300 rounded-xl px-2.5 py-1.5 text-xs text-slate-700 outline-none focus:border-indigo-600">
+            <button type="button" onclick="window.v289TestarLinkMaps()" class="bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 px-2.5 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1 active:scale-95" title="Testar link no Maps">
+              <span>↗️</span>
+            </button>
+          </div>
+        </div>
+        <!-- “Escolhe o transporte” -->
+        <div>
+          <label class="block text-[10px] font-black uppercase text-slate-500 mb-1.5">
+            🚆 Escolha o Transporte:
+          </label>
+          <div class="flex gap-1.5 overflow-x-auto no-scrollbar pb-1">
+            <button type="button" class="v289-transp-btn active" data-transp="Trem" onclick="window.v289SelecionarTransporte('Trem', this)">
+              <span class="text-base">🚆</span>
+              <span>Trem</span>
+            </button>
+            <button type="button" class="v289-transp-btn" data-transp="Avião" onclick="window.v289SelecionarTransporte('Avião', this)">
+              <span class="text-base">✈️</span>
+              <span>Avião</span>
+            </button>
+            <button type="button" class="v289-transp-btn" data-transp="Carro" onclick="window.v289SelecionarTransporte('Carro', this)">
+              <span class="text-base">🚗</span>
+              <span>Carro</span>
+            </button>
+            <button type="button" class="v289-transp-btn" data-transp="Ônibus" onclick="window.v289SelecionarTransporte('Ônibus', this)">
+              <span class="text-base">🚌</span>
+              <span>Ônibus</span>
+            </button>
+            <button type="button" class="v289-transp-btn" data-transp="A pé" onclick="window.v289SelecionarTransporte('A pé', this)">
+              <span class="text-base">🚶</span>
+              <span>A pé</span>
+            </button>
+          </div>
+        </div>
+        <!-- “Adiciona uma parada” -->
+        <div class="space-y-1.5">
+          <div class="flex items-center justify-between">
+            <label class="text-[10px] font-black uppercase text-slate-500 flex items-center gap-1">
+              <span>📍</span> <span>Paradas Intermediárias:</span>
+            </label>
+            <button type="button" onclick="window.v289AdicionarCampoParada()" class="text-[10px] text-indigo-600 hover:text-indigo-800 font-extrabold flex items-center gap-1 active:scale-95">
+              <span>➕</span> <span>Adicionar Parada</span>
+            </button>
+          </div>
+          <div id="v289-lista-paradas-temp" class="space-y-1.5">
+            <!-- Campos de paradas adicionados dinamicamente -->
+          </div>
+        </div>
+        <!-- “Editar sem perder recursos: Detalhes recolhidos” -->
+        <details class="v289-detalhes">
+          <summary>
+            <span class="flex items-center gap-1.5">
+              <span>⚙️</span>
+              <span>Detalhes (Horário, Valor, Fotos & Observações)</span>
+            </span>
+            <span class="text-[10px] text-slate-400">▾</span>
+          </summary>
+          <div class="pt-2 space-y-2">
+            <div class="grid grid-cols-2 gap-2">
+              <div>
+                <label class="block text-[9px] font-bold text-slate-500 mb-0.5">Horário / Linha</label>
+                <input type="text" id="v289-inp-horario" placeholder="Ex: 09:30 - Linha S10" class="w-full bg-white border border-slate-300 rounded-lg px-2 py-1 text-xs text-slate-800">
+              </div>
+              <div>
+                <label class="block text-[9px] font-bold text-slate-500 mb-0.5">Valor / Custo</label>
+                <div class="flex gap-1">
+                  <input type="number" step="0.5" id="v289-inp-valor" placeholder="0.00" class="w-full bg-white border border-slate-300 rounded-lg px-2 py-1 text-xs text-slate-800">
+                  <select id="v289-inp-moeda" class="bg-white border border-slate-300 rounded-lg px-1 py-1 text-xs text-slate-800 font-bold">
+                    <option value="EUR">€</option>
+                    <option value="CHF">CHF</option>
+                    <option value="BRL">R$</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <div>
+              <label class="block text-[9px] font-bold text-slate-500 mb-0.5">Observações / Dicas</label>
+              <textarea id="v289-inp-notas" rows="2" placeholder="Dicas de bilhete, plataforma, lockers, ingressos..." class="w-full bg-white border border-slate-300 rounded-lg p-2 text-xs text-slate-800"></textarea>
+            </div>
+            <div>
+              <label class="block text-[9px] font-bold text-slate-500 mb-0.5">Fotos da Parada / Rota</label>
+              <div class="flex items-center gap-2">
+                <label class="bg-slate-200 hover:bg-slate-300 text-slate-700 px-2.5 py-1 rounded-lg text-[10px] font-bold cursor-pointer transition active:scale-95">
+                  <span>📷</span> Escolher Foto
+                  <input type="file" accept="image/*" onchange="window.v289UploadFotoEtapa(event)" class="hidden">
+                </label>
+                <span id="v289-foto-status" class="text-[10px] text-slate-500">Nenhuma foto adicionada</span>
+              </div>
+              <div id="v289-foto-preview" class="flex gap-1.5 mt-1.5 overflow-x-auto no-scrollbar"></div>
+            </div>
+          </div>
+        </details>
+        <!-- Botão para Salvar/Adicionar esta Etapa -->
+        <button type="button" id="v289-btn-salvar-etapa" onclick="window.v289SalvarEtapaNoPercurso()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-extrabold py-2.5 rounded-xl text-xs transition shadow-sm shadow-indigo-600/20 flex items-center justify-center gap-1.5 active:scale-95">
+          <span>➕</span> <span id="v289-btn-salvar-etapa-txt">Adicionar Esta Etapa ao Percurso</span>
+        </button>
+      </div>
+      <!-- 2. PRÉVIA VISUAL DO PERCURSO DO DIA (LINHA COM INÍCIO, PARADAS E DESTINO) -->
+      <div class="bg-white border border-slate-200 rounded-2xl p-3 space-y-2.5 shadow-xs">
+        <div class="flex items-center justify-between border-b border-slate-100 pb-2">
+          <span class="text-xs font-black uppercase tracking-wider text-slate-800 flex items-center gap-1.5">
+            <span>🗺️</span> <span>Prévia Visual do Percurso</span>
+            <span id="v289-contador-etapas" class="bg-slate-100 text-slate-600 text-[10px] font-bold px-2 py-0.5 rounded-full">0 etapas</span>
+          </span>
+          <span class="text-[10px] text-slate-400">Editável etapa a etapa</span>
+        </div>
+        <div id="v289-container-timeline" class="space-y-3 py-1">
+          <!-- Renderizado dinamicamente -->
+          <div class="text-center py-6 text-slate-400 text-xs font-semibold">
+            Nenhuma etapa adicionada para este dia ainda.<br>Preencha os campos acima e clique em "Adicionar Esta Etapa"!
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Rodapé: Enviar para o Roteiro -->
+    <div class="bg-slate-50 p-3 sm:p-4 border-t border-slate-200 flex items-center justify-between gap-2">
+      <button type="button" onclick="window.v289FecharMontador()" class="px-3 py-2 rounded-xl bg-slate-200 hover:bg-slate-300 text-slate-700 text-xs font-bold transition active:scale-95" title="Fechar e voltar à página principal">
+        ✕ Fechar
+      </button>
+      <button type="button" onclick="window.v289VoltarAoCalendario()" class="px-3 py-2 rounded-xl bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 text-xs font-bold transition active:scale-95" title="Voltar ao calendário mensal">
+        📅 Calendário
+      </button>
+      <button type="button" onclick="window.v289ConfirmarEnviarRoteiro()" class="flex-1 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-black py-2.5 px-4 rounded-xl text-xs transition shadow-md shadow-emerald-600/25 flex items-center justify-center gap-2 active:scale-95">
+        <span>🚀</span> <span>Enviar para o Roteiro Oficial</span>
+      </button>
+    </div>
+  </div>
+</div>
+<!-- ===== FIM DA CAMADA v289 ===== -->
+<style>
+/* BOTÃO CALENDÁRIO NA BARRA FIXA E FAB FLUTUANTE */
+.v289-btn-cal {
+  background: linear-gradient(135deg, #4f46e5, #7c3aed) !important;
+  color: #ffffff !important;
+  font-weight: 800 !important;
+  border-radius: 12px !important;
+  padding: 6px 12px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 5px !important;
+  box-shadow: 0 2px 8px rgba(79, 70, 229, 0.35) !important;
+  border: 1px solid rgba(255, 255, 255, 0.25) !important;
+  cursor: pointer !important;
+  font-size: 11px !important;
+  line-height: 1 !important;
+  transition: transform 0.15s, box-shadow 0.15s, filter 0.15s !important;
+  flex: none !important;
+  user-select: none !important;
+}
+.v289-btn-cal:hover {
+  filter: brightness(1.1) !important;
+  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.45) !important;
+}
+.v289-btn-cal:active {
+  transform: scale(0.95) !important;
+}
+
+#v289-fab-cal {
+  position: fixed;
+  bottom: 84px;
+  right: 18px;
+  z-index: 60;
+  background: linear-gradient(135deg, #4338ca, #6d28d9);
+  color: #fff;
+  border-radius: 50px;
+  padding: 9px 15px;
+  font-size: 12px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  box-shadow: 0 8px 24px rgba(67, 56, 202, 0.45);
+  border: 1.5px solid rgba(255, 255, 255, 0.35);
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  user-select: none;
+}
+#v289-fab-cal:hover {
+  transform: translateY(-2px) scale(1.03);
+  box-shadow: 0 12px 28px rgba(67, 56, 202, 0.55);
+}
+#v289-fab-cal:active {
+  transform: scale(0.95);
+}
+
+/* MODAL CALENDÁRIO MENSAL & MONTAGEM */
+.v289-modal-overlay {
+  display: none !important;
+  position: fixed;
+  inset: 0;
+  z-index: 350;
+  background: rgba(15, 23, 42, 0.82);
+  backdrop-filter: blur(6px);
+  align-items: center;
+  justify-content: center;
+  padding: 12px;
+  overflow-y: auto;
+}
+.v289-modal-overlay.ativo {
+  display: flex !important;
+}
+.v289-modal-overlay.hidden {
+  display: none !important;
+}
+.v289-modal-card {
+  background: #ffffff;
+  border-radius: 24px;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.35);
+  border: 1px solid #e2e8f0;
+  width: 100%;
+  max-width: 500px;
+  max-height: 92vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: v289Pop 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+}
+@keyframes v289Pop {
+  0% { opacity: 0; transform: scale(0.93) translateY(12px); }
+  100% { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+/* GRADE DO CALENDÁRIO MENSAL */
+.v289-cal-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+  text-align: center;
+}
+.v289-cal-dow {
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  color: #64748b;
+  padding: 6px 0;
+}
+.v289-cal-cell {
+  min-height: 52px;
+  border-radius: 12px;
+  padding: 4px 2px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  font-size: 12px;
+  font-weight: 700;
+  color: #1e293b;
+  cursor: pointer;
+  background: #f8fafc;
+  border: 1.5px solid transparent;
+  transition: all 0.15s ease;
+  position: relative;
+}
+.v289-cal-cell:hover:not(.empty) {
+  background: #eef2ff;
+  border-color: #c7d2fe;
+  transform: translateY(-1px);
+}
+.v289-cal-cell.empty {
+  background: transparent;
+  cursor: default;
+}
+.v289-cal-cell.today {
+  border-color: #6366f1;
+  background: #e0e7ff;
+  color: #3730a3;
+}
+.v289-cal-cell.has-roteiro {
+  background: #f0fdf4;
+  border-color: #86efac;
+}
+.v289-cal-badge {
+  font-size: 8px;
+  font-weight: 800;
+  padding: 1px 4px;
+  border-radius: 6px;
+  margin-top: 2px;
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.1;
+}
+
+/* BOTÕES DE TRANSPORTE */
+.v289-transp-btn {
+  flex: 1;
+  min-width: 58px;
+  padding: 9px 4px;
+  border-radius: 12px;
+  background: #f1f5f9;
+  border: 1.5px solid #cbd5e1;
+  color: #334155;
+  font-weight: 800;
+  font-size: 11px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  user-select: none;
+}
+.v289-transp-btn:hover {
+  background: #e2e8f0;
+}
+.v289-transp-btn.active {
+  background: #4f46e5;
+  color: #ffffff;
+  border-color: #4338ca;
+  box-shadow: 0 3px 10px rgba(79, 70, 229, 0.35);
+  transform: scale(1.02);
+}
+
+/* PRÉVIA VISUAL DO PERCURSO */
+.v289-timeline-line {
+  position: relative;
+  padding-left: 24px;
+}
+.v289-timeline-line::before {
+  content: '';
+  position: absolute;
+  left: 9px;
+  top: 12px;
+  bottom: 14px;
+  width: 2.5px;
+  background: linear-gradient(180deg, #4f46e5, #06b6d4, #10b981);
+  border-radius: 2px;
+}
+.v289-node {
+  position: relative;
+  margin-bottom: 12px;
+}
+.v289-node::before {
+  content: '';
+  position: absolute;
+  left: -20px;
+  top: 5px;
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: #fff;
+  border: 2.5px solid #4f46e5;
+  box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.15);
+}
+.v289-node.dest::before {
+  border-color: #10b981;
+  background: #10b981;
+}
+.v289-node.stop::before {
+  border-color: #f59e0b;
+  width: 9px;
+  height: 9px;
+  left: -19px;
+}
+
+/* DETALHES RECOLHIDOS */
+details.v289-detalhes, details.v289-detalhes-rotr {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 6px 10px;
+  margin-top: 6px;
+  font-size: 11px;
+}
+details.v289-detalhes summary, details.v289-detalhes-rotr summary {
+  cursor: pointer;
+  font-weight: 700;
+  color: #475569;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+details.v289-detalhes summary::-webkit-details-marker, details.v289-detalhes-rotr summary::-webkit-details-marker {
+  display: none;
+}
+details.v289-detalhes[open] summary, details.v289-detalhes-rotr[open] summary {
+  color: #4f46e5;
+  border-bottom: 1px solid #e2e8f0;
+  padding-bottom: 4px;
+  margin-bottom: 6px;
+}
+</style>
+<script>
+try{
+(function(){
+  // ESTADO DO CALENDÁRIO E MONTAGEM
+  var calAno = 2026;
+  var calMes = 9; // 0-indexed: 9 = Outubro
+  var diaSelecionado = '2026-10-15';
+  var etapasDia = [];
+  var paradasTemp = [];
+  var fotosTemp = [];
+  var transpSelecionado = 'Trem';
+  var editandoEtapaIdx = -1;
+
+  var mesesNomes = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+
+  function $(id){ return document.getElementById(id); }
+
+  // 1. INJETAR BOTÃO NA BARRA SUPERIOR/FIXA E FAB FLUTUANTE
+  function injetarBotoesCalendario(){
+    // Barra superior fixa
+    var nav = $('v271-bar') || document.querySelector('body>header nav') || document.querySelector('nav');
+    if(nav && !$('v289-btn-cal-nav')){
+      var btn = document.createElement('button');
+      btn.id = 'v289-btn-cal-nav';
+      btn.type = 'button';
+      btn.className = 'v289-btn-cal';
+      btn.innerHTML = '<span>📅</span><span>Planejar Dia</span>';
+      btn.onclick = window.v289AbrirCalendario;
+      nav.insertBefore(btn, nav.children[1] || null);
+    }
+
+    // Botão flutuante FAB no canto inferior direito
+    if(!$('v289-fab-cal')){
+      var fab = document.createElement('div');
+      fab.id = 'v289-fab-cal';
+      fab.innerHTML = '<span style="font-size:16px">📅</span><span>Planejar Dia</span>';
+      fab.onclick = window.v289AbrirCalendario;
+      document.body.appendChild(fab);
+    }
+
+    // Botão extra no cabeçalho das abas Roteiro e Editar
+    var hdrRot = document.querySelector('#tab-leitura .bg-white') || document.querySelector('#tab-leitura');
+    if(hdrRot && !$('v289-btn-cal-rot')){
+      var btnRot = document.createElement('button');
+      btnRot.id = 'v289-btn-cal-rot';
+      btnRot.type = 'button';
+      btnRot.className = 'bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 px-2.5 py-1.5 rounded-xl font-bold text-xs transition shadow-2xs flex items-center gap-1 active:scale-95';
+      btnRot.innerHTML = '<span>📅</span> <span>Calendário Mensal</span>';
+      btnRot.onclick = window.v289AbrirCalendario;
+      var prog = $('progresso-viagem');
+      if(prog && prog.parentElement){
+        prog.parentElement.insertBefore(btnRot, prog);
+      }
+    }
+  }
+
+  // 2. ABERTURA E RENDERIZAÇÃO DO CALENDÁRIO MENSAL
+  window.v289AbrirCalendario = function(){
+    if(typeof dadosApp!=='undefined' && Array.isArray(dadosApp.itinerario)){
+      var blocoComData = dadosApp.itinerario.find(function(b){ return b.dataInicio; });
+      if(blocoComData){
+        var partes = blocoComData.dataInicio.split('-');
+        if(partes.length===3){
+          calAno = parseInt(partes[0], 10) || 2026;
+          calMes = (parseInt(partes[1], 10) - 1) || 9;
+        }
+      }
+    }
+    renderizarGradeCalendario();
+    var m = $('v289-modal-calendario');
+    if(m){
+      m.style.setProperty('display', 'flex', 'important');
+      m.classList.remove('hidden');
+      m.classList.add('ativo');
+    }
+  };
+
+  window.v289FecharCalendario = function(){
+    var m = $('v289-modal-calendario');
+    if(m){
+      m.style.setProperty('display', 'none', 'important');
+      m.classList.add('hidden');
+      m.classList.remove('ativo');
+    }
+  };
+
+  window.v289CalMudarMes = function(delta){
+    calMes += delta;
+    if(calMes > 11){ calMes = 0; calAno++; }
+    if(calMes < 0){ calMes = 11; calAno--; }
+    renderizarGradeCalendario();
+  };
+
+  window.v289CalHoje = function(){
+    var hoje = new Date();
+    calAno = hoje.getFullYear();
+    calMes = hoje.getMonth();
+    renderizarGradeCalendario();
+  };
+
+  function renderizarGradeCalendario(){
+    var tit = $('v289-cal-titulo-mes');
+    if(tit) tit.textContent = mesesNomes[calMes] + ' ' + calAno;
+
+    var corpo = $('v289-cal-corpo-dias');
+    if(!corpo) return;
+    corpo.innerHTML = '';
+
+    var primeiroDiaSemana = new Date(calAno, calMes, 1).getDay(); // 0 = Domingo
+    var totalDiasMes = new Date(calAno, calMes + 1, 0).getDate();
+
+    var hoje = new Date();
+    var hojeStr = hoje.getFullYear() + '-' + String(hoje.getMonth()+1).padStart(2,'0') + '-' + String(hoje.getDate()).padStart(2,'0');
+
+    // Mapear dias com itinerário
+    var diasComItinerario = {};
+    if(typeof dadosApp!=='undefined' && Array.isArray(dadosApp.itinerario)){
+      dadosApp.itinerario.forEach(function(b){
+        var cor = b.cor || (window.obterCorPorCategoria ? window.obterCorPorCategoria(b.categoria) : '#4f46e5');
+        var dest = b.categoria || 'Destino';
+        if(b.dataInicio && b.dataFim){
+          // Marcar intervalo
+          var cur = new Date(b.dataInicio + 'T00:00:00');
+          var fim = new Date(b.dataFim + 'T00:00:00');
+          while(cur <= fim){
+            var ds = cur.getFullYear() + '-' + String(cur.getMonth()+1).padStart(2,'0') + '-' + String(cur.getDate()).padStart(2,'0');
+            if(!diasComItinerario[ds]) diasComItinerario[ds] = [];
+            diasComItinerario[ds].push({ dest: dest, cor: cor, trechos: (b.trechos ? b.trechos.length : 0) });
+            cur.setDate(cur.getDate() + 1);
+          }
+        } else if(b.dataInicio){
+          var ds = b.dataInicio;
+          if(!diasComItinerario[ds]) diasComItinerario[ds] = [];
+          diasComItinerario[ds].push({ dest: dest, cor: cor, trechos: (b.trechos ? b.trechos.length : 0) });
+        }
+      });
+    }
+
+    // Células vazias antes do primeiro dia
+    for(var v=0; v<primeiroDiaSemana; v++){
+      var cVazia = document.createElement('div');
+      cVazia.className = 'v289-cal-cell empty';
+      corpo.appendChild(cVazia);
+    }
+
+    // Células dos dias do mês
+    for(var d=1; d<=totalDiasMes; d++){
+      var dataIso = calAno + '-' + String(calMes+1).padStart(2,'0') + '-' + String(d).padStart(2,'0');
+      var cell = document.createElement('div');
+      cell.className = 'v289-cal-cell';
+      if(dataIso === hojeStr) cell.classList.add('today');
+
+      var temIti = diasComItinerario[dataIso];
+      if(temIti && temIti.length > 0){
+        cell.classList.add('has-roteiro');
+      }
+
+      var numSpan = document.createElement('span');
+      numSpan.className = 'font-bold';
+      numSpan.textContent = d;
+      cell.appendChild(numSpan);
+
+      if(temIti && temIti.length > 0){
+        var badge = document.createElement('span');
+        badge.className = 'v289-cal-badge';
+        badge.style.backgroundColor = temIti[0].cor + '22';
+        badge.style.color = temIti[0].cor;
+        badge.style.border = '1px solid ' + temIti[0].cor + '55';
+        badge.textContent = temIti[0].dest;
+        cell.appendChild(badge);
+      }
+
+      (function(dt){
+        cell.onclick = function(){
+          window.v289AbrirMontagemDia(dt);
+        };
+      })(dataIso);
+
+      corpo.appendChild(cell);
+    }
+  }
+
+  // 3. ABERTURA DO MONTADOR DE ETAPAS PARA UM DIA
+  window.v289AbrirMontagemDia = function(dataIso){
+    window.v289FecharCalendario();
+    diaSelecionado = dataIso;
+
+    // Atualizar título com data por extenso
+    var partes = dataIso.split('-');
+    var dtObj = new Date(parseInt(partes[0],10), parseInt(partes[1],10)-1, parseInt(partes[2],10));
+    var dSemana = ['Domingo','Segunda-feira','Terça-feira','Quarta-feira','Quinta-feira','Sexta-feira','Sábado'][dtObj.getDay()];
+    var txtDia = dSemana + ', ' + partes[2] + ' de ' + mesesNomes[parseInt(partes[1],10)-1] + ' de ' + partes[0];
+    
+    var titEl = $('v289-montador-titulo-dia');
+    if(titEl) titEl.textContent = txtDia;
+
+    // Preencher datalist de destinos
+    var dl = $('v289-datalist-destinos');
+    if(dl && typeof dadosApp!=='undefined' && Array.isArray(dadosApp.destinosCadastrados)){
+      dl.innerHTML = '';
+      dadosApp.destinosCadastrados.forEach(function(d){
+        var opt = document.createElement('option');
+        opt.value = d;
+        dl.appendChild(opt);
+      });
+    }
+
+    // Carregar percurso já existente para este dia (se houver)
+    etapasDia = [];
+    var cidadeSugerida = '';
+    if(typeof dadosApp!=='undefined' && Array.isArray(dadosApp.itinerario)){
+      var bloco = dadosApp.itinerario.find(function(b){
+        if(b.dataInicio === dataIso) return true;
+        if(b.dataInicio && b.dataFim && dataIso >= b.dataInicio && dataIso <= b.dataFim) return true;
+        return false;
+      });
+      if(bloco){
+        cidadeSugerida = bloco.categoria || '';
+        if(Array.isArray(bloco.trechos)){
+          bloco.trechos.forEach(function(t){
+            var c0 = (t.conducoes && t.conducoes[0]) || {};
+            etapasDia.push({
+              id: t.id || Date.now(),
+              origem: t.origem || '',
+              destino: t.destino || '',
+              transporte: c0.transporte || 'Trem',
+              mapsLink: t.linkMaps || '',
+              paradas: (bloco.paradas||[]).filter(function(p){return String(p.apos)===String(t.id)}).map(function(p){return p.local}).concat(Array.isArray(t.paradas)?t.paradas:[]),
+              horario: c0.linha || '',
+              valor: c0.valor || 0,
+              moeda: c0.moeda || 'EUR',
+              notas: c0.notas || '',
+              fotos: Array.isArray(c0.fotosExtras) ? [...c0.fotosExtras] : []
+            });
+          });
+        }
+      }
+    }
+
+    var inpCid = $('v289-inp-cidade');
+    if(inpCid) inpCid.value = cidadeSugerida || (dadosApp && dadosApp.destinosCadastrados ? dadosApp.destinosCadastrados[0] : 'Zurique');
+
+    window.v289ResetFormEtapa();
+    renderizarPreviaTimeline();
+
+    var m = $('v289-modal-montador');
+    if(m){
+      m.style.setProperty('display', 'flex', 'important');
+      m.classList.remove('hidden');
+      m.classList.add('ativo');
+    }
+  };
+
+  window.v289FecharMontador = function(){
+    var m = $('v289-modal-montador');
+    if(m){
+      m.style.setProperty('display', 'none', 'important');
+      m.classList.add('hidden');
+      m.classList.remove('ativo');
+    }
+  };
+
+  window.v289VoltarAoCalendario = function(){
+    window.v289FecharMontador();
+    window.v289AbrirCalendario();
+  };
+
+  // 4. SELEÇÃO DE TRANSPORTE
+  window.v289SelecionarTransporte = function(modo, btn){
+    transpSelecionado = modo;
+    var all = document.querySelectorAll('.v289-transp-btn');
+    all.forEach(function(b){ b.classList.remove('active'); });
+    if(btn) btn.classList.add('active');
+  };
+
+  // 5. PARADAS INTERMEDIÁRIAS
+  window.v289AdicionarCampoParada = function(valor){
+    var container = $('v289-lista-paradas-temp');
+    if(!container) return;
+    var idx = container.children.length + 1;
+    var row = document.createElement('div');
+    row.className = 'flex items-center gap-1.5';
+    row.innerHTML = '<span class="text-[10px] font-bold text-amber-600">Parada ' + idx + ':</span>' +
+      '<input type="text" value="' + (valor || '') + '" placeholder="Nome da parada intermediária..." class="v289-inp-parada flex-1 bg-white border border-amber-300 rounded-lg px-2 py-1 text-xs text-slate-800">' +
+      '<button type="button" onclick="this.parentElement.remove()" class="w-6 h-6 rounded-md bg-rose-50 text-rose-600 hover:bg-rose-100 font-bold text-xs flex items-center justify-center">✕</button>';
+    container.appendChild(row);
+  };
+
+  // 6. COLAR LINK DO GOOGLE MAPS E PARSER
+  window.v289ColarMapsClipboard = function(){
+    if(navigator.clipboard && navigator.clipboard.readText){
+      navigator.clipboard.readText().then(function(txt){
+        $('v289-inp-maps').value = txt;
+        window.v289InterpretarMapsUrl(txt);
+        if(window.mostrarToast) window.mostrarToast('Link do Maps colado!','info');
+      }).catch(function(){
+        var p = prompt('Cole o link do Google Maps aqui:');
+        if(p){
+          $('v289-inp-maps').value = p;
+          window.v289InterpretarMapsUrl(p);
+        }
+      });
+    } else {
+      var p = prompt('Cole o link do Google Maps aqui:');
+      if(p){
+        $('v289-inp-maps').value = p;
+        window.v289InterpretarMapsUrl(p);
+      }
+    }
+  };
+
+  window.v289InterpretarMapsUrl = function(url){
+    if(!url || typeof url !== 'string') return;
+    try {
+      // Reconhecer /dir/Origem/Destino/ ou /dir/Origem/Parada/Destino
+      var dirMatch = url.match(/\/dir\/([^?#]+)/);
+      if(dirMatch && dirMatch[1]){
+        var pts = dirMatch[1].split('/').map(function(s){ return decodeURIComponent(s.replace(/\+/g, ' ')).trim(); }).filter(Boolean);
+        if(pts.length >= 2){
+          if(!$('v289-inp-origem').value) $('v289-inp-origem').value = pts[0];
+          if(!$('v289-inp-destino').value) $('v289-inp-destino').value = pts[pts.length - 1];
+          // Paradas intermediárias
+          if(pts.length > 2){
+            var c = $('v289-lista-paradas-temp');
+            if(c) c.innerHTML = '';
+            for(var i=1; i<pts.length-1; i++){
+              window.v289AdicionarCampoParada(pts[i]);
+            }
+          }
+        }
+      }
+      // Detecção de transporte pela URL
+      if(/data=.*!4m.*transit/i.test(url) || /dirflg=r/i.test(url)){
+        window.v289SetTranspBtn('Trem');
+      } else if(/dirflg=w/i.test(url) || /walking/i.test(url)){
+        window.v289SetTranspBtn('A pé');
+      } else if(/dirflg=d/i.test(url) || /driving/i.test(url)){
+        window.v289SetTranspBtn('Carro');
+      } else if(/dirflg=b/i.test(url) || /bicycling/i.test(url)){
+        window.v289SetTranspBtn('A pé');
+      }
+    } catch(e){}
+  };
+
+  window.v289SetTranspBtn = function(nome){
+    transpSelecionado = nome;
+    var btn = document.querySelector('.v289-transp-btn[data-transp="' + nome + '"]');
+    if(btn) window.v289SelecionarTransporte(nome, btn);
+  };
+
+  window.v289TestarLinkMaps = function(){
+    var url = $('v289-inp-maps').value.trim();
+    if(!url){
+      var o = $('v289-inp-origem').value.trim();
+      var d = $('v289-inp-destino').value.trim();
+      if(o && d) url = 'https://www.google.com/maps/dir/' + encodeURIComponent(o) + '/' + encodeURIComponent(d);
+      else if(d) url = 'https://www.google.com/maps/search/' + encodeURIComponent(d);
+    }
+    if(url) window.open(url, '_blank');
+    else if(window.mostrarToast) window.mostrarToast('Preencha os pontos ou cole um link.','info');
+  };
+
+  // 7. UPLOAD DE FOTOS NA ETAPA
+  window.v289UploadFotoEtapa = function(e){
+    var f = e.target.files && e.target.files[0];
+    if(!f) return;
+    var r = new FileReader();
+    r.onload = function(ev){
+      fotosTemp.push(ev.target.result);
+      renderFotosTemp();
+    };
+    r.readAsDataURL(f);
+  };
+
+  function renderFotosTemp(){
+    var c = $('v289-foto-preview');
+    var st = $('v289-foto-status');
+    if(!c) return;
+    c.innerHTML = '';
+    if(st) st.textContent = fotosTemp.length + ' foto(s) adicionada(s)';
+    fotosTemp.forEach(function(src, i){
+      var wrap = document.createElement('div');
+      wrap.className = 'relative shrink-0';
+      wrap.innerHTML = '<img src="' + src + '" class="w-12 h-12 object-cover rounded-lg border border-slate-200">' +
+        '<button type="button" onclick="window.v289RemoverFotoTemp(' + i + ')" class="absolute -top-1 -right-1 bg-rose-600 text-white rounded-full w-4 h-4 text-[10px] flex items-center justify-center font-bold">✕</button>';
+      c.appendChild(wrap);
+    });
+  }
+
+  window.v289RemoverFotoTemp = function(idx){
+    fotosTemp.splice(idx, 1);
+    renderFotosTemp();
+  };
+
+  // 8. RESETAR FORMULÁRIO DE ETAPA
+  window.v289ResetFormEtapa = function(){
+    editandoEtapaIdx = -1;
+    $('v289-form-etapa-badge').textContent = 'Etapa ' + (etapasDia.length + 1);
+    $('v289-form-etapa-titulo').textContent = 'Novo Trecho';
+    $('v289-btn-cancelar-edicao').classList.add('hidden');
+    $('v289-btn-salvar-etapa-txt').textContent = 'Adicionar Esta Etapa ao Percurso';
+
+    // Se já existem etapas, a próxima origem começa do destino da última!
+    if(etapasDia.length > 0){
+      $('v289-inp-origem').value = etapasDia[etapasDia.length - 1].destino;
+    } else {
+      $('v289-inp-origem').value = '';
+    }
+    $('v289-inp-destino').value = '';
+    $('v289-inp-maps').value = '';
+    $('v289-inp-horario').value = '';
+    $('v289-inp-valor').value = '';
+    $('v289-inp-notas').value = '';
+    $('v289-lista-paradas-temp').innerHTML = '';
+    fotosTemp = [];
+    renderFotosTemp();
+    window.v289SetTranspBtn('Trem');
+  };
+
+  // 9. SALVAR ETAPA NO PERCURSO DO DIA
+  window.v289SalvarEtapaNoPercurso = function(){
+    var origem = $('v289-inp-origem').value.trim();
+    var destino = $('v289-inp-destino').value.trim();
+    if(!origem && !destino){
+      if(window.mostrarToast) window.mostrarToast('Preencha ao menos a origem ou destino da etapa.','erro');
+      return;
+    }
+
+    var paradas = [];
+    var pInputs = document.querySelectorAll('.v289-inp-parada');
+    pInputs.forEach(function(inp){
+      var v = inp.value.trim();
+      if(v) paradas.push(v);
+    });
+
+    var mapsLink = $('v289-inp-maps').value.trim();
+    if(!mapsLink && origem && destino){
+      mapsLink = 'https://www.google.com/maps/dir/' + encodeURIComponent(origem) + '/' + encodeURIComponent(destino);
+    }
+
+    var etapaObj = {
+      id: editandoEtapaIdx >= 0 ? etapasDia[editandoEtapaIdx].id : Date.now(),
+      origem: origem,
+      destino: destino,
+      transporte: transpSelecionado || 'Trem',
+      mapsLink: mapsLink,
+      paradas: paradas,
+      horario: $('v289-inp-horario').value.trim(),
+      valor: parseFloat($('v289-inp-valor').value) || 0,
+      moeda: $('v289-inp-moeda').value || 'EUR',
+      notas: $('v289-inp-notas').value.trim(),
+      fotos: [...fotosTemp]
+    };
+
+    if(editandoEtapaIdx >= 0){
+      etapasDia[editandoEtapaIdx] = etapaObj;
+      if(window.mostrarToast) window.mostrarToast('Etapa atualizada!','sucesso');
+    } else {
+      etapasDia.push(etapaObj);
+      if(window.mostrarToast) window.mostrarToast('Etapa adicionada ao percurso!','sucesso');
+    }
+
+    window.v289ResetFormEtapa();
+    renderizarPreviaTimeline();
+  };
+
+  // 10. RENDERIZAR PRÉVIA VISUAL DO PERCURSO
+  function renderizarPreviaTimeline(){
+    var c = $('v289-container-timeline');
+    var cnt = $('v289-contador-etapas');
+    if(!c) return;
+    if(cnt) cnt.textContent = etapasDia.length + ' etapa' + (etapasDia.length === 1 ? '' : 's');
+
+    if(etapasDia.length === 0){
+      c.innerHTML = '<div class="text-center py-6 text-slate-400 text-xs font-semibold">' +
+        'Nenhuma etapa adicionada para este dia ainda.<br>Preencha os campos acima e clique em "Adicionar Esta Etapa"!' +
+        '</div>';
+      return;
+    }
+
+    c.innerHTML = '';
+    var iconesTransp = { 'Trem': '🚆', 'Avião': '✈️', 'Carro': '🚗', 'Ônibus': '🚌', 'A pé': '🚶' };
+
+    etapasDia.forEach(function(etapa, idx){
+      var card = document.createElement('div');
+      card.className = 'bg-slate-50 border border-slate-200/90 rounded-xl p-2.5 space-y-2 text-xs relative hover:border-indigo-300 transition';
+
+      var icone = iconesTransp[etapa.transporte] || '🚆';
+
+      var paradasHtml = '';
+      if(etapa.paradas && etapa.paradas.length > 0){
+        paradasHtml = '<div class="space-y-1 my-1.5 pl-3 border-l-2 border-amber-300 ml-1.5">' +
+          etapa.paradas.map(function(p, pi){
+            return '<div class="text-[11px] text-amber-800 font-bold flex items-center gap-1"><span>📍 Parada ' + (pi+1) + ':</span> <span>' + p + '</span></div>';
+          }).join('') +
+          '</div>';
+      }
+
+      var badgesInfo = '';
+      if(etapa.horario) badgesInfo += '<span class="bg-indigo-50 text-indigo-700 border border-indigo-200 px-1.5 py-0.5 rounded text-[10px] font-bold">⏱️ ' + etapa.horario + '</span> ';
+      if(etapa.valor > 0) badgesInfo += '<span class="bg-emerald-50 text-emerald-700 border border-emerald-200 px-1.5 py-0.5 rounded text-[10px] font-bold">💰 ' + (etapa.moeda==='EUR'?'€':(etapa.moeda==='CHF'?'CHF ':'R$ ')) + etapa.valor.toFixed(2) + '</span> ';
+      if(etapa.fotos && etapa.fotos.length > 0) badgesInfo += '<span class="bg-purple-50 text-purple-700 border border-purple-200 px-1.5 py-0.5 rounded text-[10px] font-bold">📷 ' + etapa.fotos.length + ' foto(s)</span> ';
+
+      card.innerHTML = 
+        '<div class="flex items-center justify-between gap-1">' +
+          '<span class="bg-indigo-600 text-white px-2 py-0.5 rounded-md font-black text-[9px] uppercase tracking-wider">Etapa ' + (idx + 1) + '</span>' +
+          '<div class="flex items-center gap-1">' +
+            (idx > 0 ? '<button type="button" onclick="window.v289MoverEtapa(' + idx + ',-1)" class="w-5 h-5 rounded bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold flex items-center justify-center text-[10px]" title="Subir">↑</button>' : '') +
+            (idx < etapasDia.length - 1 ? '<button type="button" onclick="window.v289MoverEtapa(' + idx + ',1)" class="w-5 h-5 rounded bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold flex items-center justify-center text-[10px]" title="Descer">↓</button>' : '') +
+            '<button type="button" onclick="window.v289EditarEtapa(' + idx + ')" class="w-5 h-5 rounded bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-bold flex items-center justify-center text-[10px]" title="Editar">✏️</button>' +
+            '<button type="button" onclick="window.v289ExcluirEtapa(' + idx + ')" class="w-5 h-5 rounded bg-rose-50 hover:bg-rose-100 text-rose-600 font-bold flex items-center justify-center text-[10px]" title="Excluir">🗑️</button>' +
+          '</div>' +
+        '</div>' +
+        '<div class="v289-timeline-line">' +
+          '<div class="v289-node font-bold text-slate-800">' + (etapa.origem || 'Origem') + '</div>' +
+          '<div class="text-[11px] text-indigo-700 font-extrabold flex items-center gap-1.5 my-1">' +
+            '<span class="px-2 py-0.5 rounded-lg bg-indigo-100/80 border border-indigo-200/80">' + icone + ' ' + etapa.transporte + '</span>' +
+            (badgesInfo ? '<div class="flex flex-wrap gap-1">' + badgesInfo + '</div>' : '') +
+          '</div>' +
+          paradasHtml +
+          '<div class="v289-node dest font-black text-slate-900">' + (etapa.destino || 'Destino') + '</div>' +
+        '</div>' +
+        (etapa.notas ? '<div class="text-[11px] text-slate-600 bg-white p-2 rounded-lg border border-slate-200/60 mt-1"><b>Nota:</b> ' + etapa.notas + '</div>' : '') +
+        (etapa.mapsLink ? '<div class="pt-1"><a href="' + etapa.mapsLink + '" target="_blank" class="inline-flex items-center gap-1 text-[11px] text-indigo-600 hover:text-indigo-800 font-bold"><span>🗺️ Abrir rota no Google Maps</span> <span>↗️</span></a></div>' : '');
+
+      c.appendChild(card);
+    });
+  }
+
+  window.v289EditarEtapa = function(idx){
+    editandoEtapaIdx = idx;
+    var etapa = etapasDia[idx];
+    if(!etapa) return;
+
+    $('v289-form-etapa-badge').textContent = 'Editando Etapa ' + (idx + 1);
+    $('v289-form-etapa-titulo').textContent = (etapa.origem || '...') + ' ➔ ' + (etapa.destino || '...');
+    $('v289-btn-cancelar-edicao').classList.remove('hidden');
+    $('v289-btn-salvar-etapa-txt').textContent = 'Atualizar Esta Etapa';
+
+    $('v289-inp-origem').value = etapa.origem || '';
+    $('v289-inp-destino').value = etapa.destino || '';
+    $('v289-inp-maps').value = etapa.mapsLink || '';
+    $('v289-inp-horario').value = etapa.horario || '';
+    $('v289-inp-valor').value = etapa.valor > 0 ? etapa.valor : '';
+    $('v289-inp-moeda').value = etapa.moeda || 'EUR';
+    $('v289-inp-notas').value = etapa.notas || '';
+
+    // Paradas
+    var c = $('v289-lista-paradas-temp');
+    if(c){
+      c.innerHTML = '';
+      if(etapa.paradas && etapa.paradas.length > 0){
+        etapa.paradas.forEach(function(p){ window.v289AdicionarCampoParada(p); });
+      }
+    }
+
+    fotosTemp = Array.isArray(etapa.fotos) ? [...etapa.fotos] : [];
+    renderFotosTemp();
+    window.v289SetTranspBtn(etapa.transporte || 'Trem');
+
+    // Rolar suavemente até o formulário
+    $('v289-inp-origem').scrollIntoView({ behavior: 'smooth', block: 'center' });
+  };
+
+  window.v289ExcluirEtapa = function(idx){
+    if(confirm('Deseja remover a etapa ' + (idx + 1) + ' do percurso?')){
+      etapasDia.splice(idx, 1);
+      if(editandoEtapaIdx === idx) window.v289ResetFormEtapa();
+      renderizarPreviaTimeline();
+    }
+  };
+
+  window.v289MoverEtapa = function(idx, dir){
+    var nIdx = idx + dir;
+    if(nIdx < 0 || nIdx >= etapasDia.length) return;
+    var tmp = etapasDia[idx];
+    etapasDia[idx] = etapasDia[nIdx];
+    etapasDia[nIdx] = tmp;
+    renderizarPreviaTimeline();
+  };
+
+  // 11. ENVIAR PARA O ROTEIRO OFICIAL
+  window.v289ConfirmarEnviarRoteiro = function(){
+    if(etapasDia.length === 0){
+      if(window.mostrarToast) window.mostrarToast('Adicione ao menos uma etapa antes de enviar para o roteiro.','erro');
+      return;
+    }
+
+    if(typeof window.registarEstadoAnterior === 'function') window.registarEstadoAnterior();
+
+    var cidade = ($('v289-inp-cidade').value || '').trim() || 'Zurique';
+    if(typeof dadosApp!=='undefined'){
+      if(!Array.isArray(dadosApp.itinerario)) dadosApp.itinerario = [];
+
+      // Encontrar bloco correspondente ou criar um novo
+      var bloco = dadosApp.itinerario.find(function(b){
+        if(b.dataInicio === diaSelecionado) return true;
+        if(b.dataInicio && b.dataFim && diaSelecionado >= b.dataInicio && diaSelecionado <= b.dataFim) return true;
+        if((b.categoria || '').toLowerCase() === cidade.toLowerCase() && (!b.dataInicio || b.dataInicio === diaSelecionado)) return true;
+        return false;
+      });
+
+      if(!bloco){
+        bloco = {
+          id: Date.now(),
+          categoria: cidade,
+          cor: (dadosApp.coresDestinos && dadosApp.coresDestinos[cidade]) || '#4f46e5',
+          dataInicio: diaSelecionado,
+          dataFim: diaSelecionado,
+          bloqueado: true, // Trancado / Aprovado para o Roteiro Oficial
+          trechos: []
+        };
+        dadosApp.itinerario.push(bloco);
+      } else {
+        bloco.categoria = cidade;
+        bloco.bloqueado = true; // Garante que entra no Roteiro
+        if(!bloco.dataInicio) bloco.dataInicio = diaSelecionado;
+        if(!bloco.dataFim) bloco.dataFim = diaSelecionado;
+      }
+
+      // Converter etapas em trechos estruturados
+      var novosTrechos = etapasDia.map(function(et, i){
+        var conducoes = [{
+          id: Date.now() + i * 10,
+          transporte: et.transporte || 'Trem',
+          linha: et.horario || '',
+          valor: et.valor || 0,
+          moeda: et.moeda || 'EUR',
+          notas: et.notas || '',
+          fotosExtras: Array.isArray(et.fotos) ? [...et.fotos] : [],
+          concluido: false
+        }];
+
+        return {
+          id: et.id || (Date.now() + i),
+          origem: et.origem,
+          destino: et.destino,
+          paradas: Array.isArray(et.paradas) ? [...et.paradas] : [],
+          linkMaps: et.mapsLink || '',
+          concluido: false,
+          conducoes: conducoes
+        };
+      });
+
+      var antigos=bloco.trechos||[],antP=(bloco.paradas||[]).slice();
+      novosTrechos.forEach(function(nt){var old=antigos.filter(function(o){return String(o.id)===String(nt.id)})[0];
+        if(old&&old.conducoes&&old.conducoes.length){var c0=old.conducoes[0];
+          nt.conducoes=[Object.assign({},c0,nt.conducoes[0],{id:c0.id,concluido:c0.concluido})].concat(old.conducoes.slice(1));
+          if(old.textoSaida)nt.textoSaida=old.textoSaida;if(old.textoChegada)nt.textoChegada=old.textoChegada}});
+      bloco.paradas=(bloco.paradas||[]).filter(function(p){return !novosTrechos.some(function(t){return String(t.id)===String(p.apos)})});
+      novosTrechos.forEach(function(nt,i){(nt.paradas||[]).forEach(function(nome,j){
+        var ex=antP.filter(function(p){return String(p.apos)===String(nt.id)&&p.local===nome})[0];
+        bloco.paradas.push(ex||{id:'p'+Date.now()+'_'+i+'_'+j,apos:nt.id,local:nome,de:'',texto:''})});nt.paradas=[]});
+      bloco.trechos = novosTrechos;
+
+      // Salvar dados e sincronizar
+      try{salvarStorage()}catch(e){}
+      if(typeof window.atualizarTudo === 'function') window.atualizarTudo();
+
+      // Fechar modal e ir para a aba Roteiro
+      window.v289FecharMontador();
+      if(typeof window.mudarTab === 'function') window.mudarTab('leitura');
+
+      if(window.mostrarToast){
+        window.mostrarToast('✓ Percurso de ' + cidade + ' enviado com sucesso para o Roteiro!','sucesso');
+      }
+
+      // Rolar suavemente até o bloco
+      setTimeout(function(){
+        var el = document.getElementById('leitura-bloco-' + bloco.id);
+        if(el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }, 350);
+    }
+  };
+
+  // 12. ENFEITAR APRESENTAÇÃO SEQUENCIAL NO ROTEIRO E RECOLHER DETALHES
+  var origRenderizarModoLeitura = window.renderizarModoLeitura;
+  window.renderizarModoLeitura = function(){
+    if(origRenderizarModoLeitura) origRenderizarModoLeitura();
+    try {
+      var container = document.getElementById('lista-leitura-html');
+      if(!container) return;
+
+      if(typeof dadosApp !== 'undefined' && Array.isArray(dadosApp.itinerario)){
+        var cards = container.children;
+        var blocosAprovados = dadosApp.itinerario.filter(function(i){ return i.bloqueado === true; });
+        if(destinoFiltro !== 'todos') {
+          blocosAprovados = blocosAprovados.filter(function(i){ return (i.categoria || "").toLowerCase().includes(destinoFiltro.toLowerCase()); });
+        }
+
+        for(var bIdx=0; bIdx<blocosAprovados.length && bIdx<cards.length; bIdx++){
+          var bloco = blocosAprovados[bIdx];
+          var card = cards[bIdx];
+          if(!bloco || !card) continue;
+
+          if(Array.isArray(bloco.trechos)){
+            var trechosDivs = card.querySelectorAll('.bg-slate-50.p-3.rounded-2xl');
+            for(var tIdx=0; tIdx<bloco.trechos.length && tIdx<trechosDivs.length; tIdx++){
+              var tr = bloco.trechos[tIdx];
+              var tDiv = trechosDivs[tIdx];
+              if(!tr || !tDiv) continue;
+
+              // 1. Adicionar badge de etapa sequencial
+              var rotHeader = tDiv.querySelector('.font-black.text-xs');
+              if(rotHeader && !rotHeader.querySelector('.v289-etapa-num')){
+                var badgeEtapa = document.createElement('span');
+                badgeEtapa.className = 'v289-etapa-num mr-1.5 px-2 py-0.5 rounded-md bg-indigo-600 text-white text-[9px] font-black uppercase';
+                badgeEtapa.textContent = 'Etapa ' + (tIdx + 1);
+                rotHeader.insertBefore(badgeEtapa, rotHeader.firstChild);
+              }
+
+              // 2. Se tiver paradas intermediárias, exibir linha sequencial
+              if(Array.isArray(tr.paradas) && tr.paradas.length > 0 && !tDiv.querySelector('.v289-seq-line')){
+                var seqDiv = document.createElement('div');
+                seqDiv.className = 'v289-seq-line my-2 pl-4 border-l-2 border-amber-400 space-y-1';
+                seqDiv.innerHTML = tr.paradas.map(function(p, pi){
+                  return '<div class="text-[11px] text-amber-800 font-bold flex items-center gap-1.5"><span>📍 Parada ' + (pi+1) + ':</span> <span class="bg-amber-50 px-2 py-0.5 rounded border border-amber-200">' + p + '</span></div>';
+                }).join('');
+                if(rotHeader && rotHeader.nextSibling){
+                  tDiv.insertBefore(seqDiv, rotHeader.nextSibling);
+                }
+              }
+
+              // 3. Recolher notas e fotos em "Detalhes"
+              var conducoesWraps = tDiv.querySelectorAll('.p-2\\.5.rounded-xl');
+              conducoesWraps.forEach(function(cWrap, cIdx){
+                var cond = tr.conducoes && tr.conducoes[cIdx];
+                if(cond && (cond.notas || (cond.fotosExtras && cond.fotosExtras.length > 0))){
+                  var notasEl = cWrap.querySelector('.text-slate-500.text-\\[11px\\]');
+                  var fotosEl = cWrap.querySelector('.flex.gap-2.flex-wrap');
+                  if((notasEl || fotosEl) && !cWrap.querySelector('details.v289-detalhes-rotr')){
+                    var det = document.createElement('details');
+                    det.className = 'v289-detalhes-rotr mt-1.5 bg-slate-50/80 p-1.5 rounded-lg border border-slate-200/80 text-[11px]';
+                    det.innerHTML = '<summary class="cursor-pointer font-bold text-slate-500 hover:text-indigo-600 flex items-center justify-between select-none py-0.5"><span>⚙️ Detalhes, Notas & Fotos</span><span class="text-[9px]">▾</span></summary><div class="v289-det-corpo mt-1 pt-1 border-t border-slate-200/60 space-y-1"></div>';
+                    var detCorpo = det.querySelector('.v289-det-corpo');
+                    if(notasEl){ detCorpo.appendChild(notasEl); }
+                    if(fotosEl){ detCorpo.appendChild(fotosEl); }
+                    var txtDiv = cWrap.querySelector('.flex-1.min-w-0');
+                    if(txtDiv){ txtDiv.appendChild(det); }
+                  }
+                }
+              });
+            }
+          }
+        }
+      }
+    } catch(err){}
+  };
+
+  // Inicializar quando o DOM estiver pronto
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', injetarBotoesCalendario);
+  } else {
+    injetarBotoesCalendario();
+  }
+  setTimeout(injetarBotoesCalendario, 500);
+})();
+}catch(e){console.error('[bloco com erro]',e)}
+</script>
+<!--V290-->
+<!--/V290-->
+<link rel="stylesheet" href="nucleo/nucleo-11-v290-barra.css">
+<script src="nucleo/nucleo-11-v290-barra.js"></script>
+<script>
+/* NAVEGAÇÃO ENTRE PÁGINAS: os botões da barra de baixo abrem o arquivo de cada categoria */
+(function(){
+  var MINHA=null, KEY="agenda";
+  var ABA={leitura:'roteiro.html',itinerario:'editar.html',utilidades:'hub.html',orcamento:'orcamento.html',compras:'compras.html'};
+  var livre=false;
+  ['pointerdown','keydown','touchstart'].forEach(function(ev){document.addEventListener(ev,function(){livre=true},true)});
+  var orig=window.mudarTab;
+  window.mudarTab=function(t){
+    if(livre && ABA[t] && t!==MINHA){ location.href=ABA[t]; return; }
+    return orig.apply(this,arguments);
+  };
+  var n=0, iv=setInterval(function(){
+    var b=document.getElementById('v290-cal');
+    if(b){
+      if(KEY!=='agenda'){ b.onclick=function(){location.href='agenda.html'}; }
+      else {
+        document.querySelectorAll('#v273-tabs button').forEach(function(x){
+          var on=(x===b);
+          x.classList.toggle('bg-indigo-600',on); x.classList.toggle('bg-white',!on);
+        });
+      }
+      clearInterval(iv);
+    }
+    if(++n>60) clearInterval(iv);
+  },200);
+  if(KEY==='agenda'){
+    var t2=0, iv2=setInterval(function(){
+      var f=window.v289AbrirCalendario||window.abrirCalendario;
+      if(f && ++t2>6){ clearInterval(iv2); try{f()}catch(e){} }
+      if(t2>40) clearInterval(iv2);
+    },300);
+  }
+})();
+</script>
+</body>
+</html>
