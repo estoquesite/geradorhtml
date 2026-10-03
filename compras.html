@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Roteiro Europa - Mariana — Compras</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+
+    <!-- Melhoria Global de Suavidade e Efeito de Toque nos Botões -->
+    <style>
+        button, a, label, select, input {
+            -webkit-tap-highlight-color: transparent;
+        }
+        button:active, a:active {
+            transform: scale(0.97);
+        }
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+<!--GERADOR-APP-->
+<meta name="theme-color" content="#4c1d95">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Roteiro">
+<link rel="icon" type="image/png" href="icone.png">
+<link rel="apple-touch-icon" href="icone.png">
+<script src="nucleo/nucleo-icone.js"></script>
+<!--/GERADOR-APP-->
+<script>try{localStorage.setItem('tab_ativa_v269','compras')}catch(e){}</script>
+</head>
+<body class="bg-slate-100 text-slate-800 min-h-screen pb-32 select-none transition-colors duration-200">
+
+
+    <!-- CONTAINER DE NOTIFICAÇÕES TOAST MODERNAS FLUTUANTES -->
+    <div id="toast-container" class="fixed top-4 right-4 z-[999] flex flex-col gap-2 pointer-events-none"></div>
+
+
+    <!-- TELA DE BLOQUEIO / SEGURANÇA (SENHA 1510 & BIOMETRIA NATIVA) -->
+    <div id="tela-bloqueio" class="fixed inset-0 z-[100] bg-slate-900/90 flex items-center justify-center p-4 backdrop-blur-md hidden">
+        <div class="bg-white p-6 sm:p-8 rounded-3xl shadow-2xl max-w-sm w-full space-y-4 text-center text-xs border border-slate-100">
+            <div class="w-14 h-14 bg-indigo-50 text-indigo-600 rounded-2xl mx-auto flex items-center justify-center text-2xl font-black shadow-inner border border-indigo-100">🔒</div>
+            <div>
+                <h2 class="text-sm font-black text-slate-900">Área Protegida</h2>
+                <p class="text-slate-500 mt-0.5 text-[11px]">Insira a sua senha PIN ou utilize a biometria/digital.</p>
+            </div>
+            <div class="space-y-2.5">
+                <input type="password" id="input-pin" maxlength="6" class="w-full p-3 bg-slate-50 border border-slate-300 rounded-xl text-center text-base font-black tracking-widest outline-none text-slate-900 focus:border-indigo-600 focus:ring-2 focus:ring-indigo-100 transition" placeholder="••••" onkeypress="if(event.key==='Enter')desbloquearComPin()">
+                <button onclick="desbloquearComPin()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-xl transition shadow-md shadow-indigo-600/20 text-xs active:scale-95">
+                    🔓 Desbloquear com Senha
+                </button>
+                <button onclick="desbloquearComBiometria()" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-3 rounded-xl transition border border-slate-300/80 text-xs flex items-center justify-center gap-1.5 active:scale-95">
+                    <span>👆</span> Entrar com Digital / FaceID
+                </button>
+            </div>
+            <div id="erro-pin" class="text-red-500 font-bold text-[11px] hidden">Senha incorreta (Padrão: 1510).</div>
+        </div>
+    </div>
+
+
+    <!-- CABEÇALHO SUPERIOR COMPACTO COM TRADUTOR E ATUALIZAR -->
+    <header class="bg-slate-900 text-white px-3 py-2 shadow-md border-b border-slate-800 text-xs flex justify-between items-center z-50 relative gap-1 flex-wrap">
+        <span class="font-bold tracking-wide flex items-center gap-1.5">
+            <span>🚄</span> Roteiro Europa - Mariana
+        </span>
+        <div class="flex items-center gap-1.5 flex-wrap">
+            <a href="https://translate.google.com/?hl=pt&sl=auto&tl=pt&op=images" target="_blank" class="bg-indigo-600 hover:bg-indigo-700 text-white px-2.5 py-1.5 rounded-lg font-bold text-[10px] transition shadow-xs flex items-center gap-1 active:scale-95" title="Google Tradutor & Câmera">🌐 Tradutor</a>
+            <button onclick="window.location.reload()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 hover:text-white px-2.5 py-1.5 rounded-lg font-bold text-[10px] transition shadow-xs border border-slate-700 active:scale-95" title="Atualizar Página">🔄</button>
+            <button onclick="exportarPdfPrint()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-2.5 py-1.5 rounded-lg font-bold text-[10px] transition shadow-xs active:scale-95" title="Imprimir Tudo">🖨️</button>
+            <span class="bg-indigo-950/80 text-indigo-200 border border-indigo-800/50 px-2 py-0.5 rounded-md font-mono font-bold text-[9px]">v289.1 (Pro)</span>
+        </div>
+    </header>
+
+
+    <!-- CONTEÚDO PRINCIPAL -->
+    <div class="max-w-4xl mx-auto p-3 sm:p-6 space-y-4 pt-4">
+
+
+        <!-- BARRA INTEGRADA DE RELÓGIOS COM CORES NEON (COMPACTA E REORDENÁVEL) -->
+        <div class="bg-gradient-to-r from-indigo-950 via-slate-900 to-indigo-900 text-white p-2 sm:p-2.5 rounded-2xl shadow-md border border-indigo-800/40 flex items-center justify-between gap-1.5">
+            <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar flex-1 py-0.5 px-0.5" id="barClockItems">
+                <!-- Relógios entram aqui automaticamente com as cores neon e cabem na tela -->
+            </div>
+            <button onclick="toggleClockConfig()" class="bg-white/10 hover:bg-white/20 text-white w-7 h-7 sm:w-8 sm:h-8 rounded-xl flex items-center justify-center shrink-0 border border-white/20 transition active:scale-95 text-xs" title="Configurar Cidades e Cores">⚙️</button>
+        </div>
+
+
+        <!-- MODAL DE CONFIGURAÇÃO DOS RELÓGIOS & CORES -->
+        <div id="barClockModal" class="fixed inset-0 z-[300] bg-slate-900/70 backdrop-blur-sm hidden flex items-center justify-center p-4">
+            <div class="bg-white p-5 rounded-3xl shadow-2xl max-w-sm w-full space-y-3.5 text-xs border border-slate-200">
+                <div class="flex justify-between items-center border-b pb-2">
+                    <h3 class="font-black text-xs text-slate-900 flex items-center gap-1.5"><span>⚙️</span> Cidades, Fusos & Ordem</h3>
+                    <button onclick="toggleClockConfig()" class="text-slate-400 hover:text-slate-600 font-bold text-sm p-1 rounded-lg">✕</button>
+                </div>
+                <div class="bg-indigo-50 text-indigo-900 p-2 rounded-xl text-[10px] font-bold">
+                    💡 Dica: Toque em <b>Fixar no Topo (📌)</b> ou dê um clique direto no relógio da barra para colocá-lo como seu país atual!
+                </div>
+                <div id="barClockForm" class="space-y-2.5 max-h-[55vh] overflow-y-auto pr-1"></div>
+                <div class="flex gap-2 pt-2 border-t border-slate-100">
+                    <button onclick="saveClockConfig()" class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white py-2.5 rounded-xl font-bold text-xs shadow-xs active:scale-95 transition">Salvar</button>
+                    <button onclick="toggleClockConfig()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2.5 rounded-xl text-xs font-bold border border-slate-300 active:scale-95 transition">Cancelar</button>
+                </div>
+            </div>
+        </div>
+
+
+        <script>
+            (function() {
+                const coresNeon = [
+                    { nome: "Verde Neon", hex: "#00ff66" },
+                    { nome: "Ciano Neon", hex: "#00ffff" },
+                    { nome: "Rosa Neon", hex: "#ff007f" },
+                    { nome: "Amarelo Neon", hex: "#ccff00" },
+                    { nome: "Roxo Elétrico", hex: "#a855f7" },
+                    { nome: "Laranja Neon", hex: "#ff5500" },
+                    { nome: "Branco", hex: "#ffffff" }
+                ];
+
+
+                const defaultClocks = [
+                    { name: "Zurique", tz: "Europe/Zurich", color: "#00ff66" },
+                    { name: "França", tz: "Europe/Paris", color: "#00ffff" },
+                    { name: "Alemanha", tz: "Europe/Berlin", color: "#ff007f" },
+                    { name: "Brasil", tz: "America/Sao_Paulo", color: "#ccff00" }
+                ];
+
+
+                const timezoneOptions = [
+                    { label: "Suíça / Zurique (CET)", tz: "Europe/Zurich" },
+                    { label: "França / Paris (CET)", tz: "Europe/Paris" },
+                    { label: "Alemanha / Freiburg (CET)", tz: "Europe/Berlin" },
+                    { label: "Brasil / Rio - SP (UTC-3)", tz: "America/Sao_Paulo" },
+                    { label: "Reino Unido / Londres (UTC+0)", tz: "Europe/London" },
+                    { label: "EUA / Nova York (UTC-5)", tz: "America/New_York" }
+                ];
+
+
+                let userClocks = JSON.parse(localStorage.getItem("app_travel_clocks")) || defaultClocks;
+
+
+                function updateClocks() {
+                    const container = document.getElementById("barClockItems");
+                    if (!container) return;
+                    container.innerHTML = "";
+                    const now = new Date();
+
+
+                    userClocks.forEach((c, idx) => {
+                        if (!c.name.trim()) return;
+                        const time = new Intl.DateTimeFormat("pt-BR", {
+                            timeZone: c.tz,
+                            hour: "2-digit",
+                            minute: "2-digit"
+                        }).format(now);
+
+
+                        const corAtual = c.color || "#00ff66";
+                        const ehPrimeiro = idx === 0;
+
+
+                        const pill = document.createElement("button");
+                        pill.type = "button";
+                        pill.onclick = () => window.moverPaisParaPrimeiro(idx);
+                        pill.className = "bg-white/10 px-2 py-1 rounded-xl flex items-center gap-1.5 shrink-0 shadow-2xs transition-all active:scale-95";
+                        pill.style.border = `1px solid ${corAtual}66`;
+                        pill.title = "Toque para destacar como país onde você está";
+
+
+                        pill.innerHTML = `
+                            <span class="text-[9px] uppercase font-black tracking-wide flex items-center gap-1" style="color: ${corAtual}; text-shadow: 0 0 6px ${corAtual}66;">
+                                <span style="font-size: 7px;">${ehPrimeiro ? '📍' : '●'}</span>${c.name}
+                            </span>
+                            <span class="text-[11px] font-black text-white tracking-tight">${time}</span>
+                        `;
+                        container.appendChild(pill);
+                    });
+                }
+
+
+                window.moverPaisParaPrimeiro = function(index) {
+                    if (index === 0) return;
+                    const item = userClocks.splice(index, 1)[0];
+                    userClocks.unshift(item);
+                    localStorage.setItem("app_travel_clocks", JSON.stringify(userClocks));
+                    updateClocks();
+                    if (window.mostrarToast) {
+                        window.mostrarToast(`📍 ${item.name} definido como país atual!`, 'sucesso');
+                    }
+                };
+
+
+                window.toggleClockConfig = function() {
+                    const modal = document.getElementById("barClockModal");
+                    if (!modal) return;
+                    const isVisible = !modal.classList.contains("hidden");
+                    if (isVisible) {
+                        modal.classList.add("hidden");
+                    } else {
+                        buildForm();
+                        modal.classList.remove("hidden");
+                    }
+                };
+
+
+                function buildForm() {
+                    const form = document.getElementById("barClockForm");
+                    form.innerHTML = "";
+                    userClocks.forEach((c, i) => {
+                        const row = document.createElement("div");
+                        row.className = "bg-slate-50 p-2.5 rounded-xl border border-slate-200 space-y-1.5";
+                        const optionsHtml = timezoneOptions.map(opt => 
+                            `<option value="${opt.tz}" ${opt.tz === c.tz ? 'selected' : ''}>${opt.label}</option>`
+                        ).join("");
+
+
+                        const corAtual = c.color || "#00ff66";
+
+
+                        let paletaHtml = '<div class="flex items-center gap-1 pt-0.5 flex-wrap"><span class="text-[10px] font-bold text-slate-500">Cor:</span>';
+                        coresNeon.forEach(cor => {
+                            const ativo = corAtual.toLowerCase() === cor.hex.toLowerCase() ? 'ring-2 ring-slate-900 scale-110 shadow-xs' : 'opacity-80 hover:opacity-100';
+                            paletaHtml += `<button type="button" onclick="selecionarCorRelogio(${i}, '${cor.hex}')" style="background-color: ${cor.hex};" class="w-4 h-4 rounded-full border border-black/20 transition active:scale-90 ${ativo}" title="${cor.nome}"></button>`;
+                        });
+                        paletaHtml += `<input type="color" value="${corAtual}" onchange="selecionarCorRelogio(${i}, this.value)" class="w-5 h-5 rounded cursor-pointer border-0 p-0 bg-transparent ml-1" title="Cor livre"></div>`;
+
+
+                        row.innerHTML = `
+                            <div class="flex justify-between items-center">
+                                <label class="text-[10px] font-bold text-slate-500 uppercase block">Relógio ${i + 1}</label>
+                                <button type="button" onclick="moverPaisParaPrimeiro(${i}); buildForm();" class="text-[10px] font-bold text-indigo-600 hover:text-indigo-800 flex items-center gap-0.5">
+                                    ${i === 0 ? '📍 País Atual' : '📌 Pôr em 1º'}
+                                </button>
+                            </div>
+                            <div class="flex gap-1.5">
+                                <input type="text" id="clk-name-${i}" value="${c.name}" class="w-1/2 p-2 bg-white border border-slate-300 rounded-xl font-bold text-xs outline-none focus:border-indigo-600" placeholder="Nome">
+                                <select id="clk-tz-${i}" class="w-1/2 p-2 bg-white border border-slate-300 rounded-xl font-bold text-xs outline-none">${optionsHtml}</select>
+                            </div>
+                            <input type="hidden" id="clk-color-${i}" value="${corAtual}">
+                            ${paletaHtml}
+                        `;
+                        form.appendChild(row);
+                    });
+                }
+
+
+                window.selecionarCorRelogio = function(index, hex) {
+                    const inputColor = document.getElementById(`clk-color-${index}`);
+                    if (inputColor) inputColor.value = hex;
+                    userClocks[index].color = hex;
+                    buildForm();
+                };
+
+
+                window.saveClockConfig = function() {
+                    userClocks.forEach((c, i) => {
+                        const nameEl = document.getElementById(`clk-name-${i}`);
+                        const tzEl = document.getElementById(`clk-tz-${i}`);
+                        const colorEl = document.getElementById(`clk-color-${i}`);
+                        if (nameEl) c.name = nameEl.value;
+                        if (tzEl) c.tz = tzEl.value;
+                        if (colorEl) c.color = colorEl.value;
+                    });
+                    localStorage.setItem("app_travel_clocks", JSON.stringify(userClocks));
+                    window.toggleClockConfig();
+                    updateClocks();
+                };
+
+
+                setInterval(updateClocks, 1000);
+                setTimeout(updateClocks, 50);
+            })();
+        </script>
+        <!-- SEPARADORES (TABS) - OS 5 CARTÕES PRINCIPAIS ALINHADOS -->
+        <div class="grid grid-cols-5 gap-1.5 bg-slate-200/90 p-1.5 rounded-2xl shadow-inner text-center border border-slate-300/50">
+            <button onclick="mudarTab('leitura')" id="tab-btn-leitura" class="py-2.5 px-1 rounded-xl bg-indigo-600 text-white font-extrabold shadow-sm transition text-[11px] flex flex-col items-center gap-0.5 active:scale-95"><span>✈️</span><span class="text-[8px] uppercase tracking-wider">Roteiro</span></button>
+            <button onclick="mudarTab('itinerario')" id="tab-btn-itinerario" class="py-2.5 px-1 rounded-xl bg-white text-slate-700 font-extrabold shadow-xs transition text-[11px] flex flex-col items-center gap-0.5 hover:bg-slate-50 active:scale-95"><span>📅</span><span class="text-[8px] uppercase tracking-wider">Editar</span></button>
+            <button onclick="mudarTab('utilidades')" id="tab-btn-utilidades" class="py-2.5 px-1 rounded-xl bg-white text-slate-700 font-extrabold shadow-xs transition text-[11px] flex flex-col items-center gap-0.5 hover:bg-slate-50 active:scale-95"><span>📋</span><span class="text-[8px] uppercase tracking-wider">Hub</span></button>
+            <button onclick="mudarTab('orcamento')" id="tab-btn-orcamento" class="py-2.5 px-1 rounded-xl bg-white text-slate-700 font-extrabold shadow-xs transition text-[11px] flex flex-col items-center gap-0.5 hover:bg-slate-50 active:scale-95"><span>💰</span><span class="text-[8px] uppercase tracking-wider">Orç.</span></button>
+            <button onclick="mudarTab('compras')" id="tab-btn-compras" class="py-2.5 px-1 rounded-xl bg-white text-slate-700 font-extrabold shadow-xs transition text-[11px] flex flex-col items-center gap-0.5 hover:bg-slate-50 active:scale-95"><span>🛍️</span><span class="text-[8px] uppercase tracking-wider">Compras</span></button>
+        </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        <!-- TAB 5: COMPRAS COM PARTILHA NO WHATSAPP -->
+        <div id="tab-compras" class="space-y-3 hidden">
+            <div class="bg-white p-3.5 sm:p-5 rounded-2xl shadow-xs border border-slate-200 space-y-4 text-xs" id="compras-conteudo-main">
+                <div class="flex justify-between items-center border-b pb-3 flex-wrap gap-2">
+                    <div>
+                        <h2 class="text-xs font-extrabold uppercase text-slate-800 tracking-wider">🛍️ Lista de Compras</h2>
+                        <p class="text-[11px] text-slate-500 font-semibold">Preencha a caixa abaixo e clique em OK para adicionar à lista</p>
+                    </div>
+                    <div class="flex items-center gap-1.5">
+                        <button type="button" onclick="compartilharComprasWhatsApp()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-xl font-bold text-xs transition shadow-xs flex items-center gap-1.5 active:scale-95" title="Partilhar lista no WhatsApp">
+                            <span>📲</span> WhatsApp
+                        </button>
+                        <button type="button" onclick="imprimirSeccaoCustom('Lista de Compras', document.getElementById('tab-compras').innerHTML)" class="bg-slate-700 hover:bg-slate-800 text-white px-3 py-1.5 rounded-xl font-bold text-xs transition shadow-xs active:scale-95">🖨️ PDF</button>
+                    </div>
+                </div>
+
+
+                <!-- RESUMO GERAL DAS COMPRAS NO TOPO -->
+                <div id="compras-resumo-topo" class="grid grid-cols-2 gap-2"></div>
+
+
+                <!-- CARTÕES DE FILTRAGEM COLORIDOS POR TÍTULO -->
+                <div id="compras-filtros-titulo" class="bg-slate-200/80 p-2 rounded-2xl overflow-x-auto flex gap-1.5 text-xs items-center no-scrollbar shadow-inner border border-slate-300/40"></div>
+
+
+                <!-- CAIXA ÚNICA FIXA PARA DIGITAÇÃO -->
+                <div class="p-4 rounded-2xl border border-indigo-200 bg-indigo-50/40 space-y-3 shadow-xs">
+                    <span class="font-black text-indigo-950 uppercase text-[10px] block">➕ ADICIONAR NOVO ITEM</span>
+                    <div class="flex items-center gap-1.5 min-w-0">
+                        <input type="text" id="input-nova-desc" class="flex-1 min-w-0 p-2 bg-white border border-slate-300 rounded-xl font-bold text-xs outline-none focus:border-indigo-600 focus:ring-1 focus:ring-indigo-600" placeholder="Nome do item (ex: Iogurte)...">
+                        <select id="input-novo-pub" class="p-2 bg-white border border-slate-300 rounded-xl font-bold text-xs shrink-0 outline-none">
+                            <option value="Mariana">👤 Mariana</option>
+                            <option value="Sophia">👧 Sophia</option>
+                            <option value="Glória">👵 Glória</option>
+                            <option value="Outros">📦 Outros</option>
+                        </select>
+                    </div>
+                    <div class="flex items-center gap-1.5 min-w-0">
+                        <input type="url" id="input-novo-link" class="flex-1 min-w-0 p-2 bg-white border border-slate-300 rounded-xl font-medium text-xs outline-none focus:border-indigo-600 focus:ring-1 focus:ring-indigo-600" placeholder="🔗 Link da compra (opcional)...">
+                    </div>
+                    <div class="flex items-center justify-between gap-2 flex-wrap border-t border-slate-200/80 pt-2.5">
+                        <div class="flex items-center gap-1.5">
+                            <span class="text-slate-600 font-bold">Valor:</span>
+                            <input type="text" id="input-novo-val" class="w-20 p-2 bg-white border border-slate-300 rounded-xl font-black text-right text-xs outline-none" placeholder="0">
+                            <select id="input-nova-moeda" class="p-2 bg-white border border-slate-300 rounded-xl font-bold text-xs outline-none">
+                                <option value="EUR">€ (EUR)</option>
+                                <option value="CHF">CHF</option>
+                                <option value="BRL">R$ (BRL)</option>
+                            </select>
+                        </div>
+                        <button type="button" onclick="adicionarItemUnicoForm()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-xl font-bold text-xs transition shadow-sm shadow-emerald-600/20 active:scale-95">✓ OK (Adicionar Linha)</button>
+                    </div>
+                </div>
+
+
+                <!-- LISTA DE ITENS REGISTADOS + ORDENAÇÃO -->
+                <div class="space-y-2 pt-2">
+                    <div class="flex justify-between items-center border-b border-slate-200 pb-2 flex-wrap gap-2">
+                        <span class="font-black text-slate-700 uppercase text-[10px]">📋 ITENS REGISTADOS</span>
+                        <div class="flex items-center gap-1">
+                            <span class="text-[10px] font-bold text-slate-500">Ordenar por:</span>
+                            <select id="select-ordenacao-compras" onchange="mudarOrdenacaoCompras(this.value)" class="p-1.5 bg-slate-100 border border-slate-300 rounded-xl font-bold text-[11px] outline-none text-slate-700 shadow-2xs">
+                                <option value="alfabetica">🔤 Alfabética</option>
+                                <option value="menor_valor">📉 Menor Valor</option>
+                                <option value="maior_valor">📈 Maior Valor</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div id="compras-lista-itens" class="space-y-2.5 pt-1"></div>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+
+
+    <!-- MODAL DO LEITOR DE PDF / FOTOS COM ZOOM -->
+    <div id="modal-leitor-pdf" class="fixed inset-0 z-[200] bg-slate-900/90 backdrop-blur-sm hidden flex flex-col p-2 sm:p-6">
+        <div class="bg-white rounded-3xl shadow-2xl flex-1 flex flex-col overflow-hidden border border-slate-300 max-w-4xl mx-auto w-full">
+            <div class="bg-slate-900 text-white px-4 py-3 flex justify-between items-center text-xs">
+                <span id="pdf-titulo-modal" class="font-bold truncate">📄 Visualizador</span>
+                <div class="flex items-center gap-2">
+                    <a id="pdf-btn-download" href="#" download="ficheiro" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-xl font-bold text-xs transition shadow-xs">📥 Baixar</a>
+                    <button onclick="fecharLeitorPdf()" class="bg-slate-800 hover:bg-slate-700 text-white font-bold px-3 py-1.5 rounded-xl text-xs transition active:scale-95">✕ Fechar</button>
+                </div>
+            </div>
+            <div id="visualizador-conteudo-area" class="flex-1 bg-slate-100 p-2 flex items-center justify-center overflow-auto">
+                <iframe id="pdf-iframe-view" class="w-full h-full rounded-2xl border bg-white shadow-inner hidden" src=""></iframe>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- MODAL DO CLIMA AO VIVO (OPEN-METEO) -->
+    <div id="modal-clima" class="fixed inset-0 z-[200] bg-slate-900/70 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="bg-white p-6 rounded-3xl shadow-2xl max-w-sm w-full space-y-3.5 text-xs border border-slate-200 text-center">
+            <div class="flex justify-between items-center border-b pb-2">
+                <h3 class="font-black text-xs text-slate-900 flex items-center gap-1.5"><span>🌤️</span> <span id="clima-cidade-nome">Clima em Tempo Real</span></h3>
+                <button onclick="fecharClimaModal()" class="text-slate-400 hover:text-slate-600 font-bold text-sm p-1 rounded-lg">✕</button>
+            </div>
+            <div id="clima-conteudo" class="space-y-3 py-2">
+                <div class="text-3xl animate-bounce">⏳</div>
+                <p class="font-bold text-slate-600">A consultar satélite meteorológico ao vivo...</p>
+            </div>
+            <button onclick="fecharClimaModal()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-2.5 rounded-xl font-bold text-xs shadow-md shadow-indigo-600/20 active:scale-95 transition">Fechar</button>
+        </div>
+    </div>
+
+
+    <!-- MODAL DE EDITAR TAREFA -->
+    <div id="modal-tarefa" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="bg-white p-5 rounded-3xl shadow-2xl max-w-sm w-full space-y-3 text-xs border border-slate-200">
+            <div class="flex justify-between items-center border-b pb-2">
+                <h3 class="font-bold text-xs text-slate-900">✏️ Editar Tarefa</h3>
+                <button onclick="fecharModalTarefa()" class="text-slate-400 hover:text-slate-600 font-bold text-sm p-1 rounded-lg">✕</button>
+            </div>
+            <input type="hidden" id="tarefa-edit-id">
+            <div>
+                <label class="block font-semibold text-slate-600 mb-1 text-xs">Descrição da Tarefa</label>
+                <textarea id="tarefa-edit-texto" rows="3" class="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-xl outline-none text-slate-800 font-bold text-xs focus:border-indigo-600" placeholder="Descreva a tarefa..."></textarea>
+            </div>
+            <div class="flex gap-2 pt-1">
+                <button onclick="salvarTarefaModal()" class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white py-2.5 rounded-xl font-bold text-xs shadow-xs active:scale-95 transition">Guardar</button>
+                <button onclick="fecharModalTarefa()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2.5 rounded-xl text-xs font-bold border border-slate-300 active:scale-95 transition">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- BARRA DE FERRAMENTAS FIXA MODERNA COM BACKUP E RESTAURAÇÃO -->
+    <nav class="fixed bottom-0 left-0 right-0 z-50 bg-slate-900/95 backdrop-blur-md text-white px-3 py-2.5 shadow-2xl border-t border-slate-800 text-xs flex items-center justify-around gap-1 overflow-x-auto no-scrollbar max-w-4xl mx-auto rounded-t-2xl">
+        <span class="bg-indigo-600/30 text-indigo-300 border border-indigo-500/30 px-2 py-1 rounded-lg font-mono font-bold text-[9px] shrink-0">v289.1</span>
+        
+        <button onclick="abrirGeminiModal()" class="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white px-3 py-1.5 rounded-xl font-bold transition shrink-0 flex items-center gap-1.5 text-xs shadow-sm shadow-purple-900/30 active:scale-95">
+            <span>✨</span> Gemini
+        </button>
+        
+        <button onclick="ativarMicrofone()" class="bg-purple-600/90 hover:bg-purple-600 text-white px-3 py-1.5 rounded-xl font-bold transition shrink-0 flex items-center gap-1 text-xs shadow-xs active:scale-95">
+            <span>🎤</span> Ditar
+        </button>
+        
+        <button onclick="baixarBackupJson()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 hover:text-white border border-slate-700 px-2.5 py-1.5 rounded-xl font-bold transition shrink-0 flex items-center gap-1 text-xs shadow-xs active:scale-95" title="Baixar Backup do Roteiro">
+            <span>📥</span> Backup
+        </button>
+        
+        <label class="bg-slate-800 hover:bg-slate-700 text-slate-200 hover:text-white border border-slate-700 px-2.5 py-1.5 rounded-xl font-bold transition shrink-0 flex items-center gap-1 text-xs shadow-xs cursor-pointer active:scale-95" title="Restaurar Backup">
+            <span>📤</span> Restaurar
+            <input type="file" accept=".json" onchange="restaurarBackupJson(event)" class="hidden">
+        </label>
+        
+        <button onclick="alternarTema()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 hover:text-white border border-slate-700 px-2.5 py-1.5 rounded-xl font-bold transition shrink-0 flex items-center gap-1 text-xs active:scale-95">
+            <span>🌓</span> Tema
+        </button>
+        
+        <button onclick="alterarSenhaPin()" class="bg-slate-800 hover:bg-slate-700 text-amber-300 border border-slate-700 px-2.5 py-1.5 rounded-xl font-bold transition shrink-0 flex items-center gap-1 text-xs active:scale-95">
+            <span>🔑</span> Senha
+        </button>
+        
+        <button onclick="instalarApp()" class="bg-emerald-600/90 hover:bg-emerald-600 text-white px-2.5 py-1.5 rounded-xl font-bold transition shrink-0 flex items-center gap-1 text-xs shadow-xs active:scale-95">
+            <span>📱</span> App
+        </button>
+    </nav>
+
+
+    <!-- MODAL DA GEMINI IA -->
+    <div id="modal-gemini" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="bg-white p-4 rounded-3xl shadow-2xl max-w-sm w-full space-y-3 text-xs flex flex-col h-[400px] border border-slate-200">
+            <div class="flex justify-between items-center border-b pb-2">
+                <h3 class="font-bold text-xs text-slate-900 flex items-center gap-1"><span>✨</span> Assistente Gemini IA</h3>
+                <button onclick="fecharGeminiModal()" class="text-slate-400 hover:text-slate-600 font-bold text-sm p-1 rounded-lg">✕</button>
+            </div>
+            <div id="gemini-chat-log" class="flex-1 overflow-y-auto space-y-2 p-2.5 bg-slate-50 rounded-2xl border text-xs">
+                <div class="bg-indigo-50 text-indigo-900 p-2.5 rounded-xl font-medium">Olá, Mariana! Podes pedir-me para anotar algo escrevendo "anotar [texto]" ou consultar o saldo.</div>
+            </div>
+            <div class="flex gap-2 pt-1">
+                <input type="text" id="gemini-input" class="flex-1 p-2.5 bg-slate-100 border border-slate-300 rounded-xl outline-none text-slate-800 font-medium text-xs focus:border-indigo-600" placeholder="Ex: anotar comprar bilhete ou saldo..." onkeypress="if(event.key==='Enter')enviarMensagemGemini()">
+                <button onclick="enviarMensagemGemini()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2.5 rounded-xl font-bold text-xs shadow-xs active:scale-95 transition">Enviar</button>
+            </div>
+        </div>
+    </div>
+
+
+<script src="nucleo/nucleo-00-base.js"></script>
+<script>
+        function obterCorPorTituloCompra(titulo) {
+            if (!titulo) return '#ff007f';
+            let t = titulo.trim().toLowerCase().replace(/[^a-z0-9]/g, '');
+            let paletaNeon = [
+                "#ff007f", "#00ff66", "#00ffff", "#ccff00", "#ff3300", 
+                "#a855f7", "#3b82f6", "#f59e0b", "#ec4899", "#10b981", 
+                "#6366f1", "#06b6d4"
+            ];
+            let hash = 0;
+            for (let i = 0; i < t.length; i++) {
+                hash = t.charCodeAt(i) + ((hash << 5) - hash);
+            }
+            return paletaNeon[Math.abs(hash) % paletaNeon.length];
+        }
+
+        function compartilharComprasWhatsApp() {
+            if(!dadosApp.compras || dadosApp.compras.length === 0) {
+                mostrarToast("Nenhum item na lista de compras para compartilhar.", "info");
+                return;
+            }
+            let texto = "🛍️ *Lista de Compras - Viagem Europa*\n\n";
+            dadosApp.compras.forEach(it => {
+                let status = it.concluido ? "✅" : "⏳";
+                let pub = it.publico || 'Mariana';
+                let val = it.valor > 0 ? `${it.valor} ${it.moeda}` : 'Preço a verificar';
+                texto += `${status} *${it.descricao}* (${pub}) - ${val}\n`;
+                if(it.link) texto += `   Link: ${it.link}\n`;
+            });
+
+
+            if (navigator.share) {
+                navigator.share({
+                    title: 'Lista de Compras Europa',
+                    text: texto
+                }).catch(() => {});
+            } else {
+                let urlWhats = "https://api.whatsapp.com/send?text=" + encodeURIComponent(texto);
+                window.open(urlWhats, '_blank');
+            }
+        }
+
+        function filtrarComprasTitulo(titulo) {
+            comprasFiltroTitulo = titulo;
+            renderizarComprasTab();
+        }
+
+        function mudarOrdenacaoCompras(val) {
+            registarEstadoAnterior();
+            comprasOrdenacao = val;
+            dadosApp.comprasOrdenacao = val;
+            salvarStorage();
+            renderizarComprasTab();
+        }
+
+        function adicionarItemUnicoForm() {
+            let descInput = document.getElementById('input-nova-desc');
+            let pubInput = document.getElementById('input-novo-pub');
+            let linkInput = document.getElementById('input-novo-link');
+            let valInput = document.getElementById('input-novo-val');
+            let moedaInput = document.getElementById('input-nova-moeda');
+
+
+            let desc = descInput ? descInput.value.trim() : "";
+            if (!desc) {
+                mostrarToast("Digite o nome do item.", "erro");
+                if(descInput) descInput.focus();
+                return;
+            }
+
+
+            registarEstadoAnterior();
+            if(!Array.isArray(dadosApp.compras)) dadosApp.compras = [];
+
+
+            dadosApp.compras.unshift({
+                id: 'item_' + Date.now(),
+                descricao: desc,
+                publico: pubInput ? pubInput.value : "Mariana",
+                link: linkInput ? linkInput.value.trim() : "",
+                valor: valInput ? limparNumero(valInput.value) : 0,
+                moeda: moedaInput ? moedaInput.value : "EUR",
+                concluido: false,
+                editando: false
+            });
+
+
+            if(descInput) descInput.value = "";
+            if(linkInput) linkInput.value = "";
+            if(valInput) valInput.value = "";
+
+
+            salvarStorage();
+            setTimeout(atualizarTudo, 50);
+            mostrarToast("Item adicionado com sucesso!", "sucesso");
+        }
+
+        function salvarEFecharItemDireto(itemId) {
+            registarEstadoAnterior();
+            let it = dadosApp.compras.find(i => String(i.id) === String(itemId));
+            if(it) {
+                let descInput = document.getElementById('desc-' + itemId);
+                let pubInput = document.getElementById('pub-' + itemId);
+                let linkInput = document.getElementById('link-' + itemId);
+                let valInput = document.getElementById('val-' + itemId);
+                let moedaInput = document.getElementById('moeda-' + itemId);
+
+
+                if(descInput) it.descricao = descInput.value ? descInput.value.trim() : "Item";
+                if(pubInput) it.publico = pubInput.value;
+                if(linkInput) it.link = linkInput.value ? linkInput.value.trim() : "";
+                if(valInput) it.valor = valInput.value !== "" ? limparNumero(valInput.value) : 0;
+                if(moedaInput) it.moeda = moedaInput.value;
+                
+                it.editando = false;
+
+
+                salvarStorage();
+                setTimeout(atualizarTudo, 50);
+                mostrarToast("Item salvo com sucesso!", "sucesso");
+            }
+        }
+
+        function abrirEdicaoItemDireto(itemId) {
+            registarEstadoAnterior();
+            let it = dadosApp.compras.find(i => String(i.id) === String(itemId));
+            if(it) {
+                it.editando = true;
+                salvarStorage();
+                setTimeout(atualizarTudo, 50);
+            }
+        }
+
+        function alternarConcluidoItemDireto(itemId) {
+            registarEstadoAnterior();
+            let it = dadosApp.compras.find(i => String(i.id) === String(itemId));
+            if(it) {
+                it.concluido = !it.concluido;
+                salvarStorage();
+                setTimeout(atualizarTudo, 50);
+            }
+        }
+
+        function apagarItemDireto(itemId) {
+            registarEstadoAnterior();
+            dadosApp.compras = dadosApp.compras.filter(i => String(i.id) !== String(itemId));
+            salvarStorage();
+            setTimeout(atualizarTudo, 50);
+            mostrarToast("Item excluído.", "info");
+        }
+</script>
+<script>
+/* funções de outras páginas viram "vazias" aqui, para o núcleo não dar erro */
+(function(n){n.forEach(function(f){if(typeof window[f]==="undefined")window[f]=function(){}})})(["abrirEdicaoConducaoOrcamento", "abrirModalTarefa", "adicionarBloco", "adicionarChat", "adicionarConducaoVazia", "adicionarContato", "adicionarDespesa", "adicionarFotoExtraTrecho", "adicionarItemBloco", "adicionarItemChecklist", "adicionarNovoDestinoFiltro", "adicionarNovoStatusTarefa", "adicionarTarefa", "adicionarTrecho", "adicionarVoo", "adicionarVoucher", "alternarBloqueio", "alternarItemChecklist", "anexarPdfVoo", "anexarPdfVoucher", "apagarBloco", "apagarChat", "apagarConducaoOrcamento", "apagarContato", "apagarDespesa", "apagarItemChecklist", "apagarTarefa", "apagarVoo", "apagarVoucher", "atualizarCampo", "atualizarChat", "atualizarConducaoItem", "atualizarContagemRegressiva", "atualizarContatoNome", "atualizarContatoNumero", "atualizarCorBlocoLocal", "atualizarDataInicio", "atualizarItemChecklistText", "atualizarOrcamentoDescricao", "atualizarTarefaTexto", "atualizarTextoItemBloco", "atualizarTrecho", "atualizarTudo", "atualizarVoo", "atualizarVoucherTitulo", "buscarCotacaoAoVivo", "calcularConversaoRapida", "calcularDivisaoConta", "compartilharRoteiroWhatsApp", "fecharModalTarefa", "filtrarDestino", "filtrarTarefas", "filtrarUtilidade", "gerenciarDestinos", "gerenciarDestinosLocais", "gerenciarOrigens", "imprimirBlocoUnico", "iniciarArrastoHub", "lidarSelecaoDestino", "lidarSelecaoDestinoTarefa", "lidarSelecaoDestinoTrecho", "lidarSelecaoOrigemTrecho", "lidarSelecaoStatusTarefa", "moverBloco", "moverSecaoHub", "mudarOrcamentoSubTab", "mudarOrdenacaoBlocos", "mudarTab", "permitirDropHub", "registarEstadoAnterior", "removerConducaoItem", "removerFotoExtraTrecho", "removerItemBloco", "removerTrecho", "renderizarBlocos", "renderizarFiltrosTarefas", "renderizarModoLeitura", "renderizarOrcamentoTab", "salvarCotacao", "salvarDespesaValor", "salvarEdicaoConducaoOrcamento", "salvarSaldo", "salvarTarefaModal", "soltarHub", "v289AbrirCalendario", "v289AbrirMontagemDia", "v289AdicionarCampoParada", "v289CalHoje", "v289CalMudarMes", "v289ColarMapsClipboard", "v289ConfirmarEnviarRoteiro", "v289EditarEtapa", "v289ExcluirEtapa", "v289FecharCalendario", "v289FecharMontador", "v289InterpretarMapsUrl", "v289MoverEtapa", "v289RemoverFotoTemp", "v289ResetFormEtapa", "v289SalvarEtapaNoPercurso", "v289SelecionarTransporte", "v289SetTranspBtn", "v289TestarLinkMaps", "v289UploadFotoEtapa", "v289VoltarAoCalendario"]);
+</script>
+    <!-- ================= INÍCIO: BOTÃO E POP-UP DE RELÓGIOS ================= -->
+<!-- Botão redondo -->
+<button class="fab-relogio" onclick="togglePopupRelogio()" title="Abrir Relógios">
+  🕒
+</button>
+<!-- Pop-up -->
+<div class="popup-relogio" id="meuPopupRelogio">
+  <div class="popup-relogio-header">
+    <span>Relógios Mundiais</span>
+    <button onclick="togglePopupRelogio()">✕</button>
+  </div>
+  <!-- Carrega a sua página de relógios criada anteriormente -->
+  <iframe src="Relógio.html"></iframe>
+</div>
+<!-- ================= FIM: BOTÃO E POP-UP DE RELÓGIOS ================= -->
+<link rel="stylesheet" href="nucleo/nucleo-01-relogio.css">
+<script src="nucleo/nucleo-01-relogio.js"></script>
+<!-- ===== CAMADA v271: visual moderno em todas as telas, topo fixo, swipe, bloqueio novo, instalação ===== -->
+<meta name="theme-color" content="#1e1b4b">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<!-- ===== FIM DA CAMADA v271 ===== -->
+<link rel="stylesheet" href="nucleo/nucleo-02-v271-visual.css">
+<script src="nucleo/nucleo-02-v271-visual.js"></script>
+<!-- ===== CAMADA v272: visual delicado, pulsos, hub claro, orçamento turquesa, personalização ===== -->
+<!-- ===== FIM DA CAMADA v272 ===== -->
+<link rel="stylesheet" href="nucleo/nucleo-03-v272-visual.css">
+<script src="nucleo/nucleo-03-v272-visual.js"></script>
+<!-- ===== CAMADA v274: menu que aparece ao rolar, cores por destino, painel de cores por aba, letras legíveis =====
+     Substitui a v273. Use a ferramenta "Juntar" (ela remove a v273 sozinha) ou cole antes de </body> depois de apagar a v273. -->
+<!-- ===== FIM DA CAMADA v274 ===== -->
+<link rel="stylesheet" href="nucleo/nucleo-04-v274-menu-flutuante.css">
+<script src="nucleo/nucleo-04-v274-menu-flutuante.js"></script>
+<!-- ===== CAMADA v275: modo offline, sincronização com fusão, fotos/PDFs separados, login opcional ===== -->
+<!-- ===== FIM DA CAMADA v275 ===== -->
+<!--V276-->
+<script src="nucleo/nucleo-05-v275-offline-sync.js"></script>
+<!--/V276-->
+<link rel="stylesheet" href="nucleo/nucleo-06-v276-v282-listas.css">
+<script src="nucleo/nucleo-06-v276-v282-listas.js"></script>
+<!-- ===== CAMADA v283 ===== -->
+<!-- ===== FIM DA CAMADA v283 ===== -->
+<!--V284-->
+<link rel="stylesheet" href="nucleo/nucleo-07-v283-edicao.css">
+<script src="nucleo/nucleo-07-v283-edicao.js"></script>
+<!--/V284-->
+<!--V285-->
+<!--/V285-->
+<!--V286-->
+<!--/V286-->
+<!--V287-->
+<!--/V287-->
+<link rel="stylesheet" href="nucleo/nucleo-08-v284-v287-roteiro.css">
+<script src="nucleo/nucleo-08-v284-v287-roteiro.js"></script>
+<!-- ===== CAMADA v288: papel de parede interativo toque abre/fecha, cores da setinha e quadradinho, roteiro 1 linha com X à direita, montagem rápida do Maps ===== -->
+<!-- ===== FIM DA CAMADA v288 ===== -->
+<link rel="stylesheet" href="nucleo/nucleo-09-v288-montagem-maps.css">
+<script src="nucleo/nucleo-09-v288-montagem-maps.js"></script>
+<!--V290-->
+<!--/V290-->
+<link rel="stylesheet" href="nucleo/nucleo-11-v290-barra.css">
+<script src="nucleo/nucleo-11-v290-barra.js"></script>
+<script>
+/* NAVEGAÇÃO ENTRE PÁGINAS: os botões da barra de baixo abrem o arquivo de cada categoria */
+(function(){
+  var MINHA="compras", KEY="compras";
+  var ABA={leitura:'roteiro.html',itinerario:'editar.html',utilidades:'hub.html',orcamento:'orcamento.html',compras:'compras.html'};
+  var livre=false;
+  ['pointerdown','keydown','touchstart'].forEach(function(ev){document.addEventListener(ev,function(){livre=true},true)});
+  var orig=window.mudarTab;
+  window.mudarTab=function(t){
+    if(livre && ABA[t] && t!==MINHA){ location.href=ABA[t]; return; }
+    return orig.apply(this,arguments);
+  };
+  var n=0, iv=setInterval(function(){
+    var b=document.getElementById('v290-cal');
+    if(b){
+      if(KEY!=='agenda'){ b.onclick=function(){location.href='agenda.html'}; }
+      else {
+        document.querySelectorAll('#v273-tabs button').forEach(function(x){
+          var on=(x===b);
+          x.classList.toggle('bg-indigo-600',on); x.classList.toggle('bg-white',!on);
+        });
+      }
+      clearInterval(iv);
+    }
+    if(++n>60) clearInterval(iv);
+  },200);
+  if(KEY==='agenda'){
+    var t2=0, iv2=setInterval(function(){
+      var f=window.v289AbrirCalendario||window.abrirCalendario;
+      if(f && ++t2>6){ clearInterval(iv2); try{f()}catch(e){} }
+      if(t2>40) clearInterval(iv2);
+    },300);
+  }
+})();
+</script>
+</body>
+</html>
