@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Trip Hub - Agenda & Calendário</title>
+    <title>Trip Hub - Agenda & Rota Estilo Maps</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -32,313 +32,260 @@
         .soft-shadow-sm {
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
         }
+        .rota-tracejada {
+            border-left: 2px dashed #ff007f;
+            margin-left: 7px;
+            padding-left: 15px;
+        }
     </style>
 </head>
 <body class="bg-lightBg text-slate-800 min-h-screen pb-32 font-sans selection:bg-pink-100 selection:text-pink-900">
 
-    <!-- CONTEÚDO PRINCIPAL DA AGENDA -->
-    <main class="w-full max-w-4xl mx-auto px-4 pt-8">
-
-        <!-- TELA 1: CALENDÁRIO (Dezembro 2026 / Janeiro 2027) -->
-        <div id="view-calendario" class="bg-cardBg border border-pink-100 rounded-3xl p-6 soft-shadow space-y-6">
-            <div class="flex items-center justify-between border-b border-slate-100 pb-4">
-                <div>
-                    <h3 id="mes-ano-titulo" class="text-base font-extrabold text-slate-900 tracking-wide">Dezembro 2026</h3>
-                    <p class="text-[11px] font-medium text-pink-600">Toque num dia para ver ou montar o roteiro</p>
-                </div>
-                <div class="flex items-center space-x-2">
-                    <button onclick="mudarMes(-1)" class="w-8 h-8 rounded-full bg-pink-50 hover:bg-pink-100 text-neonPink flex items-center justify-center transition-colors">
-                        <i class="fa-solid fa-chevron-left text-xs"></i>
-                    </button>
-                    <button onclick="irParaHoje()" class="px-3 py-1 bg-neonPink text-white rounded-full text-xs font-bold shadow-md neon-glow-pink">
-                        Dez/Jan
-                    </button>
-                    <button onclick="mudarMes(1)" class="w-8 h-8 rounded-full bg-pink-50 hover:bg-pink-100 text-neonPink flex items-center justify-center transition-colors">
-                        <i class="fa-solid fa-chevron-right text-xs"></i>
-                    </button>
-                    <a href="index.html" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center transition-colors">
-                        <i class="fa-solid fa-xmark text-xs"></i>
-                    </a>
-                </div>
+    <main class="w-full max-w-4xl mx-auto px-4 pt-8 space-y-6">
+        
+        <!-- TOPO -->
+        <div class="bg-cardBg border border-pink-100 rounded-3xl p-5 soft-shadow flex items-center justify-between">
+            <div>
+                <span class="text-[10px] font-extrabold text-neonPink uppercase tracking-widest block mb-0.5">🗺️ Planejamento de Rota Interativa</span>
+                <h3 class="text-xs sm:text-sm font-extrabold text-slate-900">Monte seu percurso estilo Google Maps</h3>
             </div>
-
-            <!-- Dias da Semana -->
-            <div class="grid grid-cols-7 gap-2 text-center text-[11px] font-bold text-slate-500 uppercase tracking-wider">
-                <div>Dom</div><div>Seg</div><div>Ter</div><div>Qua</div><div>Qui</div><div>Sex</div><div>Sáb</div>
-            </div>
-
-            <!-- Grade de Dias do Mês -->
-            <div id="grid-dias" class="grid grid-cols-7 gap-2">
-                <!-- Preenchido via JavaScript -->
-            </div>
-
-            <div class="flex justify-between items-center text-[11px] text-slate-500 pt-2 border-t border-slate-100">
-                <span class="flex items-center space-x-1.5"><span class="w-2.5 h-2.5 rounded-full bg-neonPink inline-block"></span><span>Dia com percurso</span></span>
-                <span class="font-bold text-neonPink">Toque para planejar</span>
-            </div>
+            <a href="index.html" class="w-8 h-8 rounded-full bg-pink-50 hover:bg-pink-100 text-neonPink flex items-center justify-center font-bold">
+                <i class="fa-solid fa-xmark"></i>
+            </a>
         </div>
 
-        <!-- TELA 2: MONTAGEM POR ETAPAS DO DIA -->
-        <div id="view-etapas" class="hidden space-y-4">
-            
-            <!-- TOPO DA DATA SELECIONADA -->
-            <div class="bg-cardBg border border-pink-100 rounded-2xl p-4 soft-shadow flex items-center justify-between">
+        <!-- FORMULÁRIO DE ROTA -->
+        <div class="bg-cardBg border border-pink-100 rounded-3xl p-6 soft-shadow space-y-5">
+            <div class="flex items-center space-x-2 border-b border-slate-100 pb-3">
+                <span class="bg-neonPink text-white text-[10px] font-extrabold px-2.5 py-1 rounded-md shadow-sm neon-glow-pink">ROTA 1</span>
+                <span class="text-xs font-extrabold text-slate-900 uppercase tracking-wider">Dados da Viagem & Percurso</span>
+            </div>
+
+            <!-- Datas -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                    <span class="text-[10px] font-bold text-neonPink uppercase tracking-widest block mb-0.5">📅 Montagem por etapas do dia</span>
-                    <h3 id="titulo-data-selecionada" class="text-xs sm:text-sm font-extrabold text-slate-900">Quinta-feira, 31 de Dezembro de 2026</h3>
+                    <label class="block text-[10px] uppercase font-bold text-slate-500 mb-1">📅 Data de Início</label>
+                    <input type="date" id="data-inicio" class="w-full bg-slate-50 border border-slate-200 rounded-2xl p-3 text-xs font-medium text-slate-800 focus:outline-none focus:border-neonPink">
                 </div>
-                <div class="flex items-center space-x-2">
-                    <button onclick="voltarParaCalendario()" class="px-3 py-1.5 bg-pink-50 hover:bg-pink-100 text-neonPink text-xs font-bold rounded-xl transition-colors">
-                        📅 Calendário
-                    </button>
-                    <button onclick="voltarParaCalendario()" class="w-7 h-7 rounded-full bg-slate-100 text-slate-600 flex items-center justify-center text-xs hover:bg-slate-200">
-                        <i class="fa-solid fa-xmark"></i>
-                    </button>
+                <div>
+                    <label class="block text-[10px] uppercase font-bold text-slate-500 mb-1">📅 Data de Fim</label>
+                    <input type="date" id="data-fim" class="w-full bg-slate-50 border border-slate-200 rounded-2xl p-3 text-xs font-medium text-slate-800 focus:outline-none focus:border-neonPink">
                 </div>
             </div>
 
-            <!-- FORMULÁRIO: NOVO TRECHO -->
-            <div class="bg-cardBg border border-pink-100 rounded-2xl p-5 soft-shadow space-y-4">
-                <div class="flex items-center space-x-2 border-b border-slate-100 pb-2">
-                    <span class="bg-neonPink text-white text-[10px] font-bold px-2.5 py-0.5 rounded-md shadow-sm neon-glow-pink">ETAPA 1</span>
-                    <span class="text-xs font-extrabold text-slate-900 uppercase tracking-wider">NOVO TRECHO</span>
-                </div>
-
-                <!-- Origem -->
-                <div>
-                    <label class="block text-[10px] uppercase font-bold text-slate-500 mb-1">🟢 De onde? (Origem)</label>
-                    <input type="text" id="origem" placeholder="Ex: Hotel, Estação..." class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs font-medium text-slate-800 focus:outline-none focus:border-neonPink">
-                </div>
-
-                <!-- Destino -->
-                <div>
-                    <label class="block text-[10px] uppercase font-bold text-slate-500 mb-1">🏁 Para onde? (Destino)</label>
-                    <input type="text" id="destino" placeholder="Ex: Lago, Museu, Restaurante..." class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs font-medium text-slate-800 focus:outline-none focus:border-neonPink">
-                </div>
-
-                <!-- Link Google Maps -->
-                <div>
-                    <div class="flex justify-between items-center mb-1">
-                        <label class="text-[10px] uppercase font-bold text-slate-500">🗺 Link do Google Maps</label>
-                        <span class="text-[10px] font-extrabold text-neonPink cursor-pointer">📋 COLAR</span>
-                    </div>
-                    <input type="text" id="maps" placeholder="Cole o link de rota do Maps (https://...)" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs font-mono text-slate-800 focus:outline-none focus:border-neonPink">
-                </div>
-
-                <!-- Botão Adicionar Etapa -->
-                <button onclick="adicionarEtapa()" class="w-full bg-neonPink hover:opacity-95 text-white text-xs font-bold py-3 rounded-xl transition-all shadow-md neon-glow-pink">
-                    + Adicionar Esta Etapa ao Percurso
-                </button>
+            <!-- Ponto de Partida -->
+            <div>
+                <label class="block text-[10px] uppercase font-bold text-emerald-600 mb-1">🟢 Ponto de Partida (Origem)</label>
+                <input type="text" id="origem" placeholder="Ex: Hotel em Zurique, Estação Central..." class="w-full bg-slate-50 border border-slate-200 rounded-2xl p-3 text-xs font-medium text-slate-800 focus:outline-none focus:border-neonPink">
             </div>
 
-            <!-- PRÉVIA VISUAL DO PERCURSO -->
-            <div class="bg-cardBg border border-pink-100 rounded-2xl p-5 soft-shadow space-y-4 mb-8">
-                <div class="flex items-center justify-between">
-                    <span class="text-xs font-extrabold text-slate-900 uppercase tracking-wider">🗺️ Prévia Visual do Percurso</span>
-                    <span id="contador-etapas" class="bg-pink-100 text-neonPink text-[10px] font-bold px-2.5 py-1 rounded-full">0 ETAPAS</span>
+            <!-- Paradas Intermediárias -->
+            <div>
+                <div class="flex justify-between items-center mb-1">
+                    <label class="text-[10px] uppercase font-bold text-amber-600">🟡 Pontos de Parada Intermediários</label>
+                    <button onclick="adicionarCampoParada()" class="text-[10px] font-extrabold text-neonPink hover:underline">+ Adicionar Parada</button>
                 </div>
-
-                <div id="lista-previa" class="space-y-2">
-                    <div class="bg-slate-50 border border-dashed border-slate-200 rounded-2xl p-6 text-center">
-                        <p class="text-xs font-medium text-slate-500 leading-relaxed max-w-sm mx-auto">
-                            Nenhuma etapa adicionada para este dia ainda. Preencha os campos acima e clique em "Adicionar Esta Etapa"!
-                        </p>
-                    </div>
-                </div>
-
-                <!-- Botões Inferiores da Agenda -->
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
-                    <button onclick="voltarParaCalendario()" class="py-2.5 px-4 bg-white border border-slate-200 rounded-xl text-xs font-bold text-slate-700 flex items-center justify-center space-x-2 soft-shadow-sm hover:bg-slate-50">
-                        <i class="fa-solid fa-xmark text-neonPink"></i>
-                        <span>Fechar</span>
-                    </button>
-                    <button onclick="voltarParaCalendario()" class="py-2.5 px-4 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-700 flex items-center justify-center space-x-2">
-                        <span>📅</span>
-                        <span>Calendário</span>
-                    </button>
-                    <button onclick="enviarParaRoteiroOficial()" class="py-2.5 px-4 bg-neonPink hover:opacity-95 text-white rounded-xl text-xs font-bold flex items-center justify-center space-x-2 shadow-md neon-glow-pink transition-colors">
-                        <span>🚀</span>
-                        <span>Enviar para o Roteiro Oficial</span>
-                    </button>
+                <div id="container-paradas" class="space-y-2">
+                    <!-- Paradas dinâmicas entram aqui -->
                 </div>
             </div>
 
+            <!-- Ponto Final -->
+            <div>
+                <label class="block text-[10px] uppercase font-bold text-pink-600 mb-1">🏁 Ponto de Chegada (Destino Final)</label>
+                <input type="text" id="destino" placeholder="Ex: Lago de Interlaken, Museu..." class="w-full bg-slate-50 border border-slate-200 rounded-2xl p-3 text-xs font-medium text-slate-800 focus:outline-none focus:border-neonPink">
+            </div>
+
+            <!-- Link do Maps -->
+            <div>
+                <label class="block text-[10px] uppercase font-bold text-slate-500 mb-1">🗺️ Link da Rota do Google Maps</label>
+                <input type="text" id="maps" placeholder="https://maps.google.com/..." class="w-full bg-slate-50 border border-slate-200 rounded-2xl p-3 text-xs font-mono text-slate-800 focus:outline-none focus:border-neonPink">
+            </div>
+
+            <button onclick="criarBlocoRota()" class="w-full bg-neonPink hover:opacity-95 text-white text-xs font-extrabold py-3.5 rounded-2xl transition-all shadow-md neon-glow-pink">
+                + Gerar Bloco de Percurso Estilo Maps
+            </button>
+        </div>
+
+        <!-- PRÉVIA DOS BLOCOS GERADOS -->
+        <div class="bg-cardBg border border-pink-100 rounded-3xl p-6 soft-shadow space-y-4 mb-8">
+            <div class="flex items-center justify-between">
+                <span class="text-xs font-extrabold text-slate-900 uppercase tracking-wider">📦 Blocos Prontos para Enviar</span>
+                <span id="contador-blocos" class="bg-pink-100 text-neonPink text-[10px] font-bold px-2.5 py-1 rounded-full">0 Bloquinhos</span>
+            </div>
+
+            <div id="lista-blocos-preview" class="space-y-4">
+                <div class="bg-slate-50 border border-dashed border-slate-200 rounded-2xl p-8 text-center">
+                    <p class="text-xs font-medium text-slate-400">Nenhum percurso gerado ainda. Preencha os campos acima!</p>
+                </div>
+            </div>
+
+            <button onclick="enviarParaRoteiro()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold py-3.5 rounded-2xl shadow-md transition-colors flex items-center justify-center space-x-2">
+                <span>🚀</span>
+                <span>OK / Enviar para o Roteiro Oficial</span>
+            </button>
         </div>
 
     </main>
 
     <!-- BARRA FLUTUANTE INFERIOR -->
-    <div id="floating-dock" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 transition-all duration-300 opacity-90 hover:opacity-100">
-        <nav class="bg-cardBg/95 backdrop-blur-md border border-pink-200 rounded-full px-5 py-3 flex items-center space-x-3 sm:space-x-6 soft-shadow shadow-xl">
-            <a href="index.html" class="flex flex-col items-center text-slate-400 hover:text-neonPink hover:scale-110 transition-transform px-1 group">
-                <span class="text-lg">🏠</span>
-                <span class="text-[9px] mt-0.5">Início</span>
+    <div id="floating-dock" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 transition-all duration-300 opacity-95">
+        <nav class="bg-cardBg/95 backdrop-blur-md border border-pink-200 rounded-full px-6 py-3.5 flex items-center space-x-4 sm:space-x-8 soft-shadow shadow-2xl">
+            <a href="index.html" class="flex flex-col items-center text-slate-400 hover:text-neonPink transition-transform px-1">
+                <span class="text-xl">🏠</span>
+                <span class="text-[10px] mt-1">Início</span>
             </a>
-            <div class="h-4 w-[1px] bg-slate-200"></div>
-            <a href="roteiro.html" class="flex flex-col items-center text-slate-400 hover:text-neonPink hover:scale-110 transition-transform px-1 group">
-                <span class="text-lg">✈️</span>
-                <span class="text-[9px] mt-0.5 font-medium">Roteiro</span>
+            <div class="h-5 w-[1px] bg-pink-100"></div>
+            <a href="roteiro.html" class="flex flex-col items-center text-slate-400 hover:text-neonPink transition-transform px-1">
+                <span class="text-xl">✈️</span>
+                <span class="text-[10px] mt-1 font-semibold">Roteiro</span>
             </a>
-            <div class="h-4 w-[1px] bg-slate-200"></div>
-            <a href="hub.html" class="flex flex-col items-center text-slate-400 hover:text-neonPink hover:scale-110 transition-transform px-1 group">
-                <span class="text-lg">🎒</span>
-                <span class="text-[9px] mt-0.5 font-medium">Hub</span>
+            <div class="h-5 w-[1px] bg-pink-100"></div>
+            <a href="hub.html" class="flex flex-col items-center text-slate-400 hover:text-neonPink transition-transform px-1">
+                <span class="text-xl">🎒</span>
+                <span class="text-[10px] mt-1 font-semibold">Hub</span>
             </a>
-            <div class="h-4 w-[1px] bg-slate-200"></div>
-            <a href="orcamento.html" class="flex flex-col items-center text-slate-400 hover:text-neonPink hover:scale-110 transition-transform px-1 group">
-                <span class="text-lg">💳</span>
-                <span class="text-[9px] mt-0.5 font-medium">Orç.</span>
+            <div class="h-5 w-[1px] bg-pink-100"></div>
+            <a href="orcamento.html" class="flex flex-col items-center text-slate-400 hover:text-neonPink transition-transform px-1">
+                <span class="text-xl">💳</span>
+                <span class="text-[10px] mt-1 font-semibold">Orç.</span>
             </a>
-            <div class="h-4 w-[1px] bg-slate-200"></div>
-            <a href="compras.html" class="flex flex-col items-center text-slate-400 hover:text-neonPink hover:scale-110 transition-transform px-1 group">
-                <span class="text-lg">🛍️️</span>
-                <span class="text-[9px] mt-0.5 font-medium">Compras</span>
+            <div class="h-5 w-[1px] bg-pink-100"></div>
+            <a href="compras.html" class="flex flex-col items-center text-slate-400 hover:text-neonPink transition-transform px-1">
+                <span class="text-xl">🛍️</span>
+                <span class="text-[10px] mt-1 font-semibold">Compras</span>
             </a>
-            <div class="h-4 w-[1px] bg-slate-200"></div>
-            <a href="agenda.html" class="flex flex-col items-center text-neonPink font-bold hover:scale-110 transition-transform px-1 group">
-                <span class="text-lg">📅</span>
-                <span class="text-[9px] mt-0.5">Agenda</span>
+            <div class="h-5 w-[1px] bg-pink-100"></div>
+            <a href="agenda.html" class="flex flex-col items-center text-neonPink font-extrabold transition-transform px-1">
+                <span class="text-xl">📅</span>
+                <span class="text-[10px] mt-1">Agenda</span>
             </a>
         </nav>
     </div>
 
-    <!-- SCRIPT DE CALENDÁRIO E ETAPAS -->
+    <!-- SCRIPT DE CRIAÇÃO DO BLOCO ESTILO MAPS -->
     <script>
-        let anoAtual = 2026;
-        let mesAtual = 11; // Dezembro
-        let diaSelecionadoStr = '';
-        let etapas = JSON.parse(localStorage.getItem('etapasAgenda')) || [];
+        let blocosGerados = JSON.parse(localStorage.getItem('blocosRotaAgenda')) || [];
 
-        const mesesNomes = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
+        function adicionarCampoParada() {
+            const container = document.getElementById('container-paradas');
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.placeholder = 'Ex: Parada para café / Foto rápida...';
+            input.className = 'input-parada w-full bg-slate-50 border border-slate-200 rounded-2xl p-3 text-xs font-medium text-slate-800 focus:outline-none focus:border-neonPink';
+            container.appendChild(input);
+        }
 
-        function renderCalendario() {
-            document.getElementById('mes-ano-titulo').innerText = `${mesesNomes[mesAtual]} ${anoAtual}`;
-            const grid = document.getElementById('grid-dias');
-            grid.innerHTML = '';
+        function criarBlocoRota() {
+            const dataInicio = document.getElementById('data-inicio').value;
+            const dataFim = document.getElementById('data-fim').value;
+            const origem = document.getElementById('origem').value.trim();
+            const destino = document.getElementById('destino').value.trim();
+            const maps = document.getElementById('maps').value.trim();
 
-            const primeiroDiaDaSemana = new Date(anoAtual, mesAtual, 1).getDay();
-            const ultimoDiaDoMes = new Date(anoAtual, mesAtual + 1, 0).getDate();
+            const inputsParadas = document.querySelectorAll('.input-parada');
+            let paradas = [];
+            inputsParadas.forEach(p => {
+                if(p.value.trim() !== '') paradas.push(p.value.trim());
+            });
 
-            for (let i = 0; i < primeiroDiaDaSemana; i++) {
-                grid.innerHTML += `<div></div>`;
+            if (!origem || !destino) {
+                alert('Por favor, preencha pelo menos o Ponto de Partida e o Ponto de Chegada.');
+                return;
             }
 
-            for (let dia = 1; dia <= ultimoDiaDoMes; dia++) {
-                const dataObj = new Date(anoAtual, mesAtual, dia);
-                const diaSemanaStr = dataObj.toLocaleDateString('pt-BR', { weekday: 'long' });
-                const dataFormatada = `${dia} de ${mesesNomes[mesAtual]} de ${anoAtual}`;
-                const diaFormatadoCompleto = `${diaSemanaStr}, ${dataFormatada}`;
+            const novoBloco = { dataInicio, dataFim, origem, paradas, destino, maps };
+            blocosGerados.push(novoBloco);
+            localStorage.setItem('blocosRotaAgenda', JSON.stringify(blocosGerados));
 
-                grid.innerHTML += `
-                    <button onclick="selecionarDia(${anoAtual}, ${mesAtual}, ${dia}, '${diaFormatadoCompleto}')" 
-                        class="p-3 bg-white hover:bg-pink-50 border border-slate-200 rounded-2xl text-xs font-bold text-slate-800 flex flex-col items-center justify-center soft-shadow-sm transition-transform hover:scale-105 hover:border-neonPink">
-                        <span>${dia}</span>
-                    </button>
-                `;
-            }
+            // Limpa formulário
+            document.getElementById('origem').value = '';
+            document.getElementById('destino').value = '';
+            document.getElementById('maps').value = '';
+            document.getElementById('container-paradas').innerHTML = '';
+
+            renderizarPreview();
         }
 
-        function mudarMes(direcao) {
-            mesAtual += direcao;
-            if (mesAtual > 11) {
-                mesAtual = 0;
-                anoAtual++;
-            } else if (mesAtual < 0) {
-                mesAtual = 11;
-                anoAtual--;
-            }
-            renderCalendario();
-        }
+        function renderizarPreview() {
+            const container = document.getElementById('lista-blocos-preview');
+            const contador = document.getElementById('contador-blocos');
+            contador.innerText = `${blocosGerados.length} Bloquinhos`;
 
-        function irParaHoje() {
-            anoAtual = 2026;
-            mesAtual = 11;
-            renderCalendario();
-        }
-
-        function selecionarDia(ano, mes, dia, formatoCompleto) {
-            diaSelecionadoStr = formatoCompleto;
-            document.getElementById('titulo-data-selecionada').innerText = formatoCompleto.charAt(0).toUpperCase() + formatoCompleto.slice(1);
-            
-            document.getElementById('view-calendario').classList.add('hidden');
-            document.getElementById('view-etapas').classList.remove('hidden');
-            renderPrevia();
-        }
-
-        function voltarParaCalendario() {
-            document.getElementById('view-etapas').classList.add('hidden');
-            document.getElementById('view-calendario').classList.remove('hidden');
-        }
-
-        function renderPrevia() {
-            const container = document.getElementById('lista-previa');
-            const contador = document.getElementById('contador-etapas');
-            contador.innerText = `${etapas.length} ETAPAS`;
-
-            if (etapas.length === 0) {
+            if (blocosGerados.length === 0) {
                 container.innerHTML = `
-                    <div class="bg-slate-50 border border-dashed border-slate-200 rounded-2xl p-6 text-center">
-                        <p class="text-xs font-medium text-slate-500 leading-relaxed max-w-sm mx-auto">
-                            Nenhuma etapa adicionada para este dia ainda. Preencha os campos acima e clique em "Adicionar Esta Etapa"!
-                        </p>
+                    <div class="bg-slate-50 border border-dashed border-slate-200 rounded-2xl p-8 text-center">
+                        <p class="text-xs font-medium text-slate-400">Nenhum percurso gerado ainda. Preencha os campos acima!</p>
                     </div>`;
                 return;
             }
 
             container.innerHTML = '';
-            etapas.forEach((etapa, index) => {
-                container.innerHTML += `
-                    <div class="bg-slate-50 border border-slate-200 rounded-xl p-3 flex items-center justify-between text-xs">
-                        <div>
-                            <span class="font-extrabold text-neonPink">Etapa ${index + 1}:</span> 
-                            <span class="font-medium text-slate-800">${etapa.origem} ➔ ${etapa.destino}</span>
+            blocosGerados.forEach((bloco, index) => {
+                let htmlParadas = '';
+                bloco.paradas.forEach(parada => {
+                    htmlParadas += `
+                        <div class="flex items-center space-x-2 py-1">
+                            <span class="w-2.5 h-2.5 rounded-full bg-amber-500 inline-block"></span>
+                            <span class="text-xs text-slate-700 font-medium">${parada}</span>
                         </div>
-                        <button onclick="removerEtapa(${index})" class="text-pink-500 hover:text-pink-700 px-2 py-1"><i class="fa-solid fa-trash"></i></button>
+                    `;
+                });
+
+                container.innerHTML += `
+                    <div class="bg-slate-50 border border-pink-200 rounded-2xl p-5 soft-shadow-sm space-y-3 relative">
+                        <div class="flex justify-between items-center border-b border-slate-200 pb-2">
+                            <span class="text-[10px] font-extrabold text-neonPink uppercase">📅 ${bloco.dataInicio || 'Início'} até ${bloco.dataFim || 'Fim'}</span>
+                            <button onclick="removerBloco(${index})" class="text-pink-500 hover:text-pink-700 text-xs"><i class="fa-solid fa-trash"></i></button>
+                        </div>
+
+                        <!-- MAPA ESTILO MAPS (PARTIDA -> TRACEJADO -> PARADAS -> CHEGADA) -->
+                        <div class="space-y-1">
+                            <!-- Partida -->
+                            <div class="flex items-center space-x-2">
+                                <span class="w-3 h-3 rounded-full bg-emerald-500 inline-block shadow-sm"></span>
+                                <span class="text-xs font-bold text-slate-900">${bloco.origem}</span>
+                            </div>
+
+                            <!-- Linha tracejada e Paradas -->
+                            <div class="rota-tracejada space-y-1 my-1">
+                                ${htmlParadas}
+                            </div>
+
+                            <!-- Chegada -->
+                            <div class="flex items-center space-x-2">
+                                <span class="w-3 h-3 rounded-full bg-neonPink inline-block shadow-sm"></span>
+                                <span class="text-xs font-bold text-slate-900">${bloco.destino}</span>
+                            </div>
+                        </div>
+
+                        ${bloco.maps ? `<a href="${bloco.maps}" target="_blank" class="block text-[11px] font-bold text-sky-600 hover:underline pt-1">🗺️ Abrir rota no Google Maps</a>` : ''}
                     </div>
                 `;
             });
         }
 
-        function adicionarEtapa() {
-            const origem = document.getElementById('origem').value.trim();
-            const destino = document.getElementById('destino').value.trim();
-            const maps = document.getElementById('maps').value.trim();
+        function removerBloco(index) {
+            blocosGerados.splice(index, 1);
+            localStorage.setItem('blocosRotaAgenda', JSON.stringify(blocosGerados));
+            renderizarPreview();
+        }
 
-            if (!origem || !destino) {
-                alert('Por favor, preencha a origem e o destino do trecho.');
+        function enviarParaRoteiro() {
+            if (blocosGerados.length === 0) {
+                alert('Gere pelo menos um bloco de percurso antes de enviar para o Roteiro Oficial!');
                 return;
             }
 
-            etapas.push({ data: diaSelecionadoStr, origem, destino, maps });
-            localStorage.setItem('etapasAgenda', JSON.stringify(etapas));
-
-            document.getElementById('origem').value = '';
-            document.getElementById('destino').value = '';
-            document.getElementById('maps').value = '';
-
-            renderPrevia();
-        }
-
-        function removerEtapa(index) {
-            etapas.splice(index, 1);
-            localStorage.setItem('etapasAgenda', JSON.stringify(etapas));
-            renderPrevia();
-        }
-
-        function enviarParaRoteiroOficial() {
-            if (etapas.length === 0) {
-                alert('Adicione pelo menos uma etapa antes de enviar para o Roteiro Oficial!');
-                return;
-            }
             let roteiroAprovados = JSON.parse(localStorage.getItem('roteiroAprovados')) || [];
-            roteiroAprovados.push(...etapas);
+            roteiroAprovados.push(...blocosGerados);
             localStorage.setItem('roteiroAprovados', JSON.stringify(roteiroAprovados));
             
-            alert('Percurso enviado com sucesso para o Roteiro Oficial! ✈️✨');
+            alert('Percursos estilo Maps enviados com sucesso para o Roteiro Oficial! 🚀✨');
             window.location.href = 'roteiro.html';
         }
 
-        renderCalendario();
+        renderizarPreview();
     </script>
 </body>
 </html>
