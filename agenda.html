@@ -38,9 +38,15 @@
         }
     </style>
 </head>
-<body class="bg-lightBg text-slate-700 min-h-screen pb-36 font-sans selection:bg-pink-100 selection:text-pink-900">
+<body class="bg-lightBg text-slate-700 min-h-screen pb-36 pt-4 font-sans selection:bg-pink-100 selection:text-pink-900">
 
-    <main class="w-full max-w-4xl mx-auto px-4 pt-8 space-y-6">
+    <!-- BARRA SUPERIOR DE VERSÃO -->
+    <div class="w-full bg-slate-900 text-white py-2.5 px-6 flex justify-between items-center text-xs font-bold tracking-wider uppercase mb-6 shadow-md">
+        <span>✈️ Roteiro Europa - Mariana</span>
+        <span class="bg-neonPink px-2.5 py-0.5 rounded-full text-[10px] text-white neon-glow-pink">Versão 1</span>
+    </div>
+
+    <main class="w-full max-w-4xl mx-auto px-4 pt-2 space-y-6">
 
         <!-- TELA 1: CALENDÁRIO (Dezembro 2026 / Janeiro 2027) -->
         <div id="view-calendario" class="bg-cardBg border border-slate-100 rounded-3xl p-6 soft-shadow space-y-6">
@@ -303,7 +309,6 @@
                 alert('Cole um link do Google Maps primeiro!');
                 return;
             }
-            // Simulação inteligente de reconhecimento de rota pelo link
             if (link.includes('zurich') || link.includes('Zuri')) {
                 document.getElementById('origem').value = 'Estação Central de Zurique';
                 document.getElementById('destino').value = 'Lago de Zurique';
@@ -320,12 +325,10 @@
             const maps = document.getElementById('maps-link').value.trim();
 
             let paradas = [];
-            // Pega checkboxes marcados
             document.querySelectorAll('.check-parada:checked').forEach(chk => {
                 paradas.push(chk.value);
             });
 
-            // Pega parada personalizada digitada
             const outraParada = document.getElementById('outra-parada').value.trim();
             if (outraParada) {
                 paradas.push(outraParada);
@@ -340,7 +343,6 @@
             blocosGerados.push(novoBloco);
             localStorage.setItem('blocosRotaAgenda', JSON.stringify(blocosGerados));
 
-            // Limpa campos
             document.getElementById('origem').value = '';
             document.getElementById('destino').value = '';
             document.getElementById('maps-link').value = '';
