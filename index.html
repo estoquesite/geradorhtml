@@ -75,40 +75,44 @@
         </div>
     </header>
 
-    <!-- CONTEÚDO PRINCIPAL -->
+    <!-- CONTEÚDO PRINCIPAL (Página Inicial) -->
     <main class="w-full max-w-4xl mx-auto px-4 mt-2">
-        <section id="content-area" class="bg-cardBg border border-slate-100 rounded-2xl min-h-[400px] p-6 flex flex-col items-center soft-shadow transition-opacity duration-200">
-            <!-- O conteúdo será injetado aqui via JavaScript -->
+        <section id="content-area" class="bg-cardBg border border-slate-100 rounded-2xl min-h-[400px] p-6 flex flex-col items-center justify-center text-center soft-shadow">
+            <div class="w-14 h-14 rounded-full bg-sky-50 border border-sky-100 flex items-center justify-center text-sky-500 text-xl mb-4">
+                🏠
+            </div>
+            <h3 class="text-lg font-bold text-slate-800 mb-2">Trip Hub - Europa</h3>
+            <p class="text-slate-400 text-sm max-w-md">Bem-vinda ao seu painel principal! Utilize a barra flutuante abaixo para navegar entre o Roteiro, Hub, Orçamento e Agenda.</p>
         </section>
     </main>
 
-    <!-- BARRA FLUTUANTE INFERIOR (Fica transparente ao rolar/parar para facilitar a digitação) -->
+    <!-- BARRA FLUTUANTE INFERIOR (Com links para as páginas separadas) -->
     <div id="floating-dock" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 transition-all duration-300 opacity-90 hover:opacity-100">
         <nav class="bg-cardBg/90 backdrop-blur-md border border-slate-100 rounded-full px-6 py-3 flex items-center space-x-4 sm:space-x-8 soft-shadow shadow-xl">
-            <button onclick="switchTab('inicio')" id="btn-inicio" class="flex flex-col items-center text-slate-400 hover:text-sky-600 hover:scale-110 transition-transform px-1 group">
+            <a href="index.html" class="flex flex-col items-center text-sky-600 font-semibold hover:scale-110 transition-transform px-1 group">
                 <span class="text-xl">🏠</span>
-                <span class="text-[10px] mt-1 font-medium">Início</span>
-            </button>
+                <span class="text-[10px] mt-1">Início</span>
+            </a>
             <div class="h-5 w-[1px] bg-slate-200"></div>
-            <button onclick="switchTab('roteiro')" id="btn-roteiro" class="flex flex-col items-center text-slate-400 hover:text-pink-600 hover:scale-110 transition-transform px-1 group">
+            <a href="roteiro.html" class="flex flex-col items-center text-slate-400 hover:text-pink-600 hover:scale-110 transition-transform px-1 group">
                 <span class="text-xl">✈️</span>
                 <span class="text-[10px] mt-1 font-medium">Roteiro</span>
-            </button>
+            </a>
             <div class="h-5 w-[1px] bg-slate-200"></div>
-            <button onclick="switchTab('hub')" id="btn-hub" class="flex flex-col items-center text-slate-400 hover:text-sky-600 hover:scale-110 transition-transform px-1 group">
+            <a href="hub.html" class="flex flex-col items-center text-slate-400 hover:text-sky-600 hover:scale-110 transition-transform px-1 group">
                 <span class="text-xl">🎒</span>
                 <span class="text-[10px] mt-1 font-medium">Hub</span>
-            </button>
+            </a>
             <div class="h-5 w-[1px] bg-slate-200"></div>
-            <button onclick="switchTab('orcamento')" id="btn-orcamento" class="flex flex-col items-center text-slate-400 hover:text-green-600 hover:scale-110 transition-transform px-1 group">
+            <a href="orcamento.html" class="flex flex-col items-center text-slate-400 hover:text-green-600 hover:scale-110 transition-transform px-1 group">
                 <span class="text-xl">💳</span>
                 <span class="text-[10px] mt-1 font-medium">Orçamento</span>
-            </button>
+            </a>
             <div class="h-5 w-[1px] bg-slate-200"></div>
-            <button onclick="switchTab('agenda')" id="btn-agenda" class="flex flex-col items-center text-slate-400 hover:text-pink-600 hover:scale-110 transition-transform px-1 group">
+            <a href="agenda.html" class="flex flex-col items-center text-slate-400 hover:text-pink-600 hover:scale-110 transition-transform px-1 group">
                 <span class="text-xl">📅</span>
                 <span class="text-[10px] mt-1 font-medium">Agenda</span>
-            </button>
+            </a>
         </nav>
     </div>
 
@@ -146,7 +150,7 @@
         setInterval(updateCountdown, 1000);
         updateCountdown();
 
-        // Comportamento dinâmico da barra flutuante ao rolar ou parar (Fica bem transparente para facilitar a leitura/digitação)
+        // Comportamento dinâmico da barra flutuante ao rolar ou parar
         let scrollTimeout;
         const dock = document.getElementById('floating-dock');
         
@@ -164,92 +168,6 @@
         dock.addEventListener('mouseenter', () => { dock.style.opacity = '1'; });
         dock.addEventListener('mouseleave', () => { dock.style.opacity = '0.45'; });
         dock.addEventListener('touchstart', () => { dock.style.opacity = '1'; });
-
-        // Alternância de abas com memória
-        function switchTab(tabName) {
-            localStorage.setItem('activeTripTab', tabName);
-            const area = document.getElementById('content-area');
-            
-            // Atualiza cores dos botões da barra inferior
-            document.querySelectorAll('nav button').forEach(btn => {
-                btn.classList.remove('text-sky-600', 'font-semibold');
-                btn.classList.add('text-slate-400');
-            });
-            const activeBtn = document.getElementById(`btn-${tabName}`);
-            if (activeBtn) {
-                activeBtn.classList.remove('text-slate-400');
-                activeBtn.classList.add('text-sky-600', 'font-semibold');
-            }
-
-            if (tabName === 'roteiro') {
-                area.innerHTML = `
-                    <!-- TOPO DO ROTEIRO OFICIAL -->
-                    <div class="w-full flex items-center justify-between bg-slate-50 border border-slate-100 rounded-2xl p-4 mb-5">
-                        <div class="flex items-center space-x-2">
-                            <span class="text-base">✈️</span>
-                            <h3 class="text-xs sm:text-sm font-bold tracking-wider text-slate-800 uppercase">ROTEIRO OFICIAL (APROVADOS)</h3>
-                        </div>
-                        <div class="flex items-center space-x-2">
-                            <span class="bg-sky-500 text-white text-xs font-semibold px-2.5 py-1 rounded-full">0/10</span>
-                            <button class="w-7 h-7 rounded-full bg-slate-200 text-slate-600 flex items-center justify-center text-xs hover:bg-slate-300 transition-colors">
-                                <i class="fa-solid fa-xmark"></i>
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- FILTROS DE CIDADES/LUGARES -->
-                    <div class="w-full flex flex-wrap items-center justify-center gap-2 mb-6">
-                        <button class="px-4 py-1.5 rounded-full bg-sky-500 text-white text-xs font-medium shadow-sm transition-transform hover:scale-105">Todos</button>
-                        <button class="px-4 py-1.5 rounded-full bg-pink-600 text-white text-xs font-medium shadow-sm transition-transform hover:scale-105">Zurique</button>
-                        <button class="px-4 py-1.5 rounded-full bg-amber-500 text-white text-xs font-medium shadow-sm transition-transform hover:scale-105">Freiburg</button>
-                        <button class="px-4 py-1.5 rounded-full bg-blue-600 text-white text-xs font-medium shadow-sm transition-transform hover:scale-105">França</button>
-                        <button class="px-4 py-1.5 rounded-full bg-emerald-600 text-white text-xs font-medium shadow-sm transition-transform hover:scale-105">Interlaken</button>
-                    </div>
-
-                    <!-- BOTÕES ABRIR / FECHAR TUDO -->
-                    <div class="w-full grid grid-cols-2 gap-3 mb-6">
-                        <button class="py-2.5 px-4 bg-white border border-slate-200 rounded-xl text-xs font-medium text-slate-700 flex items-center justify-center space-x-2 soft-shadow-sm hover:bg-slate-50 transition-colors">
-                            <span>⏫</span>
-                            <span>Fechar tudo</span>
-                        </button>
-                        <button class="py-2.5 px-4 bg-white border border-slate-200 rounded-xl text-xs font-medium text-slate-700 flex items-center justify-center space-x-2 soft-shadow-sm hover:bg-slate-50 transition-colors">
-                            <span>🔽</span>
-                            <span>Abrir tudo</span>
-                        </button>
-                    </div>
-
-                    <!-- MENSAGEM DE VAZIO / AVISO -->
-                    <div class="w-full bg-slate-50 border border-dashed border-slate-200 rounded-2xl p-8 text-center my-auto">
-                        <p class="text-slate-500 text-xs sm:text-sm leading-relaxed max-w-md mx-auto">
-                            Nenhum bloco aprovado. Vá à aba <span class="font-semibold text-slate-700">📅 Editar</span> e clique no cadeado (<span class="text-amber-500">🔒</span>) do bloco para enviá-lo para cá!
-                        </p>
-                    </div>
-                `;
-            } else if (tabName === 'inicio') {
-                area.innerHTML = `
-                    <div class="w-14 h-14 rounded-full bg-sky-50 border border-sky-100 flex items-center justify-center text-sky-500 text-xl mb-4">
-                        🏠
-                    </div>
-                    <h3 class="text-lg font-bold text-slate-800 mb-2">Início - Trip Hub</h3>
-                    <p class="text-slate-400 text-sm max-w-md">Bem-vinda ao seu painel principal de planejamento da Europa!</p>
-                `;
-            } else {
-                const icons = { hub: '🎒', orcamento: '💳', agenda: '📅' };
-                area.innerHTML = `
-                    <div class="w-14 h-14 rounded-full bg-pink-50 border border-pink-100 flex items-center justify-center text-2xl mb-4">
-                        ${icons[tabName] || '✨'}
-                    </div>
-                    <h3 class="text-lg font-bold text-slate-800 mb-2 uppercase tracking-wide">Módulo: ${tabName}</h3>
-                    <p class="text-slate-400 text-sm max-w-md">Esta seção está pronta para receber os campos, tabelas e cards interativos do(a) ${tabName}.</p>
-                `;
-            }
-        }
-
-        // Ao carregar a página, abre a última aba que estava ativa
-        window.addEventListener('DOMContentLoaded', () => {
-            const savedTab = localStorage.getItem('activeTripTab') || 'roteiro';
-            switchTab(savedTab);
-        });
     </script>
 </body>
 </html>
