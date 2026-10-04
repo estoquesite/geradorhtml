@@ -42,10 +42,10 @@
                     <h3 class="text-xs sm:text-sm font-bold tracking-wider text-slate-800 uppercase">ROTEIRO OFICIAL (APROVADOS)</h3>
                 </div>
                 <div class="flex items-center space-x-2">
-                    <span class="bg-sky-500 text-white text-xs font-semibold px-2.5 py-1 rounded-full">0/10</span>
-                    <button class="w-7 h-7 rounded-full bg-slate-200 text-slate-600 flex items-center justify-center text-xs hover:bg-slate-300 transition-colors">
+                    <span id="contador-aprovados" class="bg-sky-500 text-white text-xs font-semibold px-2.5 py-1 rounded-full">0/0</span>
+                    <a href="index.html" class="w-7 h-7 rounded-full bg-slate-200 text-slate-600 flex items-center justify-center text-xs hover:bg-slate-300 transition-colors">
                         <i class="fa-solid fa-xmark"></i>
-                    </button>
+                    </a>
                 </div>
             </div>
 
@@ -70,11 +70,9 @@
                 </button>
             </div>
 
-            <!-- MENSAGEM DE VAZIO / AVISO -->
-            <div class="w-full bg-slate-50 border border-dashed border-slate-200 rounded-2xl p-8 text-center my-auto">
-                <p class="text-slate-500 text-xs sm:text-sm leading-relaxed max-w-md mx-auto">
-                    Nenhum bloco aprovado. Vá à aba <span class="font-semibold text-slate-700">📅 Editar</span> e clique no cadeado (<span class="text-amber-500">🔒</span>) do bloco para enviá-lo para cá!
-                </p>
+            <!-- LISTA DE BLOCOS APROVADOS (Integração com a Agenda) -->
+            <div id="lista-aprovados" class="w-full space-y-3">
+                <!-- Preenchido via JavaScript -->
             </div>
 
         </section>
@@ -82,49 +80,82 @@
 
     <!-- BARRA FLUTUANTE INFERIOR -->
     <div id="floating-dock" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 transition-all duration-300 opacity-90 hover:opacity-100">
-        <nav class="bg-cardBg/90 backdrop-blur-md border border-slate-100 rounded-full px-6 py-3 flex items-center space-x-4 sm:space-x-8 soft-shadow shadow-xl">
+        <nav class="bg-cardBg/90 backdrop-blur-md border border-slate-100 rounded-full px-5 py-3 flex items-center space-x-3 sm:space-x-6 soft-shadow shadow-xl">
             <a href="index.html" class="flex flex-col items-center text-slate-400 hover:text-sky-600 hover:scale-110 transition-transform px-1 group">
-                <span class="text-xl">🏠</span>
-                <span class="text-[10px] mt-1 font-medium">Início</span>
+                <span class="text-lg">🏠</span>
+                <span class="text-[9px] mt-0.5">Início</span>
             </a>
-            <div class="h-5 w-[1px] bg-slate-200"></div>
+            <div class="h-4 w-[1px] bg-slate-200"></div>
             <a href="roteiro.html" class="flex flex-col items-center text-pink-600 font-semibold hover:scale-110 transition-transform px-1 group">
-                <span class="text-xl">✈️</span>
-                <span class="text-[10px] mt-1">Roteiro</span>
+                <span class="text-lg">✈️</span>
+                <span class="text-[9px] mt-0.5">Roteiro</span>
             </a>
-            <div class="h-5 w-[1px] bg-slate-200"></div>
+            <div class="h-4 w-[1px] bg-slate-200"></div>
             <a href="hub.html" class="flex flex-col items-center text-slate-400 hover:text-sky-600 hover:scale-110 transition-transform px-1 group">
-                <span class="text-xl">🎒</span>
-                <span class="text-[10px] mt-1 font-medium">Hub</span>
+                <span class="text-lg">🎒</span>
+                <span class="text-[9px] mt-0.5 font-medium">Hub</span>
             </a>
-            <div class="h-5 w-[1px] bg-slate-200"></div>
+            <div class="h-4 w-[1px] bg-slate-200"></div>
             <a href="orcamento.html" class="flex flex-col items-center text-slate-400 hover:text-green-600 hover:scale-110 transition-transform px-1 group">
-                <span class="text-xl">💳</span>
-                <span class="text-[10px] mt-1 font-medium">Orçamento</span>
+                <span class="text-lg">💳</span>
+                <span class="text-[9px] mt-0.5 font-medium">Orç.</span>
             </a>
-            <div class="h-5 w-[1px] bg-slate-200"></div>
+            <div class="h-4 w-[1px] bg-slate-200"></div>
+            <a href="compras.html" class="flex flex-col items-center text-slate-400 hover:text-pink-600 hover:scale-110 transition-transform px-1 group">
+                <span class="text-lg">🛍️</span>
+                <span class="text-[9px] mt-0.5 font-medium">Compras</span>
+            </a>
+            <div class="h-4 w-[1px] bg-slate-200"></div>
             <a href="agenda.html" class="flex flex-col items-center text-slate-400 hover:text-pink-600 hover:scale-110 transition-transform px-1 group">
-                <span class="text-xl">📅</span>
-                <span class="text-[10px] mt-1 font-medium">Agenda</span>
+                <span class="text-lg">📅</span>
+                <span class="text-[9px] mt-0.5 font-medium">Agenda</span>
             </a>
         </nav>
     </div>
 
     <script>
-        let scrollTimeout;
-        const dock = document.getElementById('floating-dock');
-        window.addEventListener('scroll', () => {
-            dock.style.transform = 'translate(-50%, 6px)';
-            dock.style.opacity = '0.35';
-            clearTimeout(scrollTimeout);
-            scrollTimeout = setTimeout(() => {
-                dock.style.transform = 'translate(-50%, 0)';
-                dock.style.opacity = '0.45'; 
-            }, 300);
-        });
-        dock.addEventListener('mouseenter', () => { dock.style.opacity = '1'; });
-        dock.addEventListener('mouseleave', () => { dock.style.opacity = '0.45'; });
-        dock.addEventListener('touchstart', () => { dock.style.opacity = '1'; });
+        function carregarRoteiroOficial() {
+            const aprovados = JSON.parse(localStorage.getItem('roteiroAprovados')) || [];
+            const container = document.getElementById('lista-aprovados');
+            const contador = document.getElementById('contador-aprovados');
+
+            contador.innerText = `${aprovados.length} Aprovados`;
+
+            if (aprovados.length === 0) {
+                container.innerHTML = `
+                    <div class="w-full bg-slate-50 border border-dashed border-slate-200 rounded-2xl p-8 text-center my-auto">
+                        <p class="text-slate-500 text-xs sm:text-sm leading-relaxed max-w-md mx-auto">
+                            Nenhum bloco aprovado. Vá à aba <span class="font-semibold text-slate-700">📅 Agenda</span> e envie um percurso para cá!
+                        </p>
+                    </div>`;
+                return;
+            }
+
+            container.innerHTML = '';
+            aprovados.forEach((item, index) => {
+                container.innerHTML += `
+                    <div class="bg-slate-50 border border-slate-200 rounded-2xl p-4 flex items-center justify-between text-xs soft-shadow-sm">
+                        <div class="flex items-center space-x-3">
+                            <span class="w-7 h-7 rounded-full bg-pink-100 text-pink-600 flex items-center justify-center font-bold">${index + 1}</span>
+                            <div>
+                                <h4 class="font-bold text-slate-800 text-sm">${item.origem} ➔ ${item.destino}</h4>
+                                ${item.maps ? `<a href="${item.maps}" target="_blank" class="text-sky-600 hover:underline text-[11px]">Ver no Google Maps 🗺️</a>` : ''}
+                            </div>
+                        </div>
+                        <button onclick="removerAprovado(${index})" class="text-slate-400 hover:text-pink-600 px-2 py-1"><i class="fa-solid fa-trash"></i></button>
+                    </div>
+                `;
+            });
+        }
+
+        function removerAprovado(index) {
+            let aprovados = JSON.parse(localStorage.getItem('roteiroAprovados')) || [];
+            aprovados.splice(index, 1);
+            localStorage.setItem('roteiroAprovados', JSON.stringify(aprovados));
+            carregarRoteiroOficial();
+        }
+
+        carregarRoteiroOficial();
     </script>
 </body>
 </html>
