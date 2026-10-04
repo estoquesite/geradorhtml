@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Trip Hub - Agenda & Percurso</title>
+    <title>Trip Hub - Agenda & Calendário</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -31,89 +31,133 @@
 </head>
 <body class="bg-lightBg text-slate-700 min-h-screen pb-32 font-sans selection:bg-sky-100 selection:text-sky-900">
 
-    <!-- CONTEÚDO PRINCIPAL (Agenda / Montagem de Etapas) -->
-    <main class="w-full max-w-4xl mx-auto px-4 pt-8 space-y-4">
-        
-        <!-- TOPO DA AGENDA / DATA -->
-        <div class="bg-cardBg border border-slate-100 rounded-2xl p-4 soft-shadow flex items-center justify-between">
-            <div>
-                <span class="text-[10px] font-bold text-sky-600 uppercase tracking-widest block mb-0.5">📅 Montagem por etapas do dia</span>
-                <h3 class="text-xs sm:text-sm font-bold text-slate-800">Quinta-feira, 31 de Dezembro de 2026</h3>
-            </div>
-            <div class="flex items-center space-x-2">
-                <button class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-medium rounded-xl transition-colors">
-                    📅 Calendário
-                </button>
-                <a href="index.html" class="w-7 h-7 rounded-full bg-slate-100 text-slate-600 flex items-center justify-center text-xs hover:bg-slate-200">
-                    <i class="fa-solid fa-xmark"></i>
-                </a>
-            </div>
-        </div>
+    <!-- CONTEÚDO PRINCIPAL DA AGENDA -->
+    <main class="w-full max-w-4xl mx-auto px-4 pt-8">
 
-        <!-- FORMULÁRIO: NOVO TRECHO -->
-        <div class="bg-cardBg border border-slate-100 rounded-2xl p-5 soft-shadow space-y-4">
-            <div class="flex items-center space-x-2 border-b border-slate-100 pb-2">
-                <span class="bg-pink-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-md">ETAPA 1</span>
-                <span class="text-xs font-bold text-slate-800 uppercase tracking-wider">NOVO TRECHO</span>
-            </div>
-
-            <!-- Origem -->
-            <div>
-                <label class="block text-[10px] uppercase font-semibold text-slate-400 mb-1">🟢 De onde? (Origem)</label>
-                <input type="text" id="origem" placeholder="Ex: Hotel, Estação..." class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs text-slate-700 focus:outline-none focus:border-sky-400">
-            </div>
-
-            <!-- Destino -->
-            <div>
-                <label class="block text-[10px] uppercase font-semibold text-slate-400 mb-1">🏁 Para onde? (Destino)</label>
-                <input type="text" id="destino" placeholder="Ex: Lago, Museu, Restaurante..." class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs text-slate-700 focus:outline-none focus:border-sky-400">
-            </div>
-
-            <!-- Link Google Maps -->
-            <div>
-                <div class="flex justify-between items-center mb-1">
-                    <label class="text-[10px] uppercase font-semibold text-slate-400">🗺️️ Link do Google Maps</label>
-                    <span class="text-[10px] font-bold text-sky-600 cursor-pointer">📋 COLAR</span>
+        <!-- TELA 1: CALENDÁRIO (Abre por padrão) -->
+        <div id="view-calendario" class="bg-cardBg border border-slate-100 rounded-2xl p-6 soft-shadow space-y-6">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-4">
+                <div>
+                    <h3 id="mes-ano-titulo" class="text-base font-bold text-slate-800">Dezembro 2026</h3>
+                    <p class="text-[11px] text-slate-400">Toque num dia para ver ou montar o roteiro[span_2](start_span)[span_2](end_span)</p>
                 </div>
-                <input type="text" id="maps" placeholder="Cole o link de rota do Maps (https://...)" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs font-mono text-slate-700 focus:outline-none focus:border-sky-400">
-            </div>
-
-            <!-- Botão Adicionar Etapa -->
-            <button onclick="adicionarEtapa()" class="w-full bg-gradient-to-r from-pink-600 to-purple-600 hover:opacity-95 text-white text-xs font-semibold py-3 rounded-xl transition-all shadow-sm">
-                + Adicionar Esta Etapa ao Percurso
-            </button>
-        </div>
-
-        <!-- PRÉVIA VISUAL DO PERCURSO -->
-        <div class="bg-cardBg border border-slate-100 rounded-2xl p-5 soft-shadow space-y-4 mb-8">
-            <div class="flex items-center justify-between">
-                <span class="text-xs font-bold text-slate-800 uppercase tracking-wider">🗺️ Prévia Visual do Percurso</span>
-                <span id="contador-etapas" class="bg-slate-100 text-slate-600 text-[10px] font-semibold px-2.5 py-1 rounded-full">0 ETAPAS</span>
-            </div>
-
-            <div id="lista-previa" class="space-y-2">
-                <div class="bg-slate-50 border border-dashed border-slate-200 rounded-2xl p-6 text-center">
-                    <p class="text-xs text-slate-400 leading-relaxed max-w-sm mx-auto">
-                        Nenhuma etapa adicionada para este dia ainda. Preencha os campos acima e clique em "Adicionar Esta Etapa"!
-                    </p>
+                <div class="flex items-center space-x-2">
+                    <button onclick="mudarMes(-1)" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center transition-colors">
+                        <i class="fa-solid fa-chevron-left text-xs"></i>
+                    </button>
+                    <button onclick="irParaHoje()" class="px-3 py-1 bg-sky-500 text-white rounded-full text-xs font-semibold shadow-sm">
+                        Dez/Jan
+                    </button>
+                    <button onclick="mudarMes(1)" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center transition-colors">
+                        <i class="fa-solid fa-chevron-right text-xs"></i>
+                    </button>
+                    <a href="index.html" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center transition-colors">
+                        <i class="fa-solid fa-xmark text-xs"></i>
+                    </a>
                 </div>
             </div>
 
-            <!-- Botões Inferiores da Agenda -->
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
-                <a href="index.html" class="py-2.5 px-4 bg-white border border-slate-200 rounded-xl text-xs font-medium text-slate-700 flex items-center justify-center space-x-2 soft-shadow-sm hover:bg-slate-50 text-center">
-                    <i class="fa-solid fa-xmark"></i>
-                    <span>Fechar</span>
-                </a>
-                <button class="py-2.5 px-4 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium text-slate-700 flex items-center justify-center space-x-2">
-                    <span>📅</span>
-                    <span>Calendário</span>
-                </button>
-                <button onclick="enviarParaRoteiroOficial()" class="py-2.5 px-4 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-semibold flex items-center justify-center space-x-2 shadow-sm transition-colors">
-                    <span>🚀</span>
-                    <span>Enviar para o Roteiro Oficial</span>
+            <!-- Dias da Semana -->
+            <div class="grid grid-cols-7 gap-2 text-center text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+                <div>Dom</div><div>Seg</div><div>Ter</div><div>Qua</div><div>Qui</div><div>Sex</div><div>Sáb</div>
+            </div>
+
+            <!-- Grade de Dias do Mês -->
+            <div id="grid-dias" class="grid grid-cols-7 gap-2">
+                <!-- Preenchido via JavaScript -->
+            </div>
+
+            <div class="flex justify-between items-center text-[11px] text-slate-400 pt-2 border-t border-slate-100">
+                <span class="flex items-center space-x-1.5"><span class="w-2.5 h-2.5 rounded-full bg-emerald-500 inline-block"></span><span>Dia com percurso</span></span>
+                <span class="font-medium text-sky-600">Toque para planejar[span_3](start_span)[span_3](end_span)</span>
+            </div>
+        </div>
+
+        <!-- TELA 2: MONTAGEM POR ETAPAS DO DIA (Abre ao clicar em um dia) -->
+        <div id="view-etapas" class="hidden space-y-4">
+            
+            <!-- TOPO DA DATA SELECIONADA -->
+            <div class="bg-cardBg border border-slate-100 rounded-2xl p-4 soft-shadow flex items-center justify-between">
+                <div>
+                    <span class="text-[10px] font-bold text-sky-600 uppercase tracking-widest block mb-0.5">📅 Montagem por etapas do dia[span_4](start_span)[span_4](end_span)</span>
+                    <h3 id="titulo-data-selecionada" class="text-xs sm:text-sm font-bold text-slate-800">Quinta-feira, 31 de Dezembro de 2026[span_5](start_span)[span_5](end_span)</h3>
+                </div>
+                <div class="flex items-center space-x-2">
+                    <button onclick="voltarParaCalendario()" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-medium rounded-xl transition-colors">
+                        📅 Calendário[span_6](start_span)[span_6](end_span)
+                    </button>
+                    <button onclick="voltarParaCalendario()" class="w-7 h-7 rounded-full bg-slate-100 text-slate-600 flex items-center justify-center text-xs hover:bg-slate-200">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- FORMULÁRIO: NOVO TRECHO -->
+            <div class="bg-cardBg border border-slate-100 rounded-2xl p-5 soft-shadow space-y-4">
+                <div class="flex items-center space-x-2 border-b border-slate-100 pb-2">
+                    <span class="bg-pink-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-md">ETAPA 1[span_7](start_span)[span_7](end_span)</span>
+                    <span class="text-xs font-bold text-slate-800 uppercase tracking-wider">NOVO TRECHO[span_8](start_span)[span_8](end_span)</span>
+                </div>
+
+                <!-- Origem -->
+                <div>
+                    <label class="block text-[10px] uppercase font-semibold text-slate-400 mb-1">🟢 De onde? (Origem)[span_9](start_span)[span_9](end_span)</label>
+                    <input type="text" id="origem" placeholder="Ex: Hotel, Estação..." class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs text-slate-700 focus:outline-none focus:border-sky-400">
+                </div>
+
+                <!-- Destino -->
+                <div>
+                    <label class="block text-[10px] uppercase font-semibold text-slate-400 mb-1">🏁 Para onde? (Destino)[span_10](start_span)[span_10](end_span)</label>
+                    <input type="text" id="destino" placeholder="Ex: Lago, Museu, Restaurante..." class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs text-slate-700 focus:outline-none focus:border-sky-400">
+                </div>
+
+                <!-- Link Google Maps -->
+                <div>
+                    <div class="flex justify-between items-center mb-1">
+                        <label class="text-[10px] uppercase font-semibold text-slate-400">🗺️️ Link do Google Maps[span_11](start_span)[span_11](end_span)</label>
+                        <span class="text-[10px] font-bold text-sky-600 cursor-pointer">📋 COLAR[span_12](start_span)[span_12](end_span)</span>
+                    </div>
+                    <input type="text" id="maps" placeholder="Cole o link de rota do Maps (https://...)" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs font-mono text-slate-700 focus:outline-none focus:border-sky-400">
+                </div>
+
+                <!-- Botão Adicionar Etapa -->
+                <button onclick="adicionarEtapa()" class="w-full bg-gradient-to-r from-pink-600 to-purple-600 hover:opacity-95 text-white text-xs font-semibold py-3 rounded-xl transition-all shadow-sm">
+                    + Adicionar Esta Etapa ao Percurso[span_13](start_span)[span_13](end_span)
                 </button>
             </div>
+
+            <!-- PRÉVIA VISUAL DO PERCURSO -->
+            <div class="bg-cardBg border border-slate-100 rounded-2xl p-5 soft-shadow space-y-4 mb-8">
+                <div class="flex items-center justify-between">
+                    <span class="text-xs font-bold text-slate-800 uppercase tracking-wider">🗺️ Prévia Visual do Percurso[span_14](start_span)[span_14](end_span)</span>
+                    <span id="contador-etapas" class="bg-slate-100 text-slate-600 text-[10px] font-semibold px-2.5 py-1 rounded-full">0 ETAPAS[span_15](start_span)[span_15](end_span)</span>
+                </div>
+
+                <div id="lista-previa" class="space-y-2">
+                    <div class="bg-slate-50 border border-dashed border-slate-200 rounded-2xl p-6 text-center">
+                        <p class="text-xs text-slate-400 leading-relaxed max-w-sm mx-auto">
+                            Nenhuma etapa adicionada para este dia ainda. Preencha os campos acima e clique em "Adicionar Esta Etapa"[span_16](start_span)[span_16](end_span)!
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Botões Inferiores da Agenda -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
+                    <button onclick="voltarParaCalendario()" class="py-2.5 px-4 bg-white border border-slate-200 rounded-xl text-xs font-medium text-slate-700 flex items-center justify-center space-x-2 soft-shadow-sm hover:bg-slate-50">
+                        <i class="fa-solid fa-xmark"></i>
+                        <span>Fechar[span_17](start_span)[span_17](end_span)</span>
+                    </button>
+                    <button onclick="voltarParaCalendario()" class="py-2.5 px-4 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium text-slate-700 flex items-center justify-center space-x-2">
+                        <span>📅</span>
+                        <span>Calendário[span_18](start_span)[span_18](end_span)</span>
+                    </button>
+                    <button onclick="enviarParaRoteiroOficial()" class="py-2.5 px-4 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-semibold flex items-center justify-center space-x-2 shadow-sm transition-colors">
+                        <span>🚀</span>
+                        <span>Enviar para o Roteiro Oficial[span_19](start_span)[span_19](end_span)</span>
+                    </button>
+                </div>
+            </div>
+
         </div>
 
     </main>
@@ -148,14 +192,83 @@
             <div class="h-4 w-[1px] bg-slate-200"></div>
             <a href="agenda.html" class="flex flex-col items-center text-pink-600 font-semibold hover:scale-110 transition-transform px-1 group">
                 <span class="text-lg">📅</span>
-                <span class="text-[9px] mt-0.5">Agenda</span>
+                <span class="text-[9px] mt-0.5 font-medium">Agenda</span>
             </a>
         </nav>
     </div>
 
-    <!-- SCRIPT DE LOGICA DA AGENDA -->
+    <!-- SCRIPT DE CALENDÁRIO E ETAPAS -->
     <script>
+        // Começa em Dezembro de 2026 (mês 11, pois janeiro é 0)
+        let anoAtual = 2026;
+        let mesAtual = 11; // Dezembro
+        let diaSelecionadoStr = '';
         let etapas = JSON.parse(localStorage.getItem('etapasAgenda')) || [];
+
+        const mesesNomes = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
+        const diasSemanaNomes = ["Domingo", "Segunda-feira", "Terça-feira", "Quarta-feira", "Quinta-feira", "Sexta-feira", "Sábado"];
+
+        function renderCalendario() {
+            document.getElementById('mes-ano-titulo').innerText = `${mesesNomes[mesAtual]} ${anoAtual}`;
+            const grid = document.getElementById('grid-dias');
+            grid.innerHTML = '';
+
+            const primeiroDiaDaSemana = new Date(anoAtual, mesAtual, 1).getDay();
+            const ultimoDiaDoMes = new Date(anoAtual, mesAtual + 1, 0).getDate();
+
+            // Espaços vazios para alinhar o primeiro dia do mês
+            for (let i = 0; i < primeiroDiaDaSemana; i++) {
+                grid.innerHTML += `<div></div>`;
+            }
+
+            // Dias do mês
+            for (let dia = 1; dia <= ultimoDiaDoMes; dia++) {
+                const dataObj = new Date(anoAtual, mesAtual, dia);
+                const diaSemanaStr = dataObj.toLocaleDateString('pt-BR', { weekday: 'long' });
+                const dataFormatada = `${dia} de ${mesesNomes[mesAtual]} de ${anoAtual}`;
+                const diaFormatadoCompleto = `${diaSemanaStr}, ${dataFormatada}`;
+
+                grid.innerHTML += `
+                    <button onclick="selecionarDia(${anoAtual}, ${mesAtual}, ${dia}, '${diaFormatadoCompleto}')" 
+                        class="p-3 bg-white hover:bg-sky-50 border border-slate-100 rounded-xl text-xs font-semibold text-slate-700 flex flex-col items-center justify-center soft-shadow-sm transition-transform hover:scale-105">
+                        <span>${dia}</span>
+                    </button>
+                `;
+            }
+        }
+
+        function mudarMes(direcao) {
+            mesAtual += direcao;
+            if (mesAtual > 11) {
+                mesAtual = 0;
+                anoAtual++;
+            } else if (mesAtual < 0) {
+                mesAtual = 11;
+                anoAtual--;
+            }
+            renderCalendario();
+        }
+
+        function irParaHoje() {
+            anoAtual = 2026;
+            mesAtual = 11; // Dezembro
+            renderCalendario();
+        }
+
+        function selecionarDia(ano, mes, dia, formatoCompleto) {
+            diaSelecionadoStr = formatoCompleto;
+            document.getElementById('titulo-data-selecionada').innerText = formatoCompleto.charAt(0).toUpperCase() + formatoCompleto.slice(1);
+            
+            // Alterna a tela para a montagem de etapas
+            document.getElementById('view-calendario').classList.add('hidden');
+            document.getElementById('view-etapas').classList.remove('hidden');
+            renderPrevia();
+        }
+
+        function voltarParaCalendario() {
+            document.getElementById('view-etapas').classList.add('hidden');
+            document.getElementById('view-calendario').classList.remove('hidden');
+        }
 
         function renderPrevia() {
             const container = document.getElementById('lista-previa');
@@ -196,7 +309,7 @@
                 return;
             }
 
-            etapas.push({ origem, destino, maps });
+            etapas.push({ data: diaSelecionadoStr, origem, destino, maps });
             localStorage.setItem('etapasAgenda', JSON.stringify(etapas));
 
             document.getElementById('origem').value = '';
@@ -217,7 +330,6 @@
                 alert('Adicione pelo menos uma etapa antes de enviar para o Roteiro Oficial!');
                 return;
             }
-            // Salva na lista de aprovados do roteiro
             let roteiroAprovados = JSON.parse(localStorage.getItem('roteiroAprovados')) || [];
             roteiroAprovados.push(...etapas);
             localStorage.setItem('roteiroAprovados', JSON.stringify(roteiroAprovados));
@@ -226,7 +338,8 @@
             window.location.href = 'roteiro.html';
         }
 
-        renderPrevia();
+        // Inicializa o calendário em Dezembro de 2026
+        renderCalendario();
     </script>
 </body>
 </html>
