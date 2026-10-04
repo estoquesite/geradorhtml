@@ -3,1163 +3,302 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Roteiro Europa - Mariana — Orçamento</title>
+    <title>Trip Hub - Orçamento & Câmbio</title>
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-
-    <!-- Melhoria Global de Suavidade e Efeito de Toque nos Botões -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        lightBg: '#f8fafc',
+                        cardBg: '#ffffff'
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- FontAwesome para ícones complementares -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        button, a, label, select, input {
-            -webkit-tap-highlight-color: transparent;
+        .soft-shadow {
+            box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.04);
         }
-        button:active, a:active {
-            transform: scale(0.97);
-        }
-        .no-scrollbar::-webkit-scrollbar {
-            display: none;
-        }
-        .no-scrollbar {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
+        .soft-shadow-sm {
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
         }
     </style>
-<!--GERADOR-APP-->
-<meta name="theme-color" content="#4c1d95">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="Roteiro">
-<link rel="icon" type="image/png" href="icone.png">
-<link rel="apple-touch-icon" href="icone.png">
-<script src="nucleo/nucleo-icone.js"></script>
-<!--/GERADOR-APP-->
-<script>try{localStorage.setItem('tab_ativa_v269','orcamento')}catch(e){}</script>
 </head>
-<body class="bg-slate-100 text-slate-800 min-h-screen pb-32 select-none transition-colors duration-200">
+<body class="bg-lightBg text-slate-700 min-h-screen pb-32 font-sans selection:bg-sky-100 selection:text-sky-900">
 
-
-    <!-- CONTAINER DE NOTIFICAÇÕES TOAST MODERNAS FLUTUANTES -->
-    <div id="toast-container" class="fixed top-4 right-4 z-[999] flex flex-col gap-2 pointer-events-none"></div>
-
-
-    <!-- TELA DE BLOQUEIO / SEGURANÇA (SENHA 1510 & BIOMETRIA NATIVA) -->
-    <div id="tela-bloqueio" class="fixed inset-0 z-[100] bg-slate-900/90 flex items-center justify-center p-4 backdrop-blur-md hidden">
-        <div class="bg-white p-6 sm:p-8 rounded-3xl shadow-2xl max-w-sm w-full space-y-4 text-center text-xs border border-slate-100">
-            <div class="w-14 h-14 bg-indigo-50 text-indigo-600 rounded-2xl mx-auto flex items-center justify-center text-2xl font-black shadow-inner border border-indigo-100">🔒</div>
-            <div>
-                <h2 class="text-sm font-black text-slate-900">Área Protegida</h2>
-                <p class="text-slate-500 mt-0.5 text-[11px]">Insira a sua senha PIN ou utilize a biometria/digital.</p>
+    <!-- CABEÇALHO / TOPO -->
+    <header class="w-full max-w-4xl mx-auto px-4 pt-6 pb-4">
+        <!-- Relógios: Brasil e Europa -->
+        <div class="grid grid-cols-2 gap-4 mb-4">
+            <div class="bg-cardBg border border-slate-100 rounded-2xl p-3.5 text-center soft-shadow">
+                <span class="text-[11px] font-medium uppercase tracking-wider text-slate-400 block mb-1">🇧🇷 Brasil (Rio)</span>
+                <div id="clock-br" class="text-lg font-light text-slate-700 font-mono tracking-wide">--:--:--</div>
             </div>
-            <div class="space-y-2.5">
-                <input type="password" id="input-pin" maxlength="6" class="w-full p-3 bg-slate-50 border border-slate-300 rounded-xl text-center text-base font-black tracking-widest outline-none text-slate-900 focus:border-indigo-600 focus:ring-2 focus:ring-indigo-100 transition" placeholder="••••" onkeypress="if(event.key==='Enter')desbloquearComPin()">
-                <button onclick="desbloquearComPin()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-xl transition shadow-md shadow-indigo-600/20 text-xs active:scale-95">
-                    🔓 Desbloquear com Senha
-                </button>
-                <button onclick="desbloquearComBiometria()" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-3 rounded-xl transition border border-slate-300/80 text-xs flex items-center justify-center gap-1.5 active:scale-95">
-                    <span>👆</span> Entrar com Digital / FaceID
-                </button>
+            <div class="bg-cardBg border border-slate-100 rounded-2xl p-3.5 text-center soft-shadow">
+                <span class="text-[11px] font-medium uppercase tracking-wider text-slate-400 block mb-1">🇪🇺 Europa (CH/DE/FR)</span>
+                <div id="clock-eu" class="text-lg font-light text-slate-700 font-mono tracking-wide">--:--:--</div>
             </div>
-            <div id="erro-pin" class="text-red-500 font-bold text-[11px] hidden">Senha incorreta (Padrão: 1510).</div>
         </div>
-    </div>
 
-
-    <!-- CABEÇALHO SUPERIOR COMPACTO COM TRADUTOR E ATUALIZAR -->
-    <header class="bg-slate-900 text-white px-3 py-2 shadow-md border-b border-slate-800 text-xs flex justify-between items-center z-50 relative gap-1 flex-wrap">
-        <span class="font-bold tracking-wide flex items-center gap-1.5">
-            <span>🚄</span> Roteiro Europa - Mariana
-        </span>
-        <div class="flex items-center gap-1.5 flex-wrap">
-            <a href="https://translate.google.com/?hl=pt&sl=auto&tl=pt&op=images" target="_blank" class="bg-indigo-600 hover:bg-indigo-700 text-white px-2.5 py-1.5 rounded-lg font-bold text-[10px] transition shadow-xs flex items-center gap-1 active:scale-95" title="Google Tradutor & Câmera">🌐 Tradutor</a>
-            <button onclick="window.location.reload()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 hover:text-white px-2.5 py-1.5 rounded-lg font-bold text-[10px] transition shadow-xs border border-slate-700 active:scale-95" title="Atualizar Página">🔄</button>
-            <button onclick="exportarPdfPrint()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-2.5 py-1.5 rounded-lg font-bold text-[10px] transition shadow-xs active:scale-95" title="Imprimir Tudo">🖨️</button>
-            <span class="bg-indigo-950/80 text-indigo-200 border border-indigo-800/50 px-2 py-0.5 rounded-md font-mono font-bold text-[9px]">v289.1 (Pro)</span>
+        <!-- Contador Regressivo -->
+        <div class="bg-gradient-to-r from-sky-50 via-white to-pink-50 border border-slate-100 rounded-2xl p-5 text-center soft-shadow">
+            <h2 class="text-xs font-bold tracking-widest text-sky-600 uppercase mb-3">✈️ Contagem Regressiva para a Europa</h2>
+            
+            <div id="countdown" class="flex justify-center items-center gap-2 sm:gap-3 my-2 text-slate-800 font-mono">
+                <div class="flex flex-col items-center bg-white border border-slate-100 rounded-xl px-3 py-2 soft-shadow-sm min-w-[55px]">
+                    <span id="cd-days" class="text-xl sm:text-2xl font-semibold">--</span>
+                    <span class="text-[9px] uppercase tracking-wider text-slate-400 font-sans mt-0.5">dias</span>
+                </div>
+                <span class="text-slate-300 font-bold">:</span>
+                <div class="flex flex-col items-center bg-white border border-slate-100 rounded-xl px-3 py-2 soft-shadow-sm min-w-[55px]">
+                    <span id="cd-hours" class="text-xl sm:text-2xl font-semibold">--</span>
+                    <span class="text-[9px] uppercase tracking-wider text-slate-400 font-sans mt-0.5">horas</span>
+                </div>
+                <span class="text-slate-300 font-bold">:</span>
+                <div class="flex flex-col items-center bg-white border border-slate-100 rounded-xl px-3 py-2 soft-shadow-sm min-w-[55px]">
+                    <span id="cd-mins" class="text-xl sm:text-2xl font-semibold">--</span>
+                    <span class="text-[9px] uppercase tracking-wider text-slate-400 font-sans mt-0.5">min</span>
+                </div>
+                <span class="text-slate-300 font-bold">:</span>
+                <div class="flex flex-col items-center bg-white border border-slate-100 rounded-xl px-3 py-2 soft-shadow-sm min-w-[55px]">
+                    <span id="cd-secs" class="text-xl sm:text-2xl font-semibold">--</span>
+                    <span class="text-[9px] uppercase tracking-wider text-slate-400 font-sans mt-0.5">seg</span>
+                </div>
+            </div>
+            
+            <p class="text-xs text-slate-400 font-medium mt-2">Suíça 🇨🇭 • Alemanha 🇩🇪 • França 🇫🇷</p>
         </div>
     </header>
 
-
-    <!-- CONTEÚDO PRINCIPAL -->
-    <div class="max-w-4xl mx-auto p-3 sm:p-6 space-y-4 pt-4">
-
-
-        <!-- BARRA INTEGRADA DE RELÓGIOS COM CORES NEON (COMPACTA E REORDENÁVEL) -->
-        <div class="bg-gradient-to-r from-indigo-950 via-slate-900 to-indigo-900 text-white p-2 sm:p-2.5 rounded-2xl shadow-md border border-indigo-800/40 flex items-center justify-between gap-1.5">
-            <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar flex-1 py-0.5 px-0.5" id="barClockItems">
-                <!-- Relógios entram aqui automaticamente com as cores neon e cabem na tela -->
-            </div>
-            <button onclick="toggleClockConfig()" class="bg-white/10 hover:bg-white/20 text-white w-7 h-7 sm:w-8 sm:h-8 rounded-xl flex items-center justify-center shrink-0 border border-white/20 transition active:scale-95 text-xs" title="Configurar Cidades e Cores">⚙️</button>
-        </div>
-
-
-        <!-- MODAL DE CONFIGURAÇÃO DOS RELÓGIOS & CORES -->
-        <div id="barClockModal" class="fixed inset-0 z-[300] bg-slate-900/70 backdrop-blur-sm hidden flex items-center justify-center p-4">
-            <div class="bg-white p-5 rounded-3xl shadow-2xl max-w-sm w-full space-y-3.5 text-xs border border-slate-200">
-                <div class="flex justify-between items-center border-b pb-2">
-                    <h3 class="font-black text-xs text-slate-900 flex items-center gap-1.5"><span>⚙️</span> Cidades, Fusos & Ordem</h3>
-                    <button onclick="toggleClockConfig()" class="text-slate-400 hover:text-slate-600 font-bold text-sm p-1 rounded-lg">✕</button>
-                </div>
-                <div class="bg-indigo-50 text-indigo-900 p-2 rounded-xl text-[10px] font-bold">
-                    💡 Dica: Toque em <b>Fixar no Topo (📌)</b> ou dê um clique direto no relógio da barra para colocá-lo como seu país atual!
-                </div>
-                <div id="barClockForm" class="space-y-2.5 max-h-[55vh] overflow-y-auto pr-1"></div>
-                <div class="flex gap-2 pt-2 border-t border-slate-100">
-                    <button onclick="saveClockConfig()" class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white py-2.5 rounded-xl font-bold text-xs shadow-xs active:scale-95 transition">Salvar</button>
-                    <button onclick="toggleClockConfig()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2.5 rounded-xl text-xs font-bold border border-slate-300 active:scale-95 transition">Cancelar</button>
-                </div>
-            </div>
-        </div>
-
-
-        <script>
-            (function() {
-                const coresNeon = [
-                    { nome: "Verde Neon", hex: "#00ff66" },
-                    { nome: "Ciano Neon", hex: "#00ffff" },
-                    { nome: "Rosa Neon", hex: "#ff007f" },
-                    { nome: "Amarelo Neon", hex: "#ccff00" },
-                    { nome: "Roxo Elétrico", hex: "#a855f7" },
-                    { nome: "Laranja Neon", hex: "#ff5500" },
-                    { nome: "Branco", hex: "#ffffff" }
-                ];
-
-
-                const defaultClocks = [
-                    { name: "Zurique", tz: "Europe/Zurich", color: "#00ff66" },
-                    { name: "França", tz: "Europe/Paris", color: "#00ffff" },
-                    { name: "Alemanha", tz: "Europe/Berlin", color: "#ff007f" },
-                    { name: "Brasil", tz: "America/Sao_Paulo", color: "#ccff00" }
-                ];
-
-
-                const timezoneOptions = [
-                    { label: "Suíça / Zurique (CET)", tz: "Europe/Zurich" },
-                    { label: "França / Paris (CET)", tz: "Europe/Paris" },
-                    { label: "Alemanha / Freiburg (CET)", tz: "Europe/Berlin" },
-                    { label: "Brasil / Rio - SP (UTC-3)", tz: "America/Sao_Paulo" },
-                    { label: "Reino Unido / Londres (UTC+0)", tz: "Europe/London" },
-                    { label: "EUA / Nova York (UTC-5)", tz: "America/New_York" }
-                ];
-
-
-                let userClocks = JSON.parse(localStorage.getItem("app_travel_clocks")) || defaultClocks;
-
-
-                function updateClocks() {
-                    const container = document.getElementById("barClockItems");
-                    if (!container) return;
-                    container.innerHTML = "";
-                    const now = new Date();
-
-
-                    userClocks.forEach((c, idx) => {
-                        if (!c.name.trim()) return;
-                        const time = new Intl.DateTimeFormat("pt-BR", {
-                            timeZone: c.tz,
-                            hour: "2-digit",
-                            minute: "2-digit"
-                        }).format(now);
-
-
-                        const corAtual = c.color || "#00ff66";
-                        const ehPrimeiro = idx === 0;
-
-
-                        const pill = document.createElement("button");
-                        pill.type = "button";
-                        pill.onclick = () => window.moverPaisParaPrimeiro(idx);
-                        pill.className = "bg-white/10 px-2 py-1 rounded-xl flex items-center gap-1.5 shrink-0 shadow-2xs transition-all active:scale-95";
-                        pill.style.border = `1px solid ${corAtual}66`;
-                        pill.title = "Toque para destacar como país onde você está";
-
-
-                        pill.innerHTML = `
-                            <span class="text-[9px] uppercase font-black tracking-wide flex items-center gap-1" style="color: ${corAtual}; text-shadow: 0 0 6px ${corAtual}66;">
-                                <span style="font-size: 7px;">${ehPrimeiro ? '📍' : '●'}</span>${c.name}
-                            </span>
-                            <span class="text-[11px] font-black text-white tracking-tight">${time}</span>
-                        `;
-                        container.appendChild(pill);
-                    });
-                }
-
-
-                window.moverPaisParaPrimeiro = function(index) {
-                    if (index === 0) return;
-                    const item = userClocks.splice(index, 1)[0];
-                    userClocks.unshift(item);
-                    localStorage.setItem("app_travel_clocks", JSON.stringify(userClocks));
-                    updateClocks();
-                    if (window.mostrarToast) {
-                        window.mostrarToast(`📍 ${item.name} definido como país atual!`, 'sucesso');
-                    }
-                };
-
-
-                window.toggleClockConfig = function() {
-                    const modal = document.getElementById("barClockModal");
-                    if (!modal) return;
-                    const isVisible = !modal.classList.contains("hidden");
-                    if (isVisible) {
-                        modal.classList.add("hidden");
-                    } else {
-                        buildForm();
-                        modal.classList.remove("hidden");
-                    }
-                };
-
-
-                function buildForm() {
-                    const form = document.getElementById("barClockForm");
-                    form.innerHTML = "";
-                    userClocks.forEach((c, i) => {
-                        const row = document.createElement("div");
-                        row.className = "bg-slate-50 p-2.5 rounded-xl border border-slate-200 space-y-1.5";
-                        const optionsHtml = timezoneOptions.map(opt => 
-                            `<option value="${opt.tz}" ${opt.tz === c.tz ? 'selected' : ''}>${opt.label}</option>`
-                        ).join("");
-
-
-                        const corAtual = c.color || "#00ff66";
-
-
-                        let paletaHtml = '<div class="flex items-center gap-1 pt-0.5 flex-wrap"><span class="text-[10px] font-bold text-slate-500">Cor:</span>';
-                        coresNeon.forEach(cor => {
-                            const ativo = corAtual.toLowerCase() === cor.hex.toLowerCase() ? 'ring-2 ring-slate-900 scale-110 shadow-xs' : 'opacity-80 hover:opacity-100';
-                            paletaHtml += `<button type="button" onclick="selecionarCorRelogio(${i}, '${cor.hex}')" style="background-color: ${cor.hex};" class="w-4 h-4 rounded-full border border-black/20 transition active:scale-90 ${ativo}" title="${cor.nome}"></button>`;
-                        });
-                        paletaHtml += `<input type="color" value="${corAtual}" onchange="selecionarCorRelogio(${i}, this.value)" class="w-5 h-5 rounded cursor-pointer border-0 p-0 bg-transparent ml-1" title="Cor livre"></div>`;
-
-
-                        row.innerHTML = `
-                            <div class="flex justify-between items-center">
-                                <label class="text-[10px] font-bold text-slate-500 uppercase block">Relógio ${i + 1}</label>
-                                <button type="button" onclick="moverPaisParaPrimeiro(${i}); buildForm();" class="text-[10px] font-bold text-indigo-600 hover:text-indigo-800 flex items-center gap-0.5">
-                                    ${i === 0 ? '📍 País Atual' : '📌 Pôr em 1º'}
-                                </button>
-                            </div>
-                            <div class="flex gap-1.5">
-                                <input type="text" id="clk-name-${i}" value="${c.name}" class="w-1/2 p-2 bg-white border border-slate-300 rounded-xl font-bold text-xs outline-none focus:border-indigo-600" placeholder="Nome">
-                                <select id="clk-tz-${i}" class="w-1/2 p-2 bg-white border border-slate-300 rounded-xl font-bold text-xs outline-none">${optionsHtml}</select>
-                            </div>
-                            <input type="hidden" id="clk-color-${i}" value="${corAtual}">
-                            ${paletaHtml}
-                        `;
-                        form.appendChild(row);
-                    });
-                }
-
-
-                window.selecionarCorRelogio = function(index, hex) {
-                    const inputColor = document.getElementById(`clk-color-${index}`);
-                    if (inputColor) inputColor.value = hex;
-                    userClocks[index].color = hex;
-                    buildForm();
-                };
-
-
-                window.saveClockConfig = function() {
-                    userClocks.forEach((c, i) => {
-                        const nameEl = document.getElementById(`clk-name-${i}`);
-                        const tzEl = document.getElementById(`clk-tz-${i}`);
-                        const colorEl = document.getElementById(`clk-color-${i}`);
-                        if (nameEl) c.name = nameEl.value;
-                        if (tzEl) c.tz = tzEl.value;
-                        if (colorEl) c.color = colorEl.value;
-                    });
-                    localStorage.setItem("app_travel_clocks", JSON.stringify(userClocks));
-                    window.toggleClockConfig();
-                    updateClocks();
-                };
-
-
-                setInterval(updateClocks, 1000);
-                setTimeout(updateClocks, 50);
-            })();
-        </script>
-        <!-- SEPARADORES (TABS) - OS 5 CARTÕES PRINCIPAIS ALINHADOS -->
-        <div class="grid grid-cols-5 gap-1.5 bg-slate-200/90 p-1.5 rounded-2xl shadow-inner text-center border border-slate-300/50">
-            <button onclick="mudarTab('leitura')" id="tab-btn-leitura" class="py-2.5 px-1 rounded-xl bg-indigo-600 text-white font-extrabold shadow-sm transition text-[11px] flex flex-col items-center gap-0.5 active:scale-95"><span>✈️</span><span class="text-[8px] uppercase tracking-wider">Roteiro</span></button>
-            <button onclick="mudarTab('itinerario')" id="tab-btn-itinerario" class="py-2.5 px-1 rounded-xl bg-white text-slate-700 font-extrabold shadow-xs transition text-[11px] flex flex-col items-center gap-0.5 hover:bg-slate-50 active:scale-95"><span>📅</span><span class="text-[8px] uppercase tracking-wider">Editar</span></button>
-            <button onclick="mudarTab('utilidades')" id="tab-btn-utilidades" class="py-2.5 px-1 rounded-xl bg-white text-slate-700 font-extrabold shadow-xs transition text-[11px] flex flex-col items-center gap-0.5 hover:bg-slate-50 active:scale-95"><span>📋</span><span class="text-[8px] uppercase tracking-wider">Hub</span></button>
-            <button onclick="mudarTab('orcamento')" id="tab-btn-orcamento" class="py-2.5 px-1 rounded-xl bg-white text-slate-700 font-extrabold shadow-xs transition text-[11px] flex flex-col items-center gap-0.5 hover:bg-slate-50 active:scale-95"><span>💰</span><span class="text-[8px] uppercase tracking-wider">Orç.</span></button>
-            <button onclick="mudarTab('compras')" id="tab-btn-compras" class="py-2.5 px-1 rounded-xl bg-white text-slate-700 font-extrabold shadow-xs transition text-[11px] flex flex-col items-center gap-0.5 hover:bg-slate-50 active:scale-95"><span>🛍️</span><span class="text-[8px] uppercase tracking-wider">Compras</span></button>
-        </div>
-
-
-
-
-
-
-
-
-
-
-
-        <!-- TAB 4: ORÇAMENTO COM COTAÇÃO AO VIVO E DIVISOR DE CONTA -->
-        <div id="tab-orcamento" class="space-y-3 hidden">
-            <div class="bg-white p-3.5 sm:p-5 rounded-2xl shadow-xs border border-slate-200 space-y-4 text-xs">
-                <div class="flex justify-between items-center border-b pb-3 flex-wrap gap-2">
-                    <div>
-                        <h2 class="text-xs font-extrabold uppercase text-slate-800 tracking-wider">💰 Orçamento & Câmbio</h2>
-                        <p class="text-[11px] text-slate-500 font-semibold">Resumo global no topo e gestão detalhada nas abas abaixo</p>
-                    </div>
-                    <button onclick="imprimirSeccaoCustom('Orçamento & Câmbio', document.getElementById('tab-orcamento').innerHTML)" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-xl font-bold text-xs transition shadow-sm active:scale-95">🖨️ PDF Orçamento</button>
-                </div>
-
-
-                <!-- CARD DE DESTAQUE: TOTAL GASTO GERAL EM REAIS NO TOPO -->
-                <div class="bg-emerald-50/80 p-4 rounded-2xl border-2 border-emerald-300 shadow-sm text-center space-y-1">
-                    <span class="font-black text-xs text-emerald-900 uppercase tracking-wide block">📊 Total Gasto Geral em Reais (R$)</span>
-                    <div id="resumo-total-gasto-brl" class="text-2xl font-black text-emerald-700">R$ 0.00</div>
-                    <p class="text-[10px] text-slate-600">Soma acumulada de todas as despesas, trechos e compras (Euros + Francos + Reais).</p>
-                </div>
-
-
-                <!-- COTAÇÃO GERAL COM BOTÃO AO VIVO -->
-                <div class="bg-slate-50 p-3.5 rounded-2xl border border-slate-200 space-y-2.5">
-                    <div class="flex justify-between items-center flex-wrap gap-1">
-                        <span class="font-bold text-xs text-slate-700">💱 Cotação Atual em Reais (R$)</span>
-                        <button onclick="buscarCotacaoAoVivo()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-2.5 py-1.5 rounded-xl font-bold text-[10px] transition shadow-xs flex items-center gap-1 active:scale-95">
-                            <span>🌐</span> Cotação ao Vivo
-                        </button>
-                    </div>
-                    <div class="grid grid-cols-2 gap-2">
-                        <div class="flex items-center gap-1.5 bg-white p-2 border border-slate-200 rounded-xl shadow-xs">
-                            <span class="font-bold text-xs text-amber-800 shrink-0">1€=R$</span>
-                            <input type="text" id="input-cotacao-eur" class="w-full font-black text-xs outline-none text-slate-900" placeholder="6.20">
-                            <button onclick="salvarCotacao('EUR', this.previousElementSibling.value)" class="bg-emerald-600 hover:bg-emerald-700 text-white px-2.5 py-1.5 rounded-lg font-bold text-[10px] transition active:scale-95">OK</button>
-                        </div>
-                        <div class="flex items-center gap-1.5 bg-white p-2 border border-slate-200 rounded-xl shadow-xs">
-                            <span class="font-bold text-xs text-blue-800 shrink-0">1CHF=R$</span>
-                            <input type="text" id="input-cotacao-chf" class="w-full font-black text-xs outline-none text-slate-900" placeholder="6.50">
-                            <button onclick="salvarCotacao('CHF', this.previousElementSibling.value)" class="bg-emerald-600 hover:bg-emerald-700 text-white px-2.5 py-1.5 rounded-lg font-bold text-[10px] transition active:scale-95">OK</button>
-                        </div>
-                    </div>
-                </div>
-
-
-                <!-- DIVISOR DE CONTA DE RESTAURANTE / GORJETAS -->
-                <div class="bg-gradient-to-r from-amber-50 to-orange-50 p-4 rounded-2xl border border-amber-200 space-y-2.5 shadow-xs">
-                    <div class="flex justify-between items-center">
-                        <span class="font-black text-xs text-amber-900 uppercase">🍽️ Divisor de Conta & Gorjeta</span>
-                        <span class="text-[10px] font-bold text-amber-700 bg-white px-2.5 py-0.5 rounded-lg border border-amber-200 shadow-2xs">Calculadora Rápida</span>
-                    </div>
-                    <div class="grid grid-cols-3 gap-1.5">
-                        <div>
-                            <label class="text-[10px] font-bold text-slate-600 block mb-0.5">Valor da Conta</label>
-                            <input type="number" id="split-valor" oninput="calcularDivisaoConta()" class="w-full p-2 bg-white border border-slate-300 rounded-xl font-black text-xs outline-none shadow-2xs" placeholder="100.00">
-                        </div>
-                        <div>
-                            <label class="text-[10px] font-bold text-slate-600 block mb-0.5">Moeda</label>
-                            <select id="split-moeda" onchange="calcularDivisaoConta()" class="w-full p-2 bg-white border border-slate-300 rounded-xl font-bold text-xs outline-none shadow-2xs">
-                                <option value="EUR">Euros (€)</option>
-                                <option value="CHF">Francos (CHF)</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="text-[10px] font-bold text-slate-600 block mb-0.5">Gorjeta (%)</label>
-                            <select id="split-gorjeta" onchange="calcularDivisaoConta()" class="w-full p-2 bg-white border border-slate-300 rounded-xl font-bold text-xs outline-none shadow-2xs">
-                                <option value="0">0% (Sem)</option>
-                                <option value="5">5%</option>
-                                <option value="10" selected>10%</option>
-                                <option value="15">15%</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div>
-                        <label class="text-[10px] font-bold text-slate-600 block mb-0.5">Pessoas na Divisão</label>
-                        <div class="flex gap-3 text-xs font-bold text-slate-700 flex-wrap">
-                            <label class="flex items-center gap-1 cursor-pointer"><input type="checkbox" id="split-pessoa-mariana" checked onchange="calcularDivisaoConta()" class="accent-indigo-600 rounded"> 👤 Mariana</label>
-                            <label class="flex items-center gap-1 cursor-pointer"><input type="checkbox" id="split-pessoa-sophia" checked onchange="calcularDivisaoConta()" class="accent-indigo-600 rounded"> 👧 Sophia</label>
-                            <label class="flex items-center gap-1 cursor-pointer"><input type="checkbox" id="split-pessoa-gloria" checked onchange="calcularDivisaoConta()" class="accent-indigo-600 rounded"> 👵 Glória</label>
-                        </div>
-                    </div>
-                    <div id="split-resultado" class="bg-white p-3 rounded-xl border border-amber-200 text-center font-bold text-xs text-amber-900 shadow-inner">
-                        Preencha o valor da conta para calcular a divisão por pessoa.
-                    </div>
-                </div>
-
-
-                <!-- SUB-MENU DE ORÇAMENTO -->
-                <div class="flex gap-1.5 bg-slate-100 p-1.5 rounded-2xl text-xs font-bold border border-slate-200 shadow-inner overflow-x-auto no-scrollbar">
-                    <button onclick="mudarOrcamentoSubTab('eur')" id="subtab-eur" class="flex-1 py-2.5 px-3 rounded-xl bg-amber-600 text-white shadow-sm transition text-center font-bold shrink-0 active:scale-95">💶 Euros (€)</button>
-                    <button onclick="mudarOrcamentoSubTab('chf')" id="subtab-chf" class="flex-1 py-2.5 px-3 rounded-xl bg-white text-slate-700 border border-slate-200 shadow-xs transition text-center font-bold hover:bg-slate-50 shrink-0 active:scale-95">🇨🇭 Francos (CHF)</button>
-                    <button onclick="mudarOrcamentoSubTab('conversor')" id="subtab-conversor" class="flex-1 py-2.5 px-3 rounded-xl bg-white text-slate-700 border border-slate-200 shadow-xs transition text-center font-bold hover:bg-slate-50 shrink-0 active:scale-95">🧮 Conversor</button>
-                </div>
-
-
-                <!-- CONTEÚDO DAS SUB-ABAS DE ORÇAMENTO -->
-                <div id="orcamento-conteudo" class="space-y-3 pt-1"></div>
-            </div>
-        </div>
-
-
-
-
-
-    </div>
-
-
-    <!-- MODAL DO LEITOR DE PDF / FOTOS COM ZOOM -->
-    <div id="modal-leitor-pdf" class="fixed inset-0 z-[200] bg-slate-900/90 backdrop-blur-sm hidden flex flex-col p-2 sm:p-6">
-        <div class="bg-white rounded-3xl shadow-2xl flex-1 flex flex-col overflow-hidden border border-slate-300 max-w-4xl mx-auto w-full">
-            <div class="bg-slate-900 text-white px-4 py-3 flex justify-between items-center text-xs">
-                <span id="pdf-titulo-modal" class="font-bold truncate">📄 Visualizador</span>
-                <div class="flex items-center gap-2">
-                    <a id="pdf-btn-download" href="#" download="ficheiro" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-xl font-bold text-xs transition shadow-xs">📥 Baixar</a>
-                    <button onclick="fecharLeitorPdf()" class="bg-slate-800 hover:bg-slate-700 text-white font-bold px-3 py-1.5 rounded-xl text-xs transition active:scale-95">✕ Fechar</button>
-                </div>
-            </div>
-            <div id="visualizador-conteudo-area" class="flex-1 bg-slate-100 p-2 flex items-center justify-center overflow-auto">
-                <iframe id="pdf-iframe-view" class="w-full h-full rounded-2xl border bg-white shadow-inner hidden" src=""></iframe>
-            </div>
-        </div>
-    </div>
-
-
-    <!-- MODAL DO CLIMA AO VIVO (OPEN-METEO) -->
-    <div id="modal-clima" class="fixed inset-0 z-[200] bg-slate-900/70 backdrop-blur-sm hidden flex items-center justify-center p-4">
-        <div class="bg-white p-6 rounded-3xl shadow-2xl max-w-sm w-full space-y-3.5 text-xs border border-slate-200 text-center">
-            <div class="flex justify-between items-center border-b pb-2">
-                <h3 class="font-black text-xs text-slate-900 flex items-center gap-1.5"><span>🌤️</span> <span id="clima-cidade-nome">Clima em Tempo Real</span></h3>
-                <button onclick="fecharClimaModal()" class="text-slate-400 hover:text-slate-600 font-bold text-sm p-1 rounded-lg">✕</button>
-            </div>
-            <div id="clima-conteudo" class="space-y-3 py-2">
-                <div class="text-3xl animate-bounce">⏳</div>
-                <p class="font-bold text-slate-600">A consultar satélite meteorológico ao vivo...</p>
-            </div>
-            <button onclick="fecharClimaModal()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-2.5 rounded-xl font-bold text-xs shadow-md shadow-indigo-600/20 active:scale-95 transition">Fechar</button>
-        </div>
-    </div>
-
-
-    <!-- MODAL DE EDITAR TAREFA -->
-    <div id="modal-tarefa" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
-        <div class="bg-white p-5 rounded-3xl shadow-2xl max-w-sm w-full space-y-3 text-xs border border-slate-200">
-            <div class="flex justify-between items-center border-b pb-2">
-                <h3 class="font-bold text-xs text-slate-900">✏️ Editar Tarefa</h3>
-                <button onclick="fecharModalTarefa()" class="text-slate-400 hover:text-slate-600 font-bold text-sm p-1 rounded-lg">✕</button>
-            </div>
-            <input type="hidden" id="tarefa-edit-id">
+    <!-- CONTEÚDO PRINCIPAL (Orçamento & Câmbio) -->
+    <main class="w-full max-w-4xl mx-auto px-4 mt-2 space-y-4">
+        
+        <!-- TOPO DO ORÇAMENTO -->
+        <div class="bg-cardBg border border-slate-100 rounded-2xl p-4 soft-shadow flex flex-col sm:flex-row items-center justify-between gap-3">
             <div>
-                <label class="block font-semibold text-slate-600 mb-1 text-xs">Descrição da Tarefa</label>
-                <textarea id="tarefa-edit-texto" rows="3" class="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-xl outline-none text-slate-800 font-bold text-xs focus:border-indigo-600" placeholder="Descreva a tarefa..."></textarea>
+                <h3 class="text-xs sm:text-sm font-bold tracking-wider text-slate-800 uppercase">💰 ORÇAMENTO & CÂMBIO</h3>
+                <p class="text-[11px] text-slate-400 mt-0.5">Resumo global no topo e gestão detalhada nas abas abaixo[span_9](start_span)[span_9](end_span)</p>
             </div>
-            <div class="flex gap-2 pt-1">
-                <button onclick="salvarTarefaModal()" class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white py-2.5 rounded-xl font-bold text-xs shadow-xs active:scale-95 transition">Guardar</button>
-                <button onclick="fecharModalTarefa()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2.5 rounded-xl text-xs font-bold border border-slate-300 active:scale-95 transition">Cancelar</button>
-            </div>
+            <button class="bg-sky-500 hover:bg-sky-600 text-white text-xs font-semibold px-4 py-2 rounded-xl transition-colors shadow-sm flex items-center space-x-2">
+                <i class="fa-solid fa-print"></i>
+                <span>PDF Orçamento</span>
+            </button>
         </div>
-    </div>
 
-
-    <!-- BARRA DE FERRAMENTAS FIXA MODERNA COM BACKUP E RESTAURAÇÃO -->
-    <nav class="fixed bottom-0 left-0 right-0 z-50 bg-slate-900/95 backdrop-blur-md text-white px-3 py-2.5 shadow-2xl border-t border-slate-800 text-xs flex items-center justify-around gap-1 overflow-x-auto no-scrollbar max-w-4xl mx-auto rounded-t-2xl">
-        <span class="bg-indigo-600/30 text-indigo-300 border border-indigo-500/30 px-2 py-1 rounded-lg font-mono font-bold text-[9px] shrink-0">v289.1</span>
-        
-        <button onclick="abrirGeminiModal()" class="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white px-3 py-1.5 rounded-xl font-bold transition shrink-0 flex items-center gap-1.5 text-xs shadow-sm shadow-purple-900/30 active:scale-95">
-            <span>✨</span> Gemini
-        </button>
-        
-        <button onclick="ativarMicrofone()" class="bg-purple-600/90 hover:bg-purple-600 text-white px-3 py-1.5 rounded-xl font-bold transition shrink-0 flex items-center gap-1 text-xs shadow-xs active:scale-95">
-            <span>🎤</span> Ditar
-        </button>
-        
-        <button onclick="baixarBackupJson()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 hover:text-white border border-slate-700 px-2.5 py-1.5 rounded-xl font-bold transition shrink-0 flex items-center gap-1 text-xs shadow-xs active:scale-95" title="Baixar Backup do Roteiro">
-            <span>📥</span> Backup
-        </button>
-        
-        <label class="bg-slate-800 hover:bg-slate-700 text-slate-200 hover:text-white border border-slate-700 px-2.5 py-1.5 rounded-xl font-bold transition shrink-0 flex items-center gap-1 text-xs shadow-xs cursor-pointer active:scale-95" title="Restaurar Backup">
-            <span>📤</span> Restaurar
-            <input type="file" accept=".json" onchange="restaurarBackupJson(event)" class="hidden">
-        </label>
-        
-        <button onclick="alternarTema()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 hover:text-white border border-slate-700 px-2.5 py-1.5 rounded-xl font-bold transition shrink-0 flex items-center gap-1 text-xs active:scale-95">
-            <span>🌓</span> Tema
-        </button>
-        
-        <button onclick="alterarSenhaPin()" class="bg-slate-800 hover:bg-slate-700 text-amber-300 border border-slate-700 px-2.5 py-1.5 rounded-xl font-bold transition shrink-0 flex items-center gap-1 text-xs active:scale-95">
-            <span>🔑</span> Senha
-        </button>
-        
-        <button onclick="instalarApp()" class="bg-emerald-600/90 hover:bg-emerald-600 text-white px-2.5 py-1.5 rounded-xl font-bold transition shrink-0 flex items-center gap-1 text-xs shadow-xs active:scale-95">
-            <span>📱</span> App
-        </button>
-    </nav>
-
-
-    <!-- MODAL DA GEMINI IA -->
-    <div id="modal-gemini" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
-        <div class="bg-white p-4 rounded-3xl shadow-2xl max-w-sm w-full space-y-3 text-xs flex flex-col h-[400px] border border-slate-200">
-            <div class="flex justify-between items-center border-b pb-2">
-                <h3 class="font-bold text-xs text-slate-900 flex items-center gap-1"><span>✨</span> Assistente Gemini IA</h3>
-                <button onclick="fecharGeminiModal()" class="text-slate-400 hover:text-slate-600 font-bold text-sm p-1 rounded-lg">✕</button>
-            </div>
-            <div id="gemini-chat-log" class="flex-1 overflow-y-auto space-y-2 p-2.5 bg-slate-50 rounded-2xl border text-xs">
-                <div class="bg-indigo-50 text-indigo-900 p-2.5 rounded-xl font-medium">Olá, Mariana! Podes pedir-me para anotar algo escrevendo "anotar [texto]" ou consultar o saldo.</div>
-            </div>
-            <div class="flex gap-2 pt-1">
-                <input type="text" id="gemini-input" class="flex-1 p-2.5 bg-slate-100 border border-slate-300 rounded-xl outline-none text-slate-800 font-medium text-xs focus:border-indigo-600" placeholder="Ex: anotar comprar bilhete ou saldo..." onkeypress="if(event.key==='Enter')enviarMensagemGemini()">
-                <button onclick="enviarMensagemGemini()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2.5 rounded-xl font-bold text-xs shadow-xs active:scale-95 transition">Enviar</button>
-            </div>
+        <!-- TOTAL GASTO GERAL EM REAIS -->
+        <div class="bg-gradient-to-r from-sky-50 via-white to-sky-50 border border-slate-100 rounded-2xl p-6 text-center soft-shadow">
+            <span class="text-xs font-bold tracking-wider text-slate-500 uppercase block mb-1">📊 TOTAL GASTO GERAL EM REAIS (R$)</span>
+            <div class="text-3xl sm:text-4xl font-extrabold text-slate-800 font-mono my-2">R$ 0,00</div>
+            <p class="text-[11px] text-slate-400">Soma acumulada de todas as despesas, trechos e compras (Euros + Francos + Reais)[span_10](start_span)[span_10](end_span).</p>
         </div>
-    </div>
 
-
-<script src="nucleo/nucleo-00-base.js"></script>
-<script>
-        function apagarConducaoOrcamento(itemId, trechoId, condId) {
-            registarEstadoAnterior();
-            let item = dadosApp.itinerario.find(i => String(i.id) === String(itemId));
-            if(item && item.trechos) {
-                let tr = item.trechos.find(t => String(t.id) === String(trechoId));
-                if(tr && tr.conducoes) {
-                    let cond = tr.conducoes.find(c => String(c.id) === String(condId));
-                    if(cond) {
-                        cond.valor = 0; 
-                        salvarStorage();
-                        renderizarOrcamentoTab();
-                        mostrarToast("Despesa removida do orçamento!", "sucesso");
-                    }
-                }
-            }
-        }
-
-        function abrirEdicaoConducaoOrcamento(itemId, trechoId, condId) {
-            registarEstadoAnterior();
-            let item = dadosApp.itinerario.find(i => String(i.id) === String(itemId));
-            if(item && item.trechos) {
-                let tr = item.trechos.find(t => String(t.id) === String(trechoId));
-                if(tr && tr.conducoes) {
-                    let cond = tr.conducoes.find(c => String(c.id) === String(condId));
-                    if(cond) {
-                        cond.editando = true;
-                        salvarStorage();
-                        renderizarOrcamentoTab();
-                    }
-                }
-            }
-        }
-
-        function salvarEdicaoConducaoOrcamento(itemId, trechoId, condId) {
-            registarEstadoAnterior();
-            let item = dadosApp.itinerario.find(i => String(i.id) === String(itemId));
-            if(item && item.trechos) {
-                let tr = item.trechos.find(t => String(t.id) === String(trechoId));
-                if(tr && tr.conducoes) {
-                    let cond = tr.conducoes.find(c => String(c.id) === String(condId));
-                    if(cond) {
-                        let valInput = document.getElementById('orc-tr-val-' + cond.id);
-                        let transpInput = document.getElementById('orc-tr-transp-' + cond.id);
-                        let moedaInput = document.getElementById('orc-tr-moeda-' + cond.id);
-                        
-                        if(valInput) cond.valor = limparNumero(valInput.value);
-                        if(transpInput) cond.transporte = transpInput.value;
-                        if(moedaInput) cond.moeda = moedaInput.value;
-                        
-                        cond.editando = false;
-                        salvarStorage();
-                        atualizarTudo();
-                        mostrarToast("Condução salva com sucesso!", "sucesso");
-                    }
-                }
-            }
-        }
-
-        async function buscarCotacaoAoVivo() {
-            mostrarToast("Buscando cotação em tempo real...", "info");
-            try {
-                const res = await fetch("https://economia.awesomeapi.com.br/last/EUR-BRL,CHF-BRL");
-                if (!res.ok) throw new Error("Erro na rede");
-                const dados = await res.json();
-                if (dados.EURBRL && dados.CHFBRL) {
-                    registarEstadoAnterior();
-                    const eur = parseFloat(parseFloat(dados.EURBRL.bid).toFixed(2));
-                    const chf = parseFloat(parseFloat(dados.CHFBRL.bid).toFixed(2));
-                    dadosApp.cotacaoEur = eur;
-                    dadosApp.cotacaoChf = chf;
-                    
-                    let inputEur = document.getElementById('input-cotacao-eur');
-                    let inputChf = document.getElementById('input-cotacao-chf');
-                    if(inputEur) inputEur.value = eur;
-                    if(inputChf) inputChf.value = chf;
-
-
-                    salvarStorage();
-                    renderizarOrcamentoTab();
-                    renderizarComprasTab();
-                    mostrarToast(`Cotação atualizada: 1€ = R$ ${eur} | 1 CHF = R$ ${chf}`, "sucesso");
-                }
-            } catch (err) {
-                mostrarToast("Falha ao buscar câmbio online. Verifique a internet.", "erro");
-            }
-        }
-
-        function calcularDivisaoConta() {
-            const valorInput = document.getElementById('split-valor');
-            const moedaInput = document.getElementById('split-moeda');
-            const gorjetaInput = document.getElementById('split-gorjeta');
-            const resEl = document.getElementById('split-resultado');
-            if(!valorInput || !moedaInput || !gorjetaInput || !resEl) return;
-
-
-            let val = limparNumero(valorInput.value);
-            if (val <= 0) {
-                resEl.innerHTML = "Preencha o valor da conta para calcular a divisão por pessoa.";
-                return;
-            }
-
-
-            let moeda = moedaInput.value;
-            let gorjetaPct = parseFloat(gorjetaInput.value) || 0;
-            let valorComGorjeta = val * (1 + (gorjetaPct / 100));
-
-
-            let pessoasSelecionadas = [];
-            if(document.getElementById('split-pessoa-mariana').checked) pessoasSelecionadas.push("Mariana");
-            if(document.getElementById('split-pessoa-sophia').checked) pessoasSelecionadas.push("Sophia");
-            if(document.getElementById('split-pessoa-gloria').checked) pessoasSelecionadas.push("Glória");
-
-
-            let qtdPessoas = pessoasSelecionadas.length > 0 ? pessoasSelecionadas.length : 1;
-            let porPessoaMoeda = valorComGorjeta / qtdPessoas;
-
-
-            let cotEur = parseFloat(dadosApp.cotacaoEur) || 6.20;
-            let cotChf = parseFloat(dadosApp.cotacaoChf) || 6.50;
-            let cotacao = moeda === 'EUR' ? cotEur : cotChf;
-            let totalBrl = valorComGorjeta * cotacao;
-            let porPessoaBrl = totalBrl / qtdPessoas;
-            let simboloMoeda = moeda === 'EUR' ? '€' : 'CHF';
-
-
-            resEl.innerHTML = `
-                <div class="space-y-1">
-                    <div class="text-sm font-black text-amber-900">Total com gorjeta: ${valorComGorjeta.toFixed(2)} ${simboloMoeda} <span class="text-emerald-700">(R$ ${totalBrl.toFixed(2)})</span></div>
-                    <div class="text-xs font-bold text-slate-700 border-t border-amber-200 pt-1">
-                        👉 <b>${porPessoaMoeda.toFixed(2)} ${simboloMoeda}</b> por pessoa <span class="text-emerald-700 font-extrabold">(R$ ${porPessoaBrl.toFixed(2)})</span>
-                    </div>
-                    <div class="text-[10px] text-slate-500">Divisão entre: ${pessoasSelecionadas.join(', ') || '1 pessoa'}</div>
+        <!-- COTAÇÃO ATUAL EM REAIS -->
+        <div class="bg-cardBg border border-slate-100 rounded-2xl p-4 soft-shadow">
+            <div class="flex items-center justify-between mb-3">
+                <span class="text-xs font-bold uppercase tracking-wider text-slate-700">💵 Cotação Atual em Reais (R$)</span>
+                <span class="bg-sky-500 text-white text-[10px] font-semibold px-2.5 py-1 rounded-full">⚡ Cotação ao Vivo</span>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div class="flex items-center justify-between bg-slate-50 border border-slate-200 rounded-xl p-3">
+                    <span class="text-xs font-medium text-slate-700">1€ = R$ 5,88</span>
+                    <button class="bg-sky-500 hover:bg-sky-600 text-white text-xs font-semibold px-3 py-1.5 rounded-lg shadow-sm">OK</button>
                 </div>
-            `;
+                <div class="flex items-center justify-between bg-slate-50 border border-slate-200 rounded-xl p-3">
+                    <span class="text-xs font-medium text-slate-700">1CHF = R$ 6,28</span>
+                    <button class="bg-sky-500 hover:bg-sky-600 text-white text-xs font-semibold px-3 py-1.5 rounded-lg shadow-sm">OK</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- DIVISOR DE CONTA & GORJETA -->
+        <div class="bg-cardBg border border-slate-100 rounded-2xl p-4 soft-shadow">
+            <div class="flex items-center justify-between mb-3">
+                <span class="text-xs font-bold uppercase tracking-wider text-slate-700">🍽️ Divisor de Conta & Gorjeta</span>
+                <span class="text-xs text-sky-600 font-medium">Calculadora Rápida</span>
+            </div>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4">
+                <div>
+                    <label class="block text-[10px] uppercase font-semibold text-slate-400 mb-1">Valor da Conta</label>
+                    <input type="text" value="100.00" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs font-mono text-slate-700 focus:outline-none focus:border-sky-400">
+                </div>
+                <div>
+                    <label class="block text-[10px] uppercase font-semibold text-slate-400 mb-1">Moeda</label>
+                    <select class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs text-slate-700 focus:outline-none focus:border-sky-400">
+                        <option>Euros (€)</option>
+                        <option>Francos (CHF)</option>
+                        <option>Reais (R$)</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-[10px] uppercase font-semibold text-slate-400 mb-1">Gorjeta (%)</label>
+                    <select class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs text-slate-700 focus:outline-none focus:border-sky-400">
+                        <option>10%</option>
+                        <option>15%</option>
+                        <option>20%</option>
+                        <option>0%</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- PESSOAS NA DIVISÃO -->
+            <div class="mb-4">
+                <span class="block text-[10px] uppercase font-semibold text-slate-400 mb-2">Pessoas na Divisão</span>
+                <div class="flex flex-wrap gap-4 text-xs font-medium text-slate-700">
+                    <label class="flex items-center space-x-1.5 cursor-pointer">
+                        <input type="checkbox" checked class="rounded text-sky-500 focus:ring-sky-400">
+                        <span>👤 Mariana</span>
+                    </label>
+                    <label class="flex items-center space-x-1.5 cursor-pointer">
+                        <input type="checkbox" checked class="rounded text-sky-500 focus:ring-sky-400">
+                        <span>👩 Sophia</span>
+                    </label>
+                    <label class="flex items-center space-x-1.5 cursor-pointer">
+                        <input type="checkbox" checked class="rounded text-sky-500 focus:ring-sky-400">
+                        <span>👵 Glória</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="bg-slate-50 border border-dashed border-slate-200 rounded-xl p-4 text-center">
+                <p class="text-xs text-slate-500">Preencha o valor da conta para calcular a divisão por pessoa[span_11](start_span)[span_11](end_span)[span_12](start_span)[span_12](end_span).</p>
+            </div>
+        </div>
+
+        <!-- ABAS DE MOEDAS (Euros / Francos / Conversor) -->
+        <div class="flex border-b border-slate-200 gap-2 pb-2">
+            <button class="px-4 py-2 bg-sky-500 text-white rounded-xl text-xs font-semibold shadow-sm">💶 Euros (€)</button>
+            <button class="px-4 py-2 bg-white border border-slate-200 text-slate-600 rounded-xl text-xs font-semibold hover:bg-slate-50">🇨🇭 Francos (CHF)</button>
+            <button class="px-4 py-2 bg-white border border-slate-200 text-slate-600 rounded-xl text-xs font-semibold hover:bg-slate-50">📊 Conversor</button>
+        </div>
+
+        <!-- GESTÃO DE EUROS -->
+        <div class="bg-cardBg border border-slate-100 rounded-2xl p-5 soft-shadow space-y-4 mb-8">
+            <h4 class="text-xs font-bold uppercase tracking-wider text-slate-800">💶 Gestão de Euros (€)</h4>
+            
+            <div>
+                <label class="block text-[10px] uppercase font-semibold text-slate-400 mb-1">Disponível (€)</label>
+                <div class="flex gap-2">
+                    <input type="text" value="0" class="flex-1 bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs font-mono text-slate-700 focus:outline-none focus:border-sky-400">
+                    <button class="bg-sky-500 hover:bg-sky-600 text-white text-xs font-semibold px-5 py-2.5 rounded-xl shadow-sm">OK</button>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+                <div class="bg-slate-50 border border-slate-200 rounded-xl p-3 flex justify-between items-center">
+                    <span class="text-xs text-slate-500">Restante:</span>
+                    <span class="text-xs font-mono font-bold text-slate-800">0.00 €</span>
+                </div>
+                <div class="bg-slate-50 border border-slate-200 rounded-xl p-3 flex justify-between items-center">
+                    <span class="text-xs text-slate-500">Em Reais (R$):</span>
+                    <span class="text-xs font-mono font-bold text-slate-800">R$ 0.00</span>
+                </div>
+            </div>
+
+            <div class="pt-2">
+                <span class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">Despesas em Euros (€):</span>
+                <div class="bg-slate-50 border border-slate-200 rounded-xl p-3 flex items-center justify-between gap-3">
+                    <input type="text" value="Despresa" class="flex-1 bg-white border border-slate-200 rounded-lg p-2 text-xs text-slate-700 focus:outline-none">
+                    <input type="text" value="0" class="w-20 bg-white border border-slate-200 rounded-lg p-2 text-xs font-mono text-slate-700 text-center focus:outline-none">
+                    <button class="bg-sky-500 text-white text-xs px-3 py-2 rounded-lg font-semibold">OK</button>
+                    <button class="bg-pink-100 text-pink-600 text-xs px-2.5 py-2 rounded-lg"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+            </div>
+
+            <button class="w-full bg-sky-500 hover:bg-sky-600 text-white text-xs font-semibold py-3 rounded-xl transition-colors shadow-sm mt-2">
+                + Nova Despesa EUR
+            </button>
+        </div>
+
+    </main>
+
+    <!-- BARRA FLUTUANTE INFERIOR -->
+    <div id="floating-dock" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 transition-all duration-300 opacity-90 hover:opacity-100">
+        <nav class="bg-cardBg/90 backdrop-blur-md border border-slate-100 rounded-full px-6 py-3 flex items-center space-x-4 sm:space-x-8 soft-shadow shadow-xl">
+            <a href="index.html" class="flex flex-col items-center text-slate-400 hover:text-sky-600 hover:scale-110 transition-transform px-1 group">
+                <span class="text-xl">🏠</span>
+                <span class="text-[10px] mt-1 font-medium">Início</span>
+            </a>
+            <div class="h-5 w-[1px] bg-slate-200"></div>
+            <a href="roteiro.html" class="flex flex-col items-center text-slate-400 hover:text-pink-600 hover:scale-110 transition-transform px-1 group">
+                <span class="text-xl">✈️</span>
+                <span class="text-[10px] mt-1 font-medium">Roteiro</span>
+            </a>
+            <div class="h-5 w-[1px] bg-slate-200"></div>
+            <a href="hub.html" class="flex flex-col items-center text-slate-400 hover:text-sky-600 hover:scale-110 transition-transform px-1 group">
+                <span class="text-xl">🎒</span>
+                <span class="text-[10px] mt-1 font-medium">Hub</span>
+            </a>
+            <div class="h-5 w-[1px] bg-slate-200"></div>
+            <a href="orcamento.html" class="flex flex-col items-center text-green-600 font-semibold hover:scale-110 transition-transform px-1 group">
+                <span class="text-xl">💳</span>
+                <span class="text-[10px] mt-1">Orçamento</span>
+            </a>
+            <div class="h-5 w-[1px] bg-slate-200"></div>
+            <a href="agenda.html" class="flex flex-col items-center text-slate-400 hover:text-pink-600 hover:scale-110 transition-transform px-1 group">
+                <span class="text-xl">📅</span>
+                <span class="text-[10px] mt-1 font-medium">Agenda</span>
+            </a>
+        </nav>
+    </div>
+
+    <!-- SCRIPTS DE FUNCIONALIDADE -->
+    <script>
+        // Relógios em tempo real
+        function updateClocks() {
+            const now = new Date();
+            document.getElementById('clock-br').innerText = now.toLocaleTimeString('pt-BR', { timeZone: 'America/Sao_Paulo' });
+            document.getElementById('clock-eu').innerText = now.toLocaleTimeString('pt-BR', { timeZone: 'Europe/Zurich' });
         }
+        setInterval(updateClocks, 1000);
+        updateClocks();
 
-        function mudarOrcamentoSubTab(sub) {
-            orcamentoSubTab = sub;
-            ['eur', 'chf', 'conversor'].forEach(s => {
-                let btn = document.getElementById('subtab-' + s);
-                if(btn) {
-                    if(s === sub) {
-                        if(s === 'eur') btn.className = "flex-1 py-2.5 px-3 rounded-xl bg-amber-600 text-white shadow-sm transition text-center font-bold shrink-0";
-                        else if(s === 'chf') btn.className = "flex-1 py-2.5 px-3 rounded-xl bg-blue-600 text-white shadow-sm transition text-center font-bold shrink-0";
-                        else btn.className = "flex-1 py-2.5 px-3 rounded-xl bg-indigo-600 text-white shadow-sm transition text-center font-bold shrink-0";
-                    } else {
-                        btn.className = "flex-1 py-2.5 px-3 rounded-xl bg-white text-slate-700 border border-slate-200 shadow-xs transition text-center font-bold hover:bg-slate-50 shrink-0";
-                    }
-                }
-            });
-            renderizarOrcamentoTab();
-        }
+        // Contagem Regressiva para Dezembro de 2026
+        const tripDate = new Date('2026-12-01T00:00:00');
+        function updateCountdown() {
+            const now = new Date();
+            const diff = tripDate - now;
 
-        function renderizarOrcamentoTab() {
-            const container = document.getElementById('orcamento-conteudo');
-            const resumoTotalGastoBrl = document.getElementById('resumo-total-gasto-brl');
-            if(!container) return;
-            container.innerHTML = '';
-
-
-            try {
-                let cotEur = parseFloat(dadosApp.cotacaoEur) || 6.20;
-                let cotChf = parseFloat(dadosApp.cotacaoChf) || 6.50;
-
-
-                let gastoEur = 0;
-                let gastoChf = 0;
-                let gastoBrl = 0;
-
-
-                if(dadosApp.itinerario) {
-                    dadosApp.itinerario.forEach(item => {
-                        if(item.trechos && item.trechos.length > 0) {
-                            item.trechos.forEach(tr => {
-                                if(tr.conducoes) {
-                                    tr.conducoes.forEach(cond => {
-                                        let val = limparNumero(cond.valor);
-                                        let moeda = cond.moeda || 'EUR';
-                                        if(val > 0) {
-                                            if(moeda === 'EUR') gastoEur += val;
-                                            else if(moeda === 'CHF') gastoChf += val;
-                                            else if(moeda === 'BRL') gastoBrl += val;
-                                        }
-                                    });
-                                }
-                            });
-                        }
-                    });
-                }
-
-
-                if(dadosApp.orcamento && dadosApp.orcamento.length > 0) {
-                    dadosApp.orcamento.forEach(d => {
-                        let val = limparNumero(d.valor);
-                        let moeda = d.moeda || 'EUR';
-                        if(val > 0) {
-                            if(moeda === 'EUR') gastoEur += val;
-                            else if(moeda === 'CHF') gastoChf += val;
-                            else if(moeda === 'BRL') gastoBrl += val;
-                        }
-                    });
-                }
-
-
-                if(dadosApp.compras && dadosApp.compras.length > 0) {
-                    dadosApp.compras.forEach(it => {
-                        let val = limparNumero(it.valor);
-                        let moeda = it.moeda || 'EUR';
-                        if(val > 0) {
-                            if(moeda === 'EUR') gastoEur += val;
-                            else if(moeda === 'CHF') gastoChf += val;
-                            else if(moeda === 'BRL') gastoBrl += val;
-                        }
-                    });
-                }
-
-
-                let totalGastoBrl = (gastoEur * cotEur) + (gastoChf * cotChf) + gastoBrl;
-                if(resumoTotalGastoBrl) resumoTotalGastoBrl.innerText = 'R$ ' + totalGastoBrl.toFixed(2);
-
-
-                if (orcamentoSubTab === 'eur') {
-                    let despesasEurHtml = '';
-                    if(dadosApp.itinerario) {
-                        dadosApp.itinerario.forEach(item => {
-                            if(item.trechos) {
-                                item.trechos.forEach(tr => {
-                                    if(tr.conducoes) {
-                                        tr.conducoes.forEach(cond => {
-                                            let val = limparNumero(cond.valor);
-                                            if(val > 0 && cond.moeda === 'EUR') {
-                                                let valBrl = val * cotEur;
-                                                let origemStr = (tr.origem || 'Origem').replace(/"/g, '&quot;');
-                                                let destinoStr = (tr.destino || 'Destino').replace(/"/g, '&quot;');
-                                                let isEditando = cond.editando ? true : false;
-
-
-                                                if(isEditando) {
-                                                    despesasEurHtml += `
-                                                        <div class="p-3.5 rounded-2xl bg-white border-2 border-indigo-300 flex flex-col gap-2.5 text-xs shadow-sm">
-                                                            <div class="flex justify-between items-center font-bold text-slate-700">
-                                                                <span>✏️ A editar: 🚄 ${origemStr} ➔ ${destinoStr}</span>
-                                                                <button onclick="apagarConducaoOrcamento('${item.id}', '${tr.id}', '${cond.id}')" class="text-rose-600 hover:text-rose-700 font-bold px-2 py-1 bg-rose-50 hover:bg-rose-100 border border-rose-200 rounded-lg text-xs transition active:scale-95">✕ Apagar</button>
-                                                            </div>
-                                                            <div class="flex items-center gap-1.5 flex-wrap">
-                                                                <select id="orc-tr-transp-${cond.id}" class="p-1.5 bg-slate-50 border border-slate-300 rounded-xl font-bold text-xs">
-                                                                    <option value="Trem" ${cond.transporte==='Trem'?'selected':''}>🚂 Trem</option>
-                                                                    <option value="Ônibus" ${cond.transporte==='Ônibus'?'selected':''}>🚌 Ônibus</option>
-                                                                    <option value="Avião" ${cond.transporte==='Avião'?'selected':''}>✈️ Avião</option>
-                                                                    <option value="Metrô" ${cond.transporte==='Metrô'?'selected':''}>🚇 Metrô</option>
-                                                                    <option value="Carro" ${cond.transporte==='Carro'?'selected':''}>🚗 Carro</option>
-                                                                    <option value="Outro" ${cond.transporte==='Outro'?'selected':''}>📦 Outro</option>
-                                                                </select>
-                                                                <input type="text" id="orc-tr-val-${cond.id}" value="${val}" class="w-20 p-1.5 bg-slate-50 border border-slate-300 rounded-xl font-black text-right text-xs" placeholder="0">
-                                                                <select id="orc-tr-moeda-${cond.id}" class="p-1.5 bg-slate-50 border border-slate-300 rounded-xl font-bold text-xs">
-                                                                    <option value="EUR" ${cond.moeda==='EUR'?'selected':''}>EUR (€)</option>
-                                                                    <option value="CHF" ${cond.moeda==='CHF'?'selected':''}>CHF</option>
-                                                                </select>
-                                                                <button onclick="salvarEdicaoConducaoOrcamento('${item.id}', '${tr.id}', '${cond.id}')" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-xl font-bold text-xs shadow-xs transition active:scale-95">✓ OK (Salvar)</button>
-                                                            </div>
-                                                        </div>
-                                                    `;
-                                                } else {
-                                                    despesasEurHtml += `
-                                                        <div class="p-3.5 rounded-2xl bg-white border border-slate-200 flex flex-col gap-2 text-xs shadow-xs hover:border-indigo-300 transition">
-                                                            <div class="flex justify-between items-center">
-                                                                <span class="font-black text-slate-900 truncate">🚄 ${origemStr} ➔ ${destinoStr}</span>
-                                                                <div class="flex items-center gap-1.5">
-                                                                    <button onclick="abrirEdicaoConducaoOrcamento('${item.id}', '${tr.id}', '${cond.id}')" class="bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-300 px-2.5 py-1 rounded-lg font-bold text-xs shadow-2xs transition active:scale-95" title="Editar com Lápis">✏️ Lápis</button>
-                                                                    <button onclick="apagarConducaoOrcamento('${item.id}', '${tr.id}', '${cond.id}')" class="text-rose-600 hover:text-rose-700 font-bold px-2.5 py-1 bg-rose-50 hover:bg-rose-100 border border-rose-200 rounded-lg text-xs transition active:scale-95" title="Apagar despesa">✕ Apagar</button>
-                                                                </div>
-                                                            </div>
-                                                            <div class="flex justify-between items-center border-t border-slate-100 pt-2">
-                                                                <span class="text-slate-600 font-bold">🚌 ${cond.transporte || 'Condução'}</span>
-                                                                <div class="text-right whitespace-nowrap">
-                                                                    <span class="font-black text-amber-900 text-sm">${val.toFixed(2)} ${cond.moeda || 'EUR'}</span>
-                                                                    <span class="text-emerald-700 font-bold text-[11px] block">R$ ${valBrl.toFixed(2)}</span>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    `;
-                                                }
-                                            }
-                                        });
-                                    }
-                                });
-                            }
-                        });
-                    }
-
-
-                    if(dadosApp.orcamento) {
-                        dadosApp.orcamento.forEach(d => {
-                            if(d.moeda === 'EUR') {
-                                let val = limparNumero(d.valor);
-                                let descSafe = (d.descricao || '').replace(/"/g, '&quot;');
-                                despesasEurHtml += '<div class="p-3 rounded-xl bg-white border border-slate-200 flex flex-col gap-2 text-xs shadow-xs">' +
-                                    '<input type="text" value="' + descSafe + '" oninput="atualizarOrcamentoDescricao(' + d.id + ', this.value)" class="w-full bg-transparent outline-none font-bold text-slate-800 text-xs border-b pb-1" placeholder="Descrição...">' +
-                                    '<div class="flex items-center justify-between gap-2">' +
-                                        '<span class="text-slate-500 font-medium">Valor (€):</span>' +
-                                        '<div class="flex items-center gap-1.5"><input type="text" value="' + (val !== 0 ? val : '') + '" id="despesa-val-' + d.id + '" class="w-20 p-1.5 bg-slate-50 border border-slate-300 rounded-xl font-black text-right text-xs outline-none" placeholder="0">' +
-                                        '<button onclick="salvarDespesaValor(' + d.id + ', document.getElementById(\'despesa-val-' + d.id + '\').value)" class="bg-emerald-600 hover:bg-emerald-700 text-white px-2.5 py-1.5 rounded-lg font-bold text-[10px] transition active:scale-95">OK</button></div>' +
-                                        '<button onclick="apagarDespesa(' + d.id + ')" class="text-rose-600 hover:text-rose-700 font-bold px-2 py-1.5 rounded-xl bg-rose-50 hover:bg-rose-100 border border-rose-200 text-xs transition active:scale-95">✕</button></div>' +
-                                    '</div>';
-                            }
-                        });
-                    }
-                    if(despesasEurHtml === '') despesasEurHtml = '<p class="text-xs text-slate-400 italic">Sem despesas em Euros registadas.</p>';
-
-
-                    let saldoEurNum = limparNumero(dadosApp.saldoEur);
-                    let sobraEur = saldoEurNum - gastoEur;
-                    container.innerHTML = `
-                        <div class="bg-amber-50/50 p-4 rounded-2xl border border-amber-200 space-y-3 shadow-xs">
-                            <h3 class="font-black text-amber-900 text-xs uppercase border-b border-amber-200 pb-1.5">💶 Gestão de Euros (€)</h3>
-                            <div>
-                                <label class="block font-bold text-xs text-amber-800 mb-1">Disponível (€)</label>
-                                <div class="flex gap-1.5">
-                                    <input type="text" id="input-saldo-eur" value="${dadosApp.saldoEur !== "" ? dadosApp.saldoEur : ''}" class="flex-1 p-2.5 bg-white border border-amber-300 rounded-xl font-black text-amber-900 text-sm shadow-inner outline-none" placeholder="0">
-                                    <button onclick="salvarSaldo('EUR', document.getElementById('input-saldo-eur').value)" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3.5 py-2 rounded-xl font-bold text-xs transition shadow-xs active:scale-95">OK</button>
-                                </div>
-                            </div>
-                            <div class="flex justify-between items-center bg-white p-2.5 rounded-xl border border-amber-100 text-xs shadow-2xs">
-                                <span class="font-semibold text-slate-600">Restante:</span>
-                                <span class="font-black text-amber-900 text-sm">${sobraEur.toFixed(2)} €</span>
-                            </div>
-                            <div class="flex justify-between items-center bg-white p-2.5 rounded-xl border border-amber-100 text-xs shadow-2xs">
-                                <span class="font-semibold text-slate-600">Em Reais (R$):</span>
-                                <span class="font-black text-emerald-700 text-sm">R$ ${(sobraEur * cotEur).toFixed(2)}</span>
-                            </div>
-                            <div class="space-y-2 pt-2">
-                                <span class="font-bold text-xs text-amber-900 uppercase block">Despesas em Euros (€):</span>
-                                <div class="space-y-2.5">${despesasEurHtml}</div>
-                            </div>
-                            <button onclick="adicionarDespesa('EUR')" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-bold py-2.5 rounded-xl text-xs transition shadow-sm mt-3 active:scale-95">➕ Nova Despesa EUR</button>
-                        </div>
-                    `;
-
-
-                } else if (orcamentoSubTab === 'chf') {
-                    let despesasChfHtml = '';
-                    if(dadosApp.itinerario) {
-                        dadosApp.itinerario.forEach(item => {
-                            if(item.trechos) {
-                                item.trechos.forEach(tr => {
-                                    if(tr.conducoes) {
-                                        tr.conducoes.forEach(cond => {
-                                            let val = limparNumero(cond.valor);
-                                            if(val > 0 && cond.moeda === 'CHF') {
-                                                let valBrl = val * cotChf;
-                                                let origemStr = (tr.origem || 'Origem').replace(/"/g, '&quot;');
-                                                let destinoStr = (tr.destino || 'Destino').replace(/"/g, '&quot;');
-                                                let isEditando = cond.editando ? true : false;
-
-
-                                                if(isEditando) {
-                                                    despesasChfHtml += `
-                                                        <div class="p-3.5 rounded-2xl bg-white border-2 border-indigo-300 flex flex-col gap-2.5 text-xs shadow-sm">
-                                                            <div class="flex justify-between items-center font-bold text-slate-700">
-                                                                <span>✏️ A editar: 🚄 ${origemStr} ➔ ${destinoStr}</span>
-                                                                <button onclick="apagarConducaoOrcamento('${item.id}', '${tr.id}', '${cond.id}')" class="text-rose-600 hover:text-rose-700 font-bold px-2 py-1 bg-rose-50 hover:bg-rose-100 border border-rose-200 rounded-lg text-xs transition active:scale-95">✕ Apagar</button>
-                                                            </div>
-                                                            <div class="flex items-center gap-1.5 flex-wrap">
-                                                                <select id="orc-tr-transp-${cond.id}" class="p-1.5 bg-slate-50 border border-slate-300 rounded-xl font-bold text-xs">
-                                                                    <option value="Trem" ${cond.transporte==='Trem'?'selected':''}>🚂 Trem</option>
-                                                                    <option value="Ônibus" ${cond.transporte==='Ônibus'?'selected':''}>🚌 Ônibus</option>
-                                                                    <option value="Avião" ${cond.transporte==='Avião'?'selected':''}>✈️ Avião</option>
-                                                                    <option value="Metrô" ${cond.transporte==='Metrô'?'selected':''}>🚇 Metrô</option>
-                                                                    <option value="Carro" ${cond.transporte==='Carro'?'selected':''}>🚗 Carro</option>
-                                                                    <option value="Outro" ${cond.transporte==='Outro'?'selected':''}>📦 Outro</option>
-                                                                </select>
-                                                                <input type="text" id="orc-tr-val-${cond.id}" value="${val}" class="w-20 p-1.5 bg-slate-50 border border-slate-300 rounded-xl font-black text-right text-xs" placeholder="0">
-                                                                <select id="orc-tr-moeda-${cond.id}" class="p-1.5 bg-slate-50 border border-slate-300 rounded-xl font-bold text-xs">
-                                                                    <option value="EUR" ${cond.moeda==='EUR'?'selected':''}>EUR (€)</option>
-                                                                    <option value="CHF" ${cond.moeda==='CHF'?'selected':''}>CHF</option>
-                                                                </select>
-                                                                <button onclick="salvarEdicaoConducaoOrcamento('${item.id}', '${tr.id}', '${cond.id}')" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-xl font-bold text-xs shadow-xs transition active:scale-95">✓ OK (Salvar)</button>
-                                                            </div>
-                                                        </div>
-                                                    `;
-                                                } else {
-                                                    despesasChfHtml += `
-                                                        <div class="p-3.5 rounded-2xl bg-white border border-slate-200 flex flex-col gap-2 text-xs shadow-xs hover:border-indigo-300 transition">
-                                                            <div class="flex justify-between items-center">
-                                                                <span class="font-black text-slate-900 truncate">🚄 ${origemStr} ➔ ${destinoStr}</span>
-                                                                <div class="flex items-center gap-1.5">
-                                                                    <button onclick="abrirEdicaoConducaoOrcamento('${item.id}', '${tr.id}', '${cond.id}')" class="bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-300 px-2.5 py-1 rounded-lg font-bold text-xs shadow-2xs transition active:scale-95" title="Editar com Lápis">✏️ Lápis</button>
-                                                                    <button onclick="apagarConducaoOrcamento('${item.id}', '${tr.id}', '${cond.id}')" class="text-rose-600 hover:text-rose-700 font-bold px-2.5 py-1 bg-rose-50 hover:bg-rose-100 border border-rose-200 rounded-lg text-xs transition active:scale-95" title="Apagar despesa">✕ Apagar</button>
-                                                                </div>
-                                                            </div>
-                                                            <div class="flex justify-between items-center border-t border-slate-100 pt-2">
-                                                                <span class="text-slate-600 font-bold">🚌 ${cond.transporte || 'Condução'}</span>
-                                                                <div class="text-right whitespace-nowrap">
-                                                                    <span class="font-black text-blue-900 text-sm">${val.toFixed(2)} ${cond.moeda || 'CHF'}</span>
-                                                                    <span class="text-emerald-700 font-bold text-[11px] block">R$ ${valBrl.toFixed(2)}</span>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    `;
-                                                }
-                                            }
-                                        });
-                                    }
-                                });
-                            }
-                        });
-                    }
-
-
-                    if(dadosApp.orcamento) {
-                        dadosApp.orcamento.forEach(d => {
-                            if(d.moeda === 'CHF') {
-                                let val = limparNumero(d.valor);
-                                let descSafe = (d.descricao || '').replace(/"/g, '&quot;');
-                                despesasChfHtml += '<div class="p-3 rounded-xl bg-white border border-slate-200 flex flex-col gap-2 text-xs shadow-xs">' +
-                                    '<input type="text" value="' + descSafe + '" oninput="atualizarOrcamentoDescricao(' + d.id + ', this.value)" class="w-full bg-transparent outline-none font-bold text-slate-800 text-xs border-b pb-1" placeholder="Descrição...">' +
-                                    '<div class="flex items-center justify-between gap-2">' +
-                                        '<span class="text-slate-500 font-medium">Valor (CHF):</span>' +
-                                        '<div class="flex items-center gap-1.5"><input type="text" value="' + (val !== 0 ? val : '') + '" id="despesa-val-' + d.id + '" class="w-20 p-1.5 bg-slate-50 border border-slate-300 rounded-xl font-black text-right text-xs outline-none" placeholder="0">' +
-                                        '<button onclick="salvarDespesaValor(' + d.id + ', document.getElementById(\'despesa-val-' + d.id + '\').value)" class="bg-emerald-600 hover:bg-emerald-700 text-white px-2.5 py-1.5 rounded-lg font-bold text-[10px] transition active:scale-95">OK</button></div>' +
-                                        '<button onclick="apagarDespesa(' + d.id + ')" class="text-rose-600 hover:text-rose-700 font-bold px-2 py-1.5 rounded-xl bg-rose-50 hover:bg-rose-100 border border-rose-200 text-xs transition active:scale-95">✕</button></div>' +
-                                    '</div>';
-                            }
-                        });
-                    }
-                    if(despesasChfHtml === '') despesasChfHtml = '<p class="text-xs text-slate-400 italic">Sem despesas em Francos registadas.</p>';
-
-
-                    let saldoChfNum = limparNumero(dadosApp.saldoChf);
-                    let sobraChf = saldoChfNum - gastoChf;
-                    container.innerHTML = `
-                        <div class="bg-blue-50/50 p-4 rounded-2xl border border-blue-200 space-y-3 shadow-xs">
-                            <h3 class="font-black text-blue-900 text-xs uppercase border-b border-blue-200 pb-1.5">🇨🇭 Gestão de Francos (CHF)</h3>
-                            <div>
-                                <label class="block font-bold text-xs text-blue-800 mb-1">Disponível (CHF)</label>
-                                <div class="flex gap-1.5">
-                                    <input type="text" id="input-saldo-chf" value="${dadosApp.saldoChf !== "" ? dadosApp.saldoChf : ''}" class="flex-1 p-2.5 bg-white border border-blue-300 rounded-xl font-black text-blue-900 text-sm shadow-inner outline-none" placeholder="0">
-                                    <button onclick="salvarSaldo('CHF', document.getElementById('input-saldo-chf').value)" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3.5 py-2 rounded-xl font-bold text-xs transition shadow-xs active:scale-95">OK</button>
-                                </div>
-                            </div>
-                            <div class="flex justify-between items-center bg-white p-2.5 rounded-xl border border-blue-100 text-xs shadow-2xs">
-                                <span class="font-semibold text-slate-600">Restante:</span>
-                                <span class="font-black text-blue-900 text-sm">${sobraChf.toFixed(2)} CHF</span>
-                            </div>
-                            <div class="flex justify-between items-center bg-white p-2.5 rounded-xl border border-blue-100 text-xs shadow-2xs">
-                                <span class="font-semibold text-slate-600">Em Reais (R$):</span>
-                                <span class="font-black text-emerald-700 text-sm">R$ ${(sobraChf * cotChf).toFixed(2)}</span>
-                            </div>
-                            <div class="space-y-2 pt-2">
-                                <span class="font-bold text-xs text-blue-900 uppercase block">Despesas em Francos (CHF):</span>
-                                <div class="space-y-2.5">${despesasChfHtml}</div>
-                            </div>
-                            <button onclick="adicionarDespesa('CHF')" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 rounded-xl text-xs transition shadow-sm mt-3 active:scale-95">➕ Nova Despesa CHF</button>
-                        </div>
-                    `;
-
-
-                } else if (orcamentoSubTab === 'conversor') {
-                    container.innerHTML = `
-                        <div class="bg-indigo-50/70 p-4 rounded-2xl border border-indigo-200 space-y-3 shadow-xs">
-                            <h3 class="font-black text-indigo-900 text-xs uppercase border-b border-indigo-200 pb-1.5">🧮 Conversor Rápido de Moeda</h3>
-                            <div>
-                                <label class="block font-bold text-xs text-indigo-800 mb-1">Valor Estrangeiro</label>
-                                <input type="text" id="conv-valor" class="w-full p-2.5 bg-white border border-indigo-200 rounded-xl font-black text-xs text-indigo-950 outline-none" placeholder="0.00">
-                            </div>
-                            <div>
-                                <label class="block font-bold text-xs text-indigo-800 mb-1">Moeda</label>
-                                <select id="conv-moeda" class="w-full p-2.5 bg-white border border-indigo-200 rounded-xl font-bold text-xs text-indigo-950 outline-none">
-                                    <option value="EUR">Euros (€)</option>
-                                    <option value="CHF">Francos (CHF)</option>
-                                </select>
-                            </div>
-                            <button onclick="calcularConversaoRapida()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 rounded-xl text-xs transition shadow-sm active:scale-95">Converter</button>
-                            <div class="bg-white p-3 rounded-xl border border-indigo-200 text-sm font-black text-emerald-700 text-center shadow-inner" id="conv-resultado">
-                                R$ 0.00
-                            </div>
-                        </div>
-                    `;
-                }
-            } catch(err) {
-                console.error("Erro no orçamento:", err);
-                container.innerHTML = '<div class="p-3 bg-red-50 text-red-600 rounded-xl text-xs">Erro ao carregar orçamento. Tente atualizar a página.</div>';
+            if (diff > 0) {
+                const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+                const minutes = Math.floor((diff / 1000 / 60) % 60);
+                const seconds = Math.floor((diff / 1000) % 60);
+                
+                document.getElementById('cd-days').innerText = String(days).padStart(2, '0');
+                document.getElementById('cd-hours').innerText = String(hours).padStart(2, '0');
+                document.getElementById('cd-mins').innerText = String(minutes).padStart(2, '0');
+                document.getElementById('cd-secs').innerText = String(seconds).padStart(2, '0');
+            } else {
+                document.getElementById('countdown').innerHTML = "<span class='text-lg font-bold text-pink-600'>Boa Viagem! ✈️✨</span>";
             }
         }
+        setInterval(updateCountdown, 1000);
+        updateCountdown();
 
-        function salvarSaldo(moeda, val) {
-            registarEstadoAnterior();
-            let num = limparNumero(val);
-            if(moeda === 'EUR') dadosApp.saldoEur = val !== "" ? num : "";
-            if(moeda === 'CHF') dadosApp.saldoChf = val !== "" ? num : "";
-            salvarStorage();
-            renderizarOrcamentoTab();
-            mostrarToast("Saldo guardado com sucesso!", "sucesso");
-        }
-
-        function salvarCotacao(moeda, val) {
-            registarEstadoAnterior();
-            let num = limparNumero(val);
-            if(moeda === 'EUR') dadosApp.cotacaoEur = num > 0 ? num : 6.20;
-            if(moeda === 'CHF') dadosApp.cotacaoChf = num > 0 ? num : 6.50;
-            salvarStorage();
-            renderizarOrcamentoTab();
-            renderizarComprasTab();
-            mostrarToast("Cotação guardada com sucesso!", "sucesso");
-        }
-
-        function salvarDespesaValor(id, val) {
-            registarEstadoAnterior();
-            let d = dadosApp.orcamento.find(item => String(item.id) === String(id));
-            if(d) {
-                d.valor = val !== "" ? limparNumero(val) : 0;
-                salvarStorage();
-                renderizarOrcamentoTab();
-                mostrarToast("Valor da despesa atualizado!", "sucesso");
-            }
-        }
-
-        function calcularConversaoRapida() {
-            let elVal = document.getElementById('conv-valor');
-            let elMoeda = document.getElementById('conv-moeda');
-            let elRes = document.getElementById('conv-resultado');
-            if(!elVal || !elMoeda || !elRes) return;
-            let val = limparNumero(elVal.value);
-            let moeda = elMoeda.value;
-            let cotEur = parseFloat(dadosApp.cotacaoEur) || 6.20;
-            let cotChf = parseFloat(dadosApp.cotacaoChf) || 6.50;
-            let resultado = moeda === 'EUR' ? val * cotEur : (moeda === 'CHF' ? val * cotChf : val);
-            elRes.innerText = 'R$ ' + resultado.toFixed(2);
-        }
-
-        function adicionarDespesa(moedaForcada) {
-            registarEstadoAnterior();
-            if(!dadosApp.orcamento) dadosApp.orcamento = [];
-            dadosApp.orcamento.unshift({ id: Date.now(), descricao: "Despesa", valor: 0, moeda: moedaForcada });
-            salvarStorage();
-            renderizarOrcamentoTab();
-            mostrarToast("Nova despesa adicionada!", "sucesso");
-        }
-
-        function apagarDespesa(id) {
-            registarEstadoAnterior();
-            dadosApp.orcamento = dadosApp.orcamento.filter(d => d.id !== id);
-            salvarStorage();
-            renderizarOrcamentoTab();
-            mostrarToast("Despesa apagada.", "info");
-        }
-
-        function atualizarOrcamentoDescricao(id, val) {
-            let d = dadosApp.orcamento.find(item => String(item.id) === String(id));
-            if(d) { d.descricao = val; localStorage.setItem(CHAVE_APP, JSON.stringify(dadosApp)); }
-        }
-</script>
-<script>
-/* funções de outras páginas viram "vazias" aqui, para o núcleo não dar erro */
-(function(n){n.forEach(function(f){if(typeof window[f]==="undefined")window[f]=function(){}})})(["abrirEdicaoItemDireto", "abrirModalTarefa", "adicionarBloco", "adicionarChat", "adicionarConducaoVazia", "adicionarContato", "adicionarFotoExtraTrecho", "adicionarItemBloco", "adicionarItemChecklist", "adicionarItemUnicoForm", "adicionarNovoDestinoFiltro", "adicionarNovoStatusTarefa", "adicionarTarefa", "adicionarTrecho", "adicionarVoo", "adicionarVoucher", "alternarBloqueio", "alternarConcluidoItemDireto", "alternarItemChecklist", "anexarPdfVoo", "anexarPdfVoucher", "apagarBloco", "apagarChat", "apagarContato", "apagarItemChecklist", "apagarItemDireto", "apagarTarefa", "apagarVoo", "apagarVoucher", "atualizarCampo", "atualizarChat", "atualizarConducaoItem", "atualizarContagemRegressiva", "atualizarContatoNome", "atualizarContatoNumero", "atualizarCorBlocoLocal", "atualizarDataInicio", "atualizarItemChecklistText", "atualizarTarefaTexto", "atualizarTextoItemBloco", "atualizarTrecho", "atualizarTudo", "atualizarVoo", "atualizarVoucherTitulo", "compartilharComprasWhatsApp", "compartilharRoteiroWhatsApp", "fecharModalTarefa", "filtrarComprasTitulo", "filtrarDestino", "filtrarTarefas", "filtrarUtilidade", "gerenciarDestinos", "gerenciarDestinosLocais", "gerenciarOrigens", "imprimirBlocoUnico", "iniciarArrastoHub", "lidarSelecaoDestino", "lidarSelecaoDestinoTarefa", "lidarSelecaoDestinoTrecho", "lidarSelecaoOrigemTrecho", "lidarSelecaoStatusTarefa", "moverBloco", "moverSecaoHub", "mudarOrdenacaoBlocos", "mudarOrdenacaoCompras", "mudarTab", "obterCorPorTituloCompra", "permitirDropHub", "registarEstadoAnterior", "removerConducaoItem", "removerFotoExtraTrecho", "removerItemBloco", "removerTrecho", "renderizarBlocos", "renderizarFiltrosTarefas", "renderizarModoLeitura", "salvarEFecharItemDireto", "salvarTarefaModal", "soltarHub", "v289AbrirCalendario", "v289AbrirMontagemDia", "v289AdicionarCampoParada", "v289CalHoje", "v289CalMudarMes", "v289ColarMapsClipboard", "v289ConfirmarEnviarRoteiro", "v289EditarEtapa", "v289ExcluirEtapa", "v289FecharCalendario", "v289FecharMontador", "v289InterpretarMapsUrl", "v289MoverEtapa", "v289RemoverFotoTemp", "v289ResetFormEtapa", "v289SalvarEtapaNoPercurso", "v289SelecionarTransporte", "v289SetTranspBtn", "v289TestarLinkMaps", "v289UploadFotoEtapa", "v289VoltarAoCalendario"]);
-</script>
-    <!-- ================= INÍCIO: BOTÃO E POP-UP DE RELÓGIOS ================= -->
-<!-- Botão redondo -->
-<button class="fab-relogio" onclick="togglePopupRelogio()" title="Abrir Relógios">
-  🕒
-</button>
-<!-- Pop-up -->
-<div class="popup-relogio" id="meuPopupRelogio">
-  <div class="popup-relogio-header">
-    <span>Relógios Mundiais</span>
-    <button onclick="togglePopupRelogio()">✕</button>
-  </div>
-  <!-- Carrega a sua página de relógios criada anteriormente -->
-  <iframe src="Relógio.html"></iframe>
-</div>
-<!-- ================= FIM: BOTÃO E POP-UP DE RELÓGIOS ================= -->
-<link rel="stylesheet" href="nucleo/nucleo-01-relogio.css">
-<script src="nucleo/nucleo-01-relogio.js"></script>
-<!-- ===== CAMADA v271: visual moderno em todas as telas, topo fixo, swipe, bloqueio novo, instalação ===== -->
-<meta name="theme-color" content="#1e1b4b">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="mobile-web-app-capable" content="yes">
-<!-- ===== FIM DA CAMADA v271 ===== -->
-<link rel="stylesheet" href="nucleo/nucleo-02-v271-visual.css">
-<script src="nucleo/nucleo-02-v271-visual.js"></script>
-<!-- ===== CAMADA v272: visual delicado, pulsos, hub claro, orçamento turquesa, personalização ===== -->
-<!-- ===== FIM DA CAMADA v272 ===== -->
-<link rel="stylesheet" href="nucleo/nucleo-03-v272-visual.css">
-<script src="nucleo/nucleo-03-v272-visual.js"></script>
-<!-- ===== CAMADA v274: menu que aparece ao rolar, cores por destino, painel de cores por aba, letras legíveis =====
-     Substitui a v273. Use a ferramenta "Juntar" (ela remove a v273 sozinha) ou cole antes de </body> depois de apagar a v273. -->
-<!-- ===== FIM DA CAMADA v274 ===== -->
-<link rel="stylesheet" href="nucleo/nucleo-04-v274-menu-flutuante.css">
-<script src="nucleo/nucleo-04-v274-menu-flutuante.js"></script>
-<!-- ===== CAMADA v275: modo offline, sincronização com fusão, fotos/PDFs separados, login opcional ===== -->
-<!-- ===== FIM DA CAMADA v275 ===== -->
-<!--V276-->
-<script src="nucleo/nucleo-05-v275-offline-sync.js"></script>
-<!--/V276-->
-<link rel="stylesheet" href="nucleo/nucleo-06-v276-v282-listas.css">
-<script src="nucleo/nucleo-06-v276-v282-listas.js"></script>
-<!-- ===== CAMADA v283 ===== -->
-<!-- ===== FIM DA CAMADA v283 ===== -->
-<!--V284-->
-<link rel="stylesheet" href="nucleo/nucleo-07-v283-edicao.css">
-<script src="nucleo/nucleo-07-v283-edicao.js"></script>
-<!--/V284-->
-<!--V285-->
-<!--/V285-->
-<!--V286-->
-<!--/V286-->
-<!--V287-->
-<!--/V287-->
-<link rel="stylesheet" href="nucleo/nucleo-08-v284-v287-roteiro.css">
-<script src="nucleo/nucleo-08-v284-v287-roteiro.js"></script>
-<!-- ===== CAMADA v288: papel de parede interativo toque abre/fecha, cores da setinha e quadradinho, roteiro 1 linha com X à direita, montagem rápida do Maps ===== -->
-<!-- ===== FIM DA CAMADA v288 ===== -->
-<link rel="stylesheet" href="nucleo/nucleo-09-v288-montagem-maps.css">
-<script src="nucleo/nucleo-09-v288-montagem-maps.js"></script>
-<!--V290-->
-<!--/V290-->
-<link rel="stylesheet" href="nucleo/nucleo-11-v290-barra.css">
-<script src="nucleo/nucleo-11-v290-barra.js"></script>
-<script>
-/* NAVEGAÇÃO ENTRE PÁGINAS: os botões da barra de baixo abrem o arquivo de cada categoria */
-(function(){
-  var MINHA="orcamento", KEY="orcamento";
-  var ABA={leitura:'roteiro.html',itinerario:'editar.html',utilidades:'hub.html',orcamento:'orcamento.html',compras:'compras.html'};
-  var livre=false;
-  ['pointerdown','keydown','touchstart'].forEach(function(ev){document.addEventListener(ev,function(){livre=true},true)});
-  var orig=window.mudarTab;
-  window.mudarTab=function(t){
-    if(livre && ABA[t] && t!==MINHA){ location.href=ABA[t]; return; }
-    return orig.apply(this,arguments);
-  };
-  var n=0, iv=setInterval(function(){
-    var b=document.getElementById('v290-cal');
-    if(b){
-      if(KEY!=='agenda'){ b.onclick=function(){location.href='agenda.html'}; }
-      else {
-        document.querySelectorAll('#v273-tabs button').forEach(function(x){
-          var on=(x===b);
-          x.classList.toggle('bg-indigo-600',on); x.classList.toggle('bg-white',!on);
+        // Comportamento da barra flutuante ao rolar
+        let scrollTimeout;
+        const dock = document.getElementById('floating-dock');
+        
+        window.addEventListener('scroll', () => {
+            dock.style.transform = 'translate(-50%, 6px)';
+            dock.style.opacity = '0.35';
+            
+            clearTimeout(scrollTimeout);
+            scrollTimeout = setTimeout(() => {
+                dock.style.transform = 'translate(-50%, 0)';
+                dock.style.opacity = '0.45'; 
+            }, 300);
         });
-      }
-      clearInterval(iv);
-    }
-    if(++n>60) clearInterval(iv);
-  },200);
-  if(KEY==='agenda'){
-    var t2=0, iv2=setInterval(function(){
-      var f=window.v289AbrirCalendario||window.abrirCalendario;
-      if(f && ++t2>6){ clearInterval(iv2); try{f()}catch(e){} }
-      if(t2>40) clearInterval(iv2);
-    },300);
-  }
-})();
-</script>
+
+        dock.addEventListener('mouseenter', () => { dock.style.opacity = '1'; });
+        dock.addEventListener('mouseleave', () => { dock.style.opacity = '0.45'; });
+        dock.addEventListener('touchstart', () => { dock.style.opacity = '1'; });
+    </script>
 </body>
 </html>
