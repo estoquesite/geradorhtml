@@ -31,52 +31,8 @@
 </head>
 <body class="bg-lightBg text-slate-700 min-h-screen pb-32 font-sans selection:bg-sky-100 selection:text-sky-900">
 
-    <!-- CABEÇALHO / TOPO -->
-    <header class="w-full max-w-4xl mx-auto px-4 pt-6 pb-4">
-        <!-- Relógios: Brasil e Europa -->
-        <div class="grid grid-cols-2 gap-4 mb-4">
-            <div class="bg-cardBg border border-slate-100 rounded-2xl p-3.5 text-center soft-shadow">
-                <span class="text-[11px] font-medium uppercase tracking-wider text-slate-400 block mb-1">🇧🇷 Brasil (Rio)</span>
-                <div id="clock-br" class="text-lg font-light text-slate-700 font-mono tracking-wide">--:--:--</div>
-            </div>
-            <div class="bg-cardBg border border-slate-100 rounded-2xl p-3.5 text-center soft-shadow">
-                <span class="text-[11px] font-medium uppercase tracking-wider text-slate-400 block mb-1">🇪🇺 Europa (CH/DE/FR)</span>
-                <div id="clock-eu" class="text-lg font-light text-slate-700 font-mono tracking-wide">--:--:--</div>
-            </div>
-        </div>
-
-        <!-- Contador Regressivo -->
-        <div class="bg-gradient-to-r from-sky-50 via-white to-pink-50 border border-slate-100 rounded-2xl p-5 text-center soft-shadow">
-            <h2 class="text-xs font-bold tracking-widest text-sky-600 uppercase mb-3">✈️ Contagem Regressiva para a Europa</h2>
-            
-            <div id="countdown" class="flex justify-center items-center gap-2 sm:gap-3 my-2 text-slate-800 font-mono">
-                <div class="flex flex-col items-center bg-white border border-slate-100 rounded-xl px-3 py-2 soft-shadow-sm min-w-[55px]">
-                    <span id="cd-days" class="text-xl sm:text-2xl font-semibold">--</span>
-                    <span class="text-[9px] uppercase tracking-wider text-slate-400 font-sans mt-0.5">dias</span>
-                </div>
-                <span class="text-slate-300 font-bold">:</span>
-                <div class="flex flex-col items-center bg-white border border-slate-100 rounded-xl px-3 py-2 soft-shadow-sm min-w-[55px]">
-                    <span id="cd-hours" class="text-xl sm:text-2xl font-semibold">--</span>
-                    <span class="text-[9px] uppercase tracking-wider text-slate-400 font-sans mt-0.5">horas</span>
-                </div>
-                <span class="text-slate-300 font-bold">:</span>
-                <div class="flex flex-col items-center bg-white border border-slate-100 rounded-xl px-3 py-2 soft-shadow-sm min-w-[55px]">
-                    <span id="cd-mins" class="text-xl sm:text-2xl font-semibold">--</span>
-                    <span class="text-[9px] uppercase tracking-wider text-slate-400 font-sans mt-0.5">min</span>
-                </div>
-                <span class="text-slate-300 font-bold">:</span>
-                <div class="flex flex-col items-center bg-white border border-slate-100 rounded-xl px-3 py-2 soft-shadow-sm min-w-[55px]">
-                    <span id="cd-secs" class="text-xl sm:text-2xl font-semibold">--</span>
-                    <span class="text-[9px] uppercase tracking-wider text-slate-400 font-sans mt-0.5">seg</span>
-                </div>
-            </div>
-            
-            <p class="text-xs text-slate-400 font-medium mt-2">Suíça 🇨🇭 • Alemanha 🇩🇪 • França 🇫🇷</p>
-        </div>
-    </header>
-
     <!-- CONTEÚDO PRINCIPAL (Hub de Listas & Vouchers) -->
-    <main class="w-full max-w-4xl mx-auto px-4 mt-2 space-y-4">
+    <main class="w-full max-w-4xl mx-auto px-4 pt-8 space-y-4">
         
         <!-- CABEÇALHO DO HUB -->
         <div class="bg-cardBg border border-slate-100 rounded-2xl p-4 soft-shadow">
@@ -86,7 +42,7 @@
                     <h3 class="text-xs sm:text-sm font-bold tracking-wider text-slate-800 uppercase">HUB DE LISTAS & VOUCHERS</h3>
                 </div>
             </div>
-            <p class="text-[11px] text-slate-400 mb-4">Arraste pelos pontinhos (⋮⋮) para reorganizar[span_20](start_span)[span_20](end_span)[span_21](start_span)[span_21](end_span)</p>
+            <p class="text-[11px] text-slate-400 mb-4">Arraste pelos pontinhos (⋮⋮) para reorganizar[span_0](start_span)[span_0](end_span)[span_1](start_span)[span_1](end_span)</p>
 
             <!-- FILTROS DO HUB -->
             <div class="flex flex-wrap items-center gap-2 pt-2 border-t border-slate-100">
@@ -261,55 +217,18 @@
         </nav>
     </div>
 
-    <!-- SCRIPTS DE FUNCIONALIDADE -->
     <script>
-        // Relógios em tempo real
-        function updateClocks() {
-            const now = new Date();
-            document.getElementById('clock-br').innerText = now.toLocaleTimeString('pt-BR', { timeZone: 'America/Sao_Paulo' });
-            document.getElementById('clock-eu').innerText = now.toLocaleTimeString('pt-BR', { timeZone: 'Europe/Zurich' });
-        }
-        setInterval(updateClocks, 1000);
-        updateClocks();
-
-        // Contagem Regressiva para Dezembro de 2026
-        const tripDate = new Date('2026-12-01T00:00:00');
-        function updateCountdown() {
-            const now = new Date();
-            const diff = tripDate - now;
-
-            if (diff > 0) {
-                const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-                const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
-                const minutes = Math.floor((diff / 1000 / 60) % 60);
-                const seconds = Math.floor((diff / 1000) % 60);
-                
-                document.getElementById('cd-days').innerText = String(days).padStart(2, '0');
-                document.getElementById('cd-hours').innerText = String(hours).padStart(2, '0');
-                document.getElementById('cd-mins').innerText = String(minutes).padStart(2, '0');
-                document.getElementById('cd-secs').innerText = String(seconds).padStart(2, '0');
-            } else {
-                document.getElementById('countdown').innerHTML = "<span class='text-lg font-bold text-pink-600'>Boa Viagem! ✈️✨</span>";
-            }
-        }
-        setInterval(updateCountdown, 1000);
-        updateCountdown();
-
-        // Comportamento da barra flutuante ao rolar
         let scrollTimeout;
         const dock = document.getElementById('floating-dock');
-        
         window.addEventListener('scroll', () => {
             dock.style.transform = 'translate(-50%, 6px)';
             dock.style.opacity = '0.35';
-            
             clearTimeout(scrollTimeout);
             scrollTimeout = setTimeout(() => {
                 dock.style.transform = 'translate(-50%, 0)';
                 dock.style.opacity = '0.45'; 
             }, 300);
         });
-
         dock.addEventListener('mouseenter', () => { dock.style.opacity = '1'; });
         dock.addEventListener('mouseleave', () => { dock.style.opacity = '0.45'; });
         dock.addEventListener('touchstart', () => { dock.style.opacity = '1'; });
