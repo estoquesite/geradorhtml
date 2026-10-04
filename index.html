@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt-BR" class="dark">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,15 +8,14 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
-            darkMode: 'class',
             theme: {
                 extend: {
                     colors: {
-                        neonCyan: '#00f2fe',
-                        neonPink: '#ff007f',
-                        neonLime: '#39ff14',
-                        darkBg: '#090d16',
-                        cardBg: '#131c2e'
+                        softBlue: '#0284c7',
+                        softPink: '#db2777',
+                        softGreen: '#16a34a',
+                        lightBg: '#f8fafc',
+                        cardBg: '#ffffff'
                     }
                 }
             }
@@ -25,78 +24,72 @@
     <!-- FontAwesome para ícones modernos -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        .neon-glow-cyan {
-            box-shadow: 0 0 15px rgba(0, 242, 254, 0.4);
-        }
-        .neon-glow-pink {
-            box-shadow: 0 0 15px rgba(255, 0, 127, 0.4);
-        }
-        .neon-glow-lime {
-            box-shadow: 0 0 15px rgba(57, 255, 20, 0.4);
+        .soft-shadow {
+            box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05);
         }
     </style>
 </head>
-<body class="bg-darkBg text-gray-100 min-h-screen pb-32 font-sans selection:bg-neonCyan selection:text-black">
+<body class="bg-lightBg text-slate-700 min-h-screen pb-32 font-sans selection:bg-sky-100 selection:text-sky-900">
 
     <!-- CABEÇALHO / TOPO -->
     <header class="w-full max-w-4xl mx-auto px-4 pt-6 pb-4">
         <!-- Relógios: Brasil e Europa -->
         <div class="grid grid-cols-2 gap-4 mb-4">
-            <div class="bg-cardBg border border-neonCyan/30 rounded-xl p-3 text-center neon-glow-cyan">
-                <span class="text-xs uppercase tracking-wider text-gray-400 block"><i class="fa-solid fa-earth-americas text-neonCyan mr-1"></i> Brasil (Rio)</span>
-                <div id="clock-br" class="text-xl font-bold text-neonCyan mt-1 font-mono">--:--:--</div>
+            <div class="bg-cardBg border border-slate-100 rounded-2xl p-4 text-center soft-shadow">
+                <span class="text-xs font-medium uppercase tracking-wider text-slate-400 block"><i class="fa-solid fa-earth-americas text-sky-500 mr-1"></i> Brasil (Rio)</span>
+                <div id="clock-br" class="text-xl font-semibold text-slate-800 mt-1 font-mono">--:--:--</div>
             </div>
-            <div class="bg-cardBg border border-neonPink/30 rounded-xl p-3 text-center neon-glow-pink">
-                <span class="text-xs uppercase tracking-wider text-gray-400 block"><i class="fa-solid fa-earth-europe text-neonPink mr-1"></i> Europa (CH/DE/FR)</span>
-                <div id="clock-eu" class="text-xl font-bold text-neonPink mt-1 font-mono">--:--:--</div>
+            <div class="bg-cardBg border border-slate-100 rounded-2xl p-4 text-center soft-shadow">
+                <span class="text-xs font-medium uppercase tracking-wider text-slate-400 block"><i class="fa-solid fa-earth-europe text-pink-500 mr-1"></i> Europa (CH/DE/FR)</span>
+                <div id="clock-eu" class="text-xl font-semibold text-slate-800 mt-1 font-mono">--:--:--</div>
             </div>
         </div>
 
         <!-- Contador Regressivo para a Viagem -->
-        <div class="bg-gradient-to-r from-cardBg via-[#17253d] to-cardBg border border-neonCyan/50 rounded-2xl p-5 text-center shadow-lg">
-            <h2 class="text-sm font-semibold tracking-widest text-neonCyan uppercase mb-1">Contagem Regressiva para a Europa</h2>
-            <div id="countdown" class="text-2xl sm:text-3xl font-extrabold text-white tracking-wider font-mono my-1">
+        <div class="bg-gradient-to-r from-sky-50 via-white to-pink-50 border border-slate-100 rounded-2xl p-5 text-center soft-shadow">
+            <h2 class="text-xs font-bold tracking-widest text-sky-600 uppercase mb-1">Contagem Regressiva para a Europa</h2>
+            <div id="countdown" class="text-2xl sm:text-3xl font-bold text-slate-800 tracking-wider font-mono my-1">
                 --d --h --m --s
             </div>
-            <p class="text-xs text-gray-400">Suíça • Alemanha • França</p>
+            <p class="text-xs text-slate-400 font-medium">Suíça • Alemanha • França</p>
         </div>
     </header>
 
-    <!-- CONTEÚDO PRINCIPAL (Folha em Branco para Desenhar) -->
-    <main class="w-full max-w-4xl mx-auto px-4 mt-6">
-        <section id="content-area" class="bg-cardBg border border-gray-800 rounded-2xl min-h-[400px] p-6 flex flex-col items-center justify-center text-center border-dashed border-gray-700">
-            <div class="w-16 h-16 rounded-full bg-neonCyan/10 border border-neonCyan/30 flex items-center justify-center text-neonCyan text-2xl mb-4 neon-glow-cyan">
+    <!-- CONTEÚDO PRINCIPAL -->
+    <main class="w-full max-w-4xl mx-auto px-4 mt-2">
+        <section id="content-area" class="bg-cardBg border border-slate-100 rounded-2xl min-h-[400px] p-6 flex flex-col items-center justify-center text-center soft-shadow">
+            <div class="w-14 h-14 rounded-full bg-sky-50 border border-sky-100 flex items-center justify-center text-sky-500 text-xl mb-4">
                 <i class="fa-solid fa-wand-magic-sparkles"></i>
             </div>
-            <h3 class="text-lg font-bold text-white mb-2">Área de Trabalho em Branco</h3>
-            <p class="text-gray-400 text-sm max-w-md">Pronta para construirmos os módulos de Roteiro, Orçamento, Agenda e Hub com detalhes personalizados.</p>
+            <h3 class="text-lg font-bold text-slate-800 mb-2">Área de Trabalho em Branco</h3>
+            <p class="text-slate-400 text-sm max-w-md">Pronta para construirmos os módulos de Roteiro, Orçamento, Agenda e Hub com detalhes personalizados.</p>
         </section>
     </main>
 
-    <!-- BARRA FLUTUANTE INFERIOR (Comportamento inteligente ao rolar) -->
-    <div id="floating-dock" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 transition-all duration-300 opacity-90 hover:opacity-100">
-        <nav class="bg-cardBg/95 backdrop-blur-md border border-neonCyan/40 rounded-full px-5 py-3 flex items-center space-x-4 sm:space-x-8 neon-glow-cyan shadow-2xl">
-            <button onclick="switchTab('inicio')" class="flex flex-col items-center text-neonCyan hover:scale-110 transition-transform px-1">
+    <!-- BARRA FLUTUANTE INFERIOR -->
+    <div id="floating-dock" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 transition-all duration-300 opacity-95 hover:opacity-100">
+        <nav class="bg-cardBg/95 backdrop-blur-md border border-slate-100 rounded-full px-5 py-3 flex items-center space-x-4 sm:space-x-8 soft-shadow shadow-xl">
+            <button onclick="switchTab('inicio')" class="flex flex-col items-center text-sky-600 hover:scale-110 transition-transform px-1">
                 <i class="fa-solid fa-house text-lg"></i>
-                <span class="text-[10px] mt-1 font-medium">Início</span>
+                <span class="text-[10px] mt-1 font-semibold">Início</span>
             </button>
-            <div class="h-6 w-[1px] bg-gray-700"></div>
-            <button onclick="switchTab('roteiro')" class="flex flex-col items-center text-gray-400 hover:text-neonPink hover:scale-110 transition-transform px-1">
+            <div class="h-5 w-[1px] bg-slate-200"></div>
+            <button onclick="switchTab('roteiro')" class="flex flex-col items-center text-slate-400 hover:text-pink-600 hover:scale-110 transition-transform px-1">
                 <i class="fa-solid fa-map-location-dot text-lg"></i>
                 <span class="text-[10px] mt-1 font-medium">Roteiro</span>
             </button>
-            <div class="h-6 w-[1px] bg-gray-700"></div>
-            <button onclick="switchTab('hub')" class="flex flex-col items-center text-gray-400 hover:text-neonCyan hover:scale-110 transition-transform px-1">
+            <div class="h-5 w-[1px] bg-slate-200"></div>
+            <button onclick="switchTab('hub')" class="flex flex-col items-center text-slate-400 hover:text-sky-600 hover:scale-110 transition-transform px-1">
                 <i class="fa-solid fa-layer-group text-lg"></i>
                 <span class="text-[10px] mt-1 font-medium">Hub</span>
             </button>
-            <div class="h-6 w-[1px] bg-gray-700"></div>
-            <button onclick="switchTab('orcamento')" class="flex flex-col items-center text-gray-400 hover:text-neonLime hover:scale-110 transition-transform px-1">
+            <div class="h-5 w-[1px] bg-slate-200"></div>
+            <button onclick="switchTab('orcamento')" class="flex flex-col items-center text-slate-400 hover:text-green-600 hover:scale-110 transition-transform px-1">
                 <i class="fa-solid fa-wallet text-lg"></i>
                 <span class="text-[10px] mt-1 font-medium">Orçamento</span>
             </button>
-            <div class="h-6 w-[1px] bg-gray-700"></div>
-            <button onclick="switchTab('agenda')" class="flex flex-col items-center text-gray-400 hover:text-neonPink hover:scale-110 transition-transform px-1">
+            <div class="h-5 w-[1px] bg-slate-200"></div>
+            <button onclick="switchTab('agenda')" class="flex flex-col items-center text-slate-400 hover:text-pink-600 hover:scale-110 transition-transform px-1">
                 <i class="fa-solid fa-calendar-days text-lg"></i>
                 <span class="text-[10px] mt-1 font-medium">Agenda</span>
             </button>
@@ -138,13 +131,13 @@
         const dock = document.getElementById('floating-dock');
         
         window.addEventListener('scroll', () => {
-            dock.style.transform = 'translate(-50%, 10px)';
-            dock.style.opacity = '0.4';
+            dock.style.transform = 'translate(-50%, 6px)';
+            dock.style.opacity = '0.6';
             
             clearTimeout(scrollTimeout);
             scrollTimeout = setTimeout(() => {
                 dock.style.transform = 'translate(-50%, 0)';
-                dock.style.opacity = '1';
+                dock.style.opacity = '0.95';
             }, 250);
         });
 
@@ -152,11 +145,11 @@
         function switchTab(tabName) {
             const area = document.getElementById('content-area');
             area.innerHTML = `
-                <div class="w-16 h-16 rounded-full bg-neonPink/10 border border-neonPink/30 flex items-center justify-center text-neonPink text-2xl mb-4 neon-glow-pink">
+                <div class="w-14 h-14 rounded-full bg-pink-50 border border-pink-100 flex items-center justify-center text-pink-500 text-xl mb-4">
                     <i class="fa-solid fa-code"></i>
                 </div>
-                <h3 class="text-lg font-bold text-white mb-2 uppercase tracking-wide">Módulo: ${tabName}</h3>
-                <p class="text-gray-400 text-sm max-w-md">Esta seção está pronta para receber os campos, tabelas e cards interativos do(a) ${tabName}.</p>
+                <h3 class="text-lg font-bold text-slate-800 mb-2 uppercase tracking-wide">Módulo: ${tabName}</h3>
+                <p class="text-slate-400 text-sm max-w-md">Esta seção está pronta para receber os campos, tabelas e cards interativos do(a) ${tabName}.</p>
             `;
         }
     </script>
