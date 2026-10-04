@@ -11,9 +11,6 @@
             theme: {
                 extend: {
                     colors: {
-                        softBlue: '#0284c7',
-                        softPink: '#db2777',
-                        softGreen: '#16a34a',
                         lightBg: '#f8fafc',
                         cardBg: '#ffffff'
                     }
@@ -21,11 +18,14 @@
             }
         }
     </script>
-    <!-- FontAwesome para ícones modernos -->
+    <!-- FontAwesome para ícones complementares -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         .soft-shadow {
-            box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.04);
+        }
+        .soft-shadow-sm {
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
         }
     </style>
 </head>
@@ -33,25 +33,45 @@
 
     <!-- CABEÇALHO / TOPO -->
     <header class="w-full max-w-4xl mx-auto px-4 pt-6 pb-4">
-        <!-- Relógios: Brasil e Europa -->
+        <!-- Relógios: Brasil e Europa (Mais delicados e finos) -->
         <div class="grid grid-cols-2 gap-4 mb-4">
-            <div class="bg-cardBg border border-slate-100 rounded-2xl p-4 text-center soft-shadow">
-                <span class="text-xs font-medium uppercase tracking-wider text-slate-400 block"><i class="fa-solid fa-earth-americas text-sky-500 mr-1"></i> Brasil (Rio)</span>
-                <div id="clock-br" class="text-xl font-semibold text-slate-800 mt-1 font-mono">--:--:--</div>
+            <div class="bg-cardBg border border-slate-100 rounded-2xl p-3.5 text-center soft-shadow">
+                <span class="text-[11px] font-medium uppercase tracking-wider text-slate-400 block mb-1">🇧🇷 Brasil (Rio)</span>
+                <div id="clock-br" class="text-lg font-light text-slate-700 font-mono tracking-wide">--:--:--</div>
             </div>
-            <div class="bg-cardBg border border-slate-100 rounded-2xl p-4 text-center soft-shadow">
-                <span class="text-xs font-medium uppercase tracking-wider text-slate-400 block"><i class="fa-solid fa-earth-europe text-pink-500 mr-1"></i> Europa (CH/DE/FR)</span>
-                <div id="clock-eu" class="text-xl font-semibold text-slate-800 mt-1 font-mono">--:--:--</div>
+            <div class="bg-cardBg border border-slate-100 rounded-2xl p-3.5 text-center soft-shadow">
+                <span class="text-[11px] font-medium uppercase tracking-wider text-slate-400 block mb-1">🇪🇺 Europa (CH/DE/FR)</span>
+                <div id="clock-eu" class="text-lg font-light text-slate-700 font-mono tracking-wide">--:--:--</div>
             </div>
         </div>
 
-        <!-- Contador Regressivo para a Viagem -->
+        <!-- Contador Regressivo para a Viagem (Com caixinhas separadinhas) -->
         <div class="bg-gradient-to-r from-sky-50 via-white to-pink-50 border border-slate-100 rounded-2xl p-5 text-center soft-shadow">
-            <h2 class="text-xs font-bold tracking-widest text-sky-600 uppercase mb-1">Contagem Regressiva para a Europa</h2>
-            <div id="countdown" class="text-2xl sm:text-3xl font-bold text-slate-800 tracking-wider font-mono my-1">
-                --d --h --m --s
+            <h2 class="text-xs font-bold tracking-widest text-sky-600 uppercase mb-3">✈️ Contagem Regressiva para a Europa</h2>
+            
+            <div id="countdown" class="flex justify-center items-center gap-2 sm:gap-3 my-2 text-slate-800 font-mono">
+                <div class="flex flex-col items-center bg-white border border-slate-100 rounded-xl px-3 py-2 soft-shadow-sm min-w-[55px]">
+                    <span id="cd-days" class="text-xl sm:text-2xl font-semibold">--</span>
+                    <span class="text-[9px] uppercase tracking-wider text-slate-400 font-sans mt-0.5">dias</span>
+                </div>
+                <span class="text-slate-300 font-bold">:</span>
+                <div class="flex flex-col items-center bg-white border border-slate-100 rounded-xl px-3 py-2 soft-shadow-sm min-w-[55px]">
+                    <span id="cd-hours" class="text-xl sm:text-2xl font-semibold">--</span>
+                    <span class="text-[9px] uppercase tracking-wider text-slate-400 font-sans mt-0.5">horas</span>
+                </div>
+                <span class="text-slate-300 font-bold">:</span>
+                <div class="flex flex-col items-center bg-white border border-slate-100 rounded-xl px-3 py-2 soft-shadow-sm min-w-[55px]">
+                    <span id="cd-mins" class="text-xl sm:text-2xl font-semibold">--</span>
+                    <span class="text-[9px] uppercase tracking-wider text-slate-400 font-sans mt-0.5">min</span>
+                </div>
+                <span class="text-slate-300 font-bold">:</span>
+                <div class="flex flex-col items-center bg-white border border-slate-100 rounded-xl px-3 py-2 soft-shadow-sm min-w-[55px]">
+                    <span id="cd-secs" class="text-xl sm:text-2xl font-semibold">--</span>
+                    <span class="text-[9px] uppercase tracking-wider text-slate-400 font-sans mt-0.5">seg</span>
+                </div>
             </div>
-            <p class="text-xs text-slate-400 font-medium">Suíça • Alemanha • França</p>
+            
+            <p class="text-xs text-slate-400 font-medium mt-2">Suíça 🇨🇭 • Alemanha 🇩🇪 • França 🇫🇷</p>
         </div>
     </header>
 
@@ -59,38 +79,38 @@
     <main class="w-full max-w-4xl mx-auto px-4 mt-2">
         <section id="content-area" class="bg-cardBg border border-slate-100 rounded-2xl min-h-[400px] p-6 flex flex-col items-center justify-center text-center soft-shadow">
             <div class="w-14 h-14 rounded-full bg-sky-50 border border-sky-100 flex items-center justify-center text-sky-500 text-xl mb-4">
-                <i class="fa-solid fa-wand-magic-sparkles"></i>
+                ✨
             </div>
             <h3 class="text-lg font-bold text-slate-800 mb-2">Área de Trabalho em Branco</h3>
             <p class="text-slate-400 text-sm max-w-md">Pronta para construirmos os módulos de Roteiro, Orçamento, Agenda e Hub com detalhes personalizados.</p>
         </section>
     </main>
 
-    <!-- BARRA FLUTUANTE INFERIOR -->
+    <!-- BARRA FLUTUANTE INFERIOR (Com Emojis fofos) -->
     <div id="floating-dock" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 transition-all duration-300 opacity-95 hover:opacity-100">
-        <nav class="bg-cardBg/95 backdrop-blur-md border border-slate-100 rounded-full px-5 py-3 flex items-center space-x-4 sm:space-x-8 soft-shadow shadow-xl">
-            <button onclick="switchTab('inicio')" class="flex flex-col items-center text-sky-600 hover:scale-110 transition-transform px-1">
-                <i class="fa-solid fa-house text-lg"></i>
+        <nav class="bg-cardBg/95 backdrop-blur-md border border-slate-100 rounded-full px-6 py-3 flex items-center space-x-4 sm:space-x-8 soft-shadow shadow-xl">
+            <button onclick="switchTab('inicio')" class="flex flex-col items-center text-sky-600 hover:scale-110 transition-transform px-1 group">
+                <span class="text-xl">🏠</span>
                 <span class="text-[10px] mt-1 font-semibold">Início</span>
             </button>
             <div class="h-5 w-[1px] bg-slate-200"></div>
-            <button onclick="switchTab('roteiro')" class="flex flex-col items-center text-slate-400 hover:text-pink-600 hover:scale-110 transition-transform px-1">
-                <i class="fa-solid fa-map-location-dot text-lg"></i>
+            <button onclick="switchTab('roteiro')" class="flex flex-col items-center text-slate-400 hover:text-pink-600 hover:scale-110 transition-transform px-1 group">
+                <span class="text-xl">✈️</span>
                 <span class="text-[10px] mt-1 font-medium">Roteiro</span>
             </button>
             <div class="h-5 w-[1px] bg-slate-200"></div>
-            <button onclick="switchTab('hub')" class="flex flex-col items-center text-slate-400 hover:text-sky-600 hover:scale-110 transition-transform px-1">
-                <i class="fa-solid fa-layer-group text-lg"></i>
+            <button onclick="switchTab('hub')" class="flex flex-col items-center text-slate-400 hover:text-sky-600 hover:scale-110 transition-transform px-1 group">
+                <span class="text-xl">🎒</span>
                 <span class="text-[10px] mt-1 font-medium">Hub</span>
             </button>
             <div class="h-5 w-[1px] bg-slate-200"></div>
-            <button onclick="switchTab('orcamento')" class="flex flex-col items-center text-slate-400 hover:text-green-600 hover:scale-110 transition-transform px-1">
-                <i class="fa-solid fa-wallet text-lg"></i>
+            <button onclick="switchTab('orcamento')" class="flex flex-col items-center text-slate-400 hover:text-green-600 hover:scale-110 transition-transform px-1 group">
+                <span class="text-xl">💳</span>
                 <span class="text-[10px] mt-1 font-medium">Orçamento</span>
             </button>
             <div class="h-5 w-[1px] bg-slate-200"></div>
-            <button onclick="switchTab('agenda')" class="flex flex-col items-center text-slate-400 hover:text-pink-600 hover:scale-110 transition-transform px-1">
-                <i class="fa-solid fa-calendar-days text-lg"></i>
+            <button onclick="switchTab('agenda')" class="flex flex-col items-center text-slate-400 hover:text-pink-600 hover:scale-110 transition-transform px-1 group">
+                <span class="text-xl">📅</span>
                 <span class="text-[10px] mt-1 font-medium">Agenda</span>
             </button>
         </nav>
@@ -107,7 +127,7 @@
         setInterval(updateClocks, 1000);
         updateClocks();
 
-        // Contagem Regressiva para Dezembro de 2026
+        // Contagem Regressiva para Dezembro de 2026 com caixinhas
         const tripDate = new Date('2026-12-01T00:00:00');
         function updateCountdown() {
             const now = new Date();
@@ -118,9 +138,13 @@
                 const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
                 const minutes = Math.floor((diff / 1000 / 60) % 60);
                 const seconds = Math.floor((diff / 1000) % 60);
-                document.getElementById('countdown').innerText = `${days}d ${hours}h ${minutes}m ${seconds}s`;
+                
+                document.getElementById('cd-days').innerText = String(days).padStart(2, '0');
+                document.getElementById('cd-hours').innerText = String(hours).padStart(2, '0');
+                document.getElementById('cd-mins').innerText = String(minutes).padStart(2, '0');
+                document.getElementById('cd-secs').innerText = String(seconds).padStart(2, '0');
             } else {
-                document.getElementById('countdown').innerText = "Boa Viagem!";
+                document.getElementById('countdown').innerHTML = "<span class='text-lg font-bold text-pink-600'>Boa Viagem! ✈️✨</span>";
             }
         }
         setInterval(updateCountdown, 1000);
@@ -144,9 +168,17 @@
         // Alternância de abas para o canvas
         function switchTab(tabName) {
             const area = document.getElementById('content-area');
+            const icons = {
+                inicio: '🏠',
+                roteiro: '✈️',
+                hub: '🎒',
+                orcamento: '💳',
+                agenda: '📅'
+            };
+            
             area.innerHTML = `
-                <div class="w-14 h-14 rounded-full bg-pink-50 border border-pink-100 flex items-center justify-center text-pink-500 text-xl mb-4">
-                    <i class="fa-solid fa-code"></i>
+                <div class="w-14 h-14 rounded-full bg-pink-50 border border-pink-100 flex items-center justify-center text-2xl mb-4">
+                    ${icons[tabName] || '✨'}
                 </div>
                 <h3 class="text-lg font-bold text-slate-800 mb-2 uppercase tracking-wide">Módulo: ${tabName}</h3>
                 <p class="text-slate-400 text-sm max-w-md">Esta seção está pronta para receber os campos, tabelas e cards interativos do(a) ${tabName}.</p>
