@@ -4,110 +4,46 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Trip Hub - Compras & Encomendas</title>
-    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        lightBg: '#f8fafc',
-                        cardBg: '#ffffff',
-                        neonPink: '#ff007f'
-                    }
-                }
-            }
-        }
+        tailwind.config = { theme: { extend: { colors: { lightBg: '#f8fafc', cardBg: '#ffffff', neonPink: '#ff007f' } } } }
     </script>
-    <!-- FontAwesome para ícones complementares -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        .neon-glow-pink {
-            box-shadow: 0 0 12px rgba(255, 0, 127, 0.25);
-        }
-        .soft-shadow {
-            box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.04);
-        }
-        .soft-shadow-sm {
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
-        }
+        .neon-glow-pink { box-shadow: 0 0 15px rgba(255, 0, 127, 0.35); }
+        .soft-shadow { box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.04); }
     </style>
 </head>
-<body class="bg-lightBg text-slate-700 min-h-screen pb-36 font-sans selection:bg-pink-100 selection:text-pink-900">
+<body class="bg-lightBg text-slate-700 min-h-screen pb-36 pt-4 font-sans selection:bg-sky-100 selection:text-sky-900">
 
-    <!-- CONTEÚDO PRINCIPAL (Compras) -->
-    <main class="w-full max-w-4xl mx-auto px-4 pt-8 space-y-4">
-        
-        <!-- CABEÇALHO DE COMPRAS -->
-        <div class="bg-cardBg border border-slate-100 rounded-3xl p-5 soft-shadow flex flex-col sm:flex-row items-center justify-between gap-3">
-            <div>
-                <span class="text-[10px] font-bold text-neonPink uppercase tracking-widest block mb-0.5">🛍️ Controle de Compras & Encomendas</span>
-                <h3 class="text-xs sm:text-sm font-bold text-slate-800">Lista de itens, lembranças e desejos para a Europa</h3>
-            </div>
-            <button class="bg-neonPink hover:opacity-95 text-white text-xs font-bold px-4 py-2.5 rounded-2xl transition-all shadow-md neon-glow-pink flex items-center space-x-2">
-                <i class="fa-solid fa-plus"></i>
-                <span>Novo Item</span>
-            </button>
+    <!-- BARRA SUPERIOR DE VERSÃO -->
+    <div class="w-full bg-slate-900 text-white py-2.5 px-6 flex justify-between items-center text-xs font-bold tracking-wider uppercase mb-6 shadow-md">
+        <span>✈️ Roteiro Europa - Mariana</span>
+        <span class="bg-neonPink px-2.5 py-0.5 rounded-full text-[10px] text-white neon-glow-pink">Versão 1</span>
+    </div>
+
+    <main class="w-full max-w-4xl mx-auto px-4 pt-2 space-y-4">
+        <div class="bg-cardBg border border-slate-100 rounded-3xl p-5 soft-shadow">
+            <h3 class="text-xs sm:text-sm font-bold tracking-wider text-slate-800 uppercase">🛍️ COMPRAS & ENCOMENDAS</h3>
+            <p class="text-[11px] text-slate-400 mt-1">Organize suas lembranças e desejos da viagem.</p>
         </div>
-
-        <!-- FILTROS DE CATEGORIA -->
-        <div class="flex flex-wrap items-center gap-2 pt-2">
-            <button class="px-4 py-1.5 rounded-full bg-neonPink text-white text-xs font-bold shadow-sm neon-glow-pink">🔍 Todos</button>
-            <button class="px-4 py-1.5 rounded-full bg-white border border-slate-200 text-slate-600 text-xs font-medium hover:bg-slate-50 transition-colors">👗 Roupas & Inverno</button>
-            <button class="px-4 py-1.5 rounded-full bg-white border border-slate-200 text-slate-600 text-xs font-medium hover:bg-slate-50 transition-colors">🍫 Chocolates & Souvenirs</button>
-            <button class="px-4 py-1.5 rounded-full bg-white border border-slate-200 text-slate-600 text-xs font-medium hover:bg-slate-50 transition-colors">🎁 Encomendas</button>
-        </div>
-
-        <!-- LISTA DE COMPRAS (CARD EXEMPLO) -->
-        <div class="bg-cardBg border border-slate-100 rounded-3xl p-5 soft-shadow space-y-4 mb-8">
-            <div class="flex items-center justify-between border-b border-slate-100 pb-3">
-                <span class="text-xs font-bold uppercase tracking-wider text-slate-800">📦 Itens Adicionados</span>
-                <span class="bg-pink-100 text-neonPink text-[10px] font-bold px-2.5 py-1 rounded-full">0 itens</span>
-            </div>
-
-            <div class="bg-slate-50 border border-dashed border-slate-200 rounded-2xl p-8 text-center">
-                <p class="text-xs text-slate-400 leading-relaxed max-w-sm mx-auto">
-                    Nenhum item de compra cadastrado ainda. Clique em "Novo Item" para adicionar o que deseja trazer da Suíça, Alemanha e França! 🇨🇭🇩🇪🇫🇷
-                </p>
-            </div>
-        </div>
-
     </main>
 
     <!-- BARRA FLUTUANTE INFERIOR -->
-    <div id="floating-dock" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 transition-all duration-300 opacity-95">
+    <div id="floating-dock" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-50">
         <nav class="bg-cardBg/95 backdrop-blur-md border border-slate-100 rounded-full px-6 py-3.5 flex items-center space-x-4 sm:space-x-8 soft-shadow shadow-xl">
-            <a href="index.html" class="flex flex-col items-center text-slate-400 hover:text-neonPink transition-transform px-1">
-                <span class="text-xl">🏠</span>
-                <span class="text-[10px] mt-1">Início</span>
-            </a>
+            <a href="index.html" class="flex flex-col items-center text-slate-400 hover:text-neonPink transition-transform px-1"><span class="text-xl">🏠</span><span class="text-[10px] mt-1">Início</span></a>
             <div class="h-5 w-[1px] bg-slate-200"></div>
-            <a href="roteiro.html" class="flex flex-col items-center text-slate-400 hover:text-neonPink transition-transform px-1">
-                <span class="text-xl">✈️</span>
-                <span class="text-[10px] mt-1 font-semibold">Roteiro</span>
-            </a>
+            <a href="roteiro.html" class="flex flex-col items-center text-slate-400 hover:text-neonPink transition-transform px-1"><span class="text-xl">✈️</span><span class="text-[10px] mt-1 font-semibold">Roteiro</span></a>
             <div class="h-5 w-[1px] bg-slate-200"></div>
-            <a href="hub.html" class="flex flex-col items-center text-slate-400 hover:text-neonPink transition-transform px-1">
-                <span class="text-xl">🎒</span>
-                <span class="text-[10px] mt-1 font-semibold">Hub</span>
-            </a>
+            <a href="hub.html" class="flex flex-col items-center text-slate-400 hover:text-neonPink transition-transform px-1"><span class="text-xl">🎒</span><span class="text-[10px] mt-1 font-semibold">Hub</span></a>
             <div class="h-5 w-[1px] bg-slate-200"></div>
-            <a href="orcamento.html" class="flex flex-col items-center text-slate-400 hover:text-neonPink transition-transform px-1">
-                <span class="text-xl">💳</span>
-                <span class="text-[10px] mt-1 font-semibold">Orç.</span>
-            </a>
+            <a href="orcamento.html" class="flex flex-col items-center text-slate-400 hover:text-neonPink transition-transform px-1"><span class="text-xl">💳</span><span class="text-[10px] mt-1 font-semibold">Orç.</span></a>
             <div class="h-5 w-[1px] bg-slate-200"></div>
-            <a href="compras.html" class="flex flex-col items-center text-neonPink font-extrabold transition-transform px-1">
-                <span class="text-xl">🛍️</span>
-                <span class="text-[10px] mt-1 font-semibold">Compras</span>
-            </a>
+            <a href="compras.html" class="flex flex-col items-center text-neonPink font-extrabold transition-transform px-1"><span class="text-xl">🛍️</span><span class="text-[10px] mt-1 font-semibold">Compras</span></a>
             <div class="h-5 w-[1px] bg-slate-200"></div>
-            <a href="agenda.html" class="flex flex-col items-center text-slate-400 hover:text-neonPink transition-transform px-1">
-                <span class="text-xl">📅</span>
-                <span class="text-[10px] mt-1 font-semibold">Agenda</span>
-            </a>
+            <a href="agenda.html" class="flex flex-col items-center text-slate-400 hover:text-neonPink transition-transform px-1"><span class="text-xl">📅</span><span class="text-[10px] mt-1 font-semibold">Agenda</span></a>
         </nav>
     </div>
-
 </body>
 </html>
