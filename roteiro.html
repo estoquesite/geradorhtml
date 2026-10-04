@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Trip Hub - Europa</title>
+    <title>Trip Hub - Roteiro Europa</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -75,7 +75,7 @@
         </div>
     </header>
 
-    <!-- CONTEÚDO PRINCIPAL -->
+    <!-- CONTEÚDO PRINCIPAL (Roteiro Oficial) -->
     <main class="w-full max-w-4xl mx-auto px-4 mt-2">
         <section id="content-area" class="bg-cardBg border border-slate-100 rounded-2xl min-h-[400px] p-6 flex flex-col items-center soft-shadow">
             
@@ -124,33 +124,33 @@
         </section>
     </main>
 
-    <!-- BARRA FLUTUANTE INFERIOR (Com Emojis fofos) -->
-    <div id="floating-dock" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 transition-all duration-300 opacity-95 hover:opacity-100">
-        <nav class="bg-cardBg/95 backdrop-blur-md border border-slate-100 rounded-full px-6 py-3 flex items-center space-x-4 sm:space-x-8 soft-shadow shadow-xl">
-            <button onclick="switchTab('inicio')" class="flex flex-col items-center text-sky-600 hover:scale-110 transition-transform px-1 group">
+    <!-- BARRA FLUTUANTE INFERIOR (Com links para páginas separadas) -->
+    <div id="floating-dock" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 transition-all duration-300 opacity-90 hover:opacity-100">
+        <nav class="bg-cardBg/90 backdrop-blur-md border border-slate-100 rounded-full px-6 py-3 flex items-center space-x-4 sm:space-x-8 soft-shadow shadow-xl">
+            <a href="index.html" class="flex flex-col items-center text-slate-400 hover:text-sky-600 hover:scale-110 transition-transform px-1 group">
                 <span class="text-xl">🏠</span>
-                <span class="text-[10px] mt-1 font-semibold">Início</span>
-            </button>
+                <span class="text-[10px] mt-1 font-medium">Início</span>
+            </a>
             <div class="h-5 w-[1px] bg-slate-200"></div>
-            <button onclick="switchTab('roteiro')" class="flex flex-col items-center text-slate-400 hover:text-pink-600 hover:scale-110 transition-transform px-1 group">
+            <a href="roteiro.html" class="flex flex-col items-center text-pink-600 font-semibold hover:scale-110 transition-transform px-1 group">
                 <span class="text-xl">✈️</span>
-                <span class="text-[10px] mt-1 font-medium">Roteiro</span>
-            </button>
+                <span class="text-[10px] mt-1">Roteiro</span>
+            </a>
             <div class="h-5 w-[1px] bg-slate-200"></div>
-            <button onclick="switchTab('hub')" class="flex flex-col items-center text-slate-400 hover:text-sky-600 hover:scale-110 transition-transform px-1 group">
+            <a href="hub.html" class="flex flex-col items-center text-slate-400 hover:text-sky-600 hover:scale-110 transition-transform px-1 group">
                 <span class="text-xl">🎒</span>
                 <span class="text-[10px] mt-1 font-medium">Hub</span>
-            </button>
+            </a>
             <div class="h-5 w-[1px] bg-slate-200"></div>
-            <button onclick="switchTab('orcamento')" class="flex flex-col items-center text-slate-400 hover:text-green-600 hover:scale-110 transition-transform px-1 group">
+            <a href="orcamento.html" class="flex flex-col items-center text-slate-400 hover:text-green-600 hover:scale-110 transition-transform px-1 group">
                 <span class="text-xl">💳</span>
                 <span class="text-[10px] mt-1 font-medium">Orçamento</span>
-            </button>
+            </a>
             <div class="h-5 w-[1px] bg-slate-200"></div>
-            <button onclick="switchTab('agenda')" class="flex flex-col items-center text-slate-400 hover:text-pink-600 hover:scale-110 transition-transform px-1 group">
+            <a href="agenda.html" class="flex flex-col items-center text-slate-400 hover:text-pink-600 hover:scale-110 transition-transform px-1 group">
                 <span class="text-xl">📅</span>
                 <span class="text-[10px] mt-1 font-medium">Agenda</span>
-            </button>
+            </a>
         </nav>
     </div>
 
@@ -188,45 +188,24 @@
         setInterval(updateCountdown, 1000);
         updateCountdown();
 
-        // Comportamento dinâmico da barra flutuante ao rolar a página
+        // Comportamento dinâmico da barra flutuante ao rolar ou parar
         let scrollTimeout;
         const dock = document.getElementById('floating-dock');
         
         window.addEventListener('scroll', () => {
             dock.style.transform = 'translate(-50%, 6px)';
-            dock.style.opacity = '0.6';
+            dock.style.opacity = '0.35';
             
             clearTimeout(scrollTimeout);
             scrollTimeout = setTimeout(() => {
                 dock.style.transform = 'translate(-50%, 0)';
-                dock.style.opacity = '0.95';
-            }, 250);
+                dock.style.opacity = '0.45'; 
+            }, 300);
         });
 
-        // Alternância de abas para o canvas
-        function switchTab(tabName) {
-            const area = document.getElementById('content-area');
-            if (tabName === 'roteiro') {
-                // Recarrega o layout do roteiro da foto
-                location.reload(); 
-                return;
-            }
-            
-            const icons = {
-                inicio: '🏠',
-                hub: '🎒',
-                orcamento: '💳',
-                agenda: '📅'
-            };
-            
-            area.innerHTML = `
-                <div class="w-14 h-14 rounded-full bg-pink-50 border border-pink-100 flex items-center justify-center text-2xl mb-4">
-                    ${icons[tabName] || '✨'}
-                </div>
-                <h3 class="text-lg font-bold text-slate-800 mb-2 uppercase tracking-wide">Módulo: ${tabName}</h3>
-                <p class="text-slate-400 text-sm max-w-md">Esta seção está pronta para receber os campos, tabelas e cards interativos do(a) ${tabName}.</p>
-            `;
-        }
+        dock.addEventListener('mouseenter', () => { dock.style.opacity = '1'; });
+        dock.addEventListener('mouseleave', () => { dock.style.opacity = '0.45'; });
+        dock.addEventListener('touchstart', () => { dock.style.opacity = '1'; });
     </script>
 </body>
 </html>
